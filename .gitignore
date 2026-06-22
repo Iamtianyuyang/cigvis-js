@@ -11,6 +11,12 @@ build/
 # Source Python cigvis (reference only)
 cigvis/
 
+# CodeGraph
+.codegraph/
+
+# Documentation
+docs/
+
 # IDE
 .idea/
 .vscode/
