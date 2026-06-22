@@ -341,6 +341,172 @@ export function createTheme(
 }
 
 // ============================================================================
+// Font configuration functions (ported from mplstyle.py)
+// ============================================================================
+
+/** Font configuration for canvas text */
+export interface CanvasFontConfig {
+  family?: string;
+  size?: number;
+  weight?: string;
+  style?: string;
+}
+
+/**
+ * Set title font configuration.
+ * Ported from cigvis Python: set_title_font
+ *
+ * @param config - Font configuration
+ * @returns CanvasFontConfig
+ */
+export function setTitleFont(config: string | CanvasFontConfig): CanvasFontConfig {
+  if (typeof config === 'string') {
+    const preset = FONT_PRESETS[config.toLowerCase()];
+    if (preset) {
+      return {
+        family: preset.family,
+        weight: String(preset.weight),
+      };
+    }
+    return { family: config };
+  }
+  return config;
+}
+
+/**
+ * Set label font configuration.
+ * Ported from cigvis Python: set_label_font
+ *
+ * @param config - Font configuration
+ * @returns CanvasFontConfig
+ */
+export function setLabelFont(config: string | CanvasFontConfig): CanvasFontConfig {
+  if (typeof config === 'string') {
+    const preset = FONT_PRESETS[config.toLowerCase()];
+    if (preset) {
+      return {
+        family: preset.family,
+        weight: String(preset.weight),
+      };
+    }
+    return { family: config };
+  }
+  return config;
+}
+
+/**
+ * Set tick font configuration.
+ * Ported from cigvis Python: set_tick_font
+ *
+ * @param config - Font configuration
+ * @returns CanvasFontConfig
+ */
+export function setTickFont(config: string | CanvasFontConfig): CanvasFontConfig {
+  if (typeof config === 'string') {
+    const preset = FONT_PRESETS[config.toLowerCase()];
+    if (preset) {
+      return {
+        family: preset.family,
+        weight: String(preset.weight),
+      };
+    }
+    return { family: config };
+  }
+  return config;
+}
+
+/**
+ * Set legend font configuration.
+ * Ported from cigvis Python: set_legend_font
+ *
+ * @param config - Font configuration
+ * @returns CanvasFontConfig
+ */
+export function setLegendFont(config: string | CanvasFontConfig): CanvasFontConfig {
+  if (typeof config === 'string') {
+    const preset = FONT_PRESETS[config.toLowerCase()];
+    if (preset) {
+      return {
+        family: preset.family,
+        weight: String(preset.weight),
+      };
+    }
+    return { family: config };
+  }
+  return config;
+}
+
+/**
+ * Configure minor ticks on axes.
+ * Ported from cigvis Python: set_minor_ticks
+ *
+ * @param ctx - Canvas 2D context
+ * @param x - Enable minor ticks on X axis
+ * @param y - Enable minor ticks on Y axis
+ * @param options - Optional tick styling
+ */
+export function setMinorTicks(
+  ctx: CanvasRenderingContext2D,
+  x: boolean = true,
+  y: boolean = true,
+  options: {
+    minorSize?: number;
+    majorSize?: number;
+    lineWidth?: number;
+  } = {}
+): void {
+  const {
+    minorSize = 4,
+    majorSize = 6,
+    lineWidth = 0.8,
+  } = options;
+
+  // Store configuration on canvas for later use
+  (ctx as any).__cigvisMinorTicks = {
+    x,
+    y,
+    minorSize,
+    majorSize,
+    lineWidth,
+  };
+}
+
+/**
+ * Apply font configuration to canvas context.
+ *
+ * @param ctx - Canvas 2D context
+ * @param config - Font configuration
+ * @param defaultSize - Default font size
+ */
+export function applyFontConfig(
+  ctx: CanvasRenderingContext2D,
+  config: CanvasFontConfig,
+  defaultSize: number = 12
+): void {
+  const size = config.size || defaultSize;
+  const weight = config.weight || 'normal';
+  const family = config.family || 'sans-serif';
+  ctx.font = `${weight} ${size}px ${family}`;
+}
+
+/**
+ * Get font string for canvas context.
+ *
+ * @param config - Font configuration
+ * @param defaultSize - Default font size
+ * @returns Font string
+ */
+export function getFontString(
+  config: CanvasFontConfig,
+  defaultSize: number = 12
+): string {
+  const size = config.size || defaultSize;
+  const weight = config.weight || 'normal';
+  const family = config.family || 'sans-serif';
+  return `${weight} ${size}px ${family}`;
+}
+
+// ============================================================================
 // Agent interface
 // ============================================================================
 
