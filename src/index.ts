@@ -5,7 +5,7 @@
  *
  * @example
  * ```ts
- * import * as cigvis from 'cigvis';
+ * import * as cigvis from 'cigvis-js';
  *
  * // Read volume data
  * const { data, shape } = await cigvis.io.readVolume('seismic.bin', [192, 200, 240]);

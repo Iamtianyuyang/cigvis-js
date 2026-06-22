@@ -30,7 +30,7 @@ export interface Plot3DOptions {
  *
  * @example
  * ```ts
- * import { cigvis } from 'cigvis';
+ * import { cigvis } from 'cigvis-js';
  *
  * // Create nodes
  * const nodes = cigvis.createSlices({
