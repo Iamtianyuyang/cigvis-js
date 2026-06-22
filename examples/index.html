@@ -3,96 +3,293 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CIGVis Examples</title>
+  <title>CIGVis.js Examples</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Times New Roman', Georgia, serif;
-      background: #ffffff;
-      color: #000000;
-      max-width: 800px;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0a0a0f;
+      color: #e0e0e0;
+      min-height: 100vh;
+    }
+    .header {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      padding: 40px 24px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .header h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #00d4aa, #0078d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .header p {
+      font-size: 16px;
+      color: #8b8fa3;
+      max-width: 600px;
       margin: 0 auto;
-      padding: 40px 20px;
-      line-height: 1.6;
     }
-    h1 { font-size: 24px; font-weight: bold; margin-bottom: 8px; }
-    .subtitle { font-size: 14px; color: #333; margin-bottom: 32px; }
-    h2 { font-size: 18px; font-weight: bold; margin: 24px 0 12px; border-bottom: 1px solid #000; padding-bottom: 4px; }
-    .example-list { list-style: none; }
-    .example-list li { margin: 8px 0; }
-    .example-list a {
-      color: #000;
-      text-decoration: none;
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: #161922;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(0, 212, 170, 0.3);
+    }
+    .card-header {
+      padding: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .card-category {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #00d4aa;
+      margin-bottom: 8px;
+    }
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .card-body {
+      padding: 16px;
+    }
+    .card-desc {
       font-size: 14px;
+      color: #8b8fa3;
+      line-height: 1.5;
     }
-    .example-list a:hover { text-decoration: underline; }
-    .example-list .desc {
-      color: #555;
-      font-size: 12px;
-      margin-left: 16px;
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 12px;
+    }
+    .tag {
+      font-size: 11px;
+      padding: 2px 8px;
+      background: rgba(0, 212, 170, 0.1);
+      color: #00d4aa;
+      border-radius: 4px;
+    }
+    .card-footer {
+      padding: 12px 16px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card-footer a {
+      color: #00d4aa;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .card-footer a:hover {
+      text-decoration: underline;
+    }
+    .section-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 40px 0 20px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
     }
     .footer {
-      margin-top: 48px;
-      padding-top: 16px;
-      border-top: 1px solid #000;
-      font-size: 12px;
-      color: #555;
+      text-align: center;
+      padding: 40px 24px;
+      color: #5c6078;
+      font-size: 13px;
     }
-    .footer a { color: #000; }
+    .footer a {
+      color: #00d4aa;
+      text-decoration: none;
+    }
+    .code-block {
+      background: #0f1117;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 8px;
+      padding: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      overflow-x: auto;
+      margin: 16px 0;
+    }
   </style>
 </head>
 <body>
-  <h1>CIGVis Examples</h1>
-  <p class="subtitle">
-    Geophysical data visualization examples<br>
-    Ported from <a href="https://github.com/JintaoLee-Roger/cigvis">Python cigvis</a>
-  </p>
+  <div class="header">
+    <h1>CIGVis.js</h1>
+    <p>JavaScript/TypeScript 库，用于在浏览器中可视化多维地球物理数据</p>
+  </div>
 
-  <h2>1D Plotting</h2>
-  <ul class="example-list">
-    <li>
-      <a href="1d/trace.html">Trace Plot</a>
-      <div class="desc">Single trace, multi-trace section, and filled area display</div>
-    </li>
-  </ul>
+  <div class="container">
+    <h2 class="section-title">示例</h2>
 
-  <h2>2D Plotting</h2>
-  <ul class="example-list">
-    <li>
-      <a href="2d/plot2d.html">2D Image Display</a>
-      <div class="desc">Seismic slices with colormaps, overlays, and annotations</div>
-    </li>
-  </ul>
+    <div class="grid">
+      <!-- 3D Volume -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-category">3D</div>
+          <div class="card-title">体积切片</div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">
+            交互式 3D 体积可视化，支持正交切片、曲面和测井显示。
+            使用 Three.js/WebGL 渲染。
+          </div>
+          <div class="card-tags">
+            <span class="tag">createSlices</span>
+            <span class="tag">createSurfaces</span>
+            <span class="tag">createWellLog</span>
+          </div>
+        </div>
+        <div class="card-footer">
+          <a href="3d/volume.html">查看示例 →</a>
+        </div>
+      </div>
 
-  <h2>3D Visualization</h2>
-  <ul class="example-list">
-    <li>
-      <a href="3d/volume.html">Volume Slices</a>
-      <div class="desc">Interactive 3D volume with orthogonal slices, surfaces, and well logs</div>
-    </li>
-  </ul>
+      <!-- 2D Plot -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-category">2D</div>
+          <div class="card-title">图像显示</div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">
+            2D 图像可视化，支持多种色表、叠加层、标记和注释。
+            使用 Canvas API 渲染。
+          </div>
+          <div class="card-tags">
+            <span class="tag">plot2D</span>
+            <span class="tag">fgImageArgs</span>
+            <span class="tag">lineArgs</span>
+          </div>
+        </div>
+        <div class="card-footer">
+          <a href="2d/plot2d.html">查看示例 →</a>
+        </div>
+      </div>
 
-  <h2>Colormaps</h2>
-  <ul class="example-list">
-    <li>
-      <a href="colormap/colormaps.html">Colormap Gallery</a>
-      <div class="desc">Built-in colormaps for geophysical data visualization</div>
-    </li>
-  </ul>
+      <!-- 1D Plot -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-category">1D</div>
+          <div class="card-title">道显示</div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">
+            1D 道数据可视化，支持单道、多道和填充面积显示。
+            适用于测井曲线和地震道显示。
+          </div>
+          <div class="card-tags">
+            <span class="tag">plot1D</span>
+            <span class="tag">plotMultiTraces</span>
+            <span class="tag">plotWithFill</span>
+          </div>
+        </div>
+        <div class="card-footer">
+          <a href="1d/trace.html">查看示例 →</a>
+        </div>
+      </div>
 
-  <h2>GUI Components</h2>
-  <ul class="example-list">
-    <li>
-      <a href="gui-test.html">Web Components</a>
-      <div class="desc">Interactive controls for parameter adjustment</div>
-    </li>
-  </ul>
+      <!-- Colormap -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-category">Color</div>
+          <div class="card-title">色表库</div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">
+            内置地球物理专用色表，包括 Petrel、seismic、viridis 等。
+            支持自定义色表和 alpha 混合。
+          </div>
+          <div class="card-tags">
+            <span class="tag">petrel</span>
+            <span class="tag">seismic</span>
+            <span class="tag">viridis</span>
+          </div>
+        </div>
+        <div class="card-footer">
+          <a href="colormap/colormaps.html">查看示例 →</a>
+        </div>
+      </div>
+
+      <!-- GUI -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-category">UI</div>
+          <div class="card-title">Web Components</div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">
+            可复用的 Web Components，包括滑块、按钮、下拉框和侧边栏。
+            框架无关，可在任何项目中使用。
+          </div>
+          <div class="card-tags">
+            <span class="tag">RangeSlider</span>
+            <span class="tag">Button</span>
+            <span class="tag">Sidebar</span>
+          </div>
+        </div>
+        <div class="card-footer">
+          <a href="gui-test.html">查看示例 →</a>
+        </div>
+      </div>
+
+      <!-- Quick Start -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-category">Start</div>
+          <div class="card-title">快速开始</div>
+        </div>
+        <div class="card-body">
+          <div class="card-code">
+            <pre class="code-block"><code>import * as cigvis from 'cigvis';
+
+const { data, shape } = await cigvis.io.readVolume(
+  'seismic.bin', [192, 200, 240]
+);
+
+const nodes = cigvis.createSlices({
+  data, shape,
+  pos: { z: 120 },
+  cmap: 'petrel',
+});
+
+cigvis.plot3D({ nodes, container: '#viewer' });</code></pre>
+          </div>
+        </div>
+        <div class="card-footer">
+          <a href="https://github.com/Iamtianyuyang/cigvis-js">GitHub →</a>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="footer">
     <p>
-      CIGVis.js v0.1.0 |
-      <a href="https://github.com/Iamtianyuyang/cigvis-js">GitHub</a> |
-      MIT License
+      CIGVis.js - 移植自 <a href="https://github.com/JintaoLee-Roger/cigvis">Python cigvis</a>
+      · MIT License
+      · <a href="https://github.com/Iamtianyuyang/cigvis-js">GitHub</a>
     </p>
   </div>
 </body>

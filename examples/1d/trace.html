@@ -3,143 +3,127 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CIGVis — 1D Trace Examples</title>
+  <title>CIGVis - 1D Trace Examples</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Times New Roman', Georgia, serif;
-      background: #ffffff;
-      color: #000000;
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: #0a0a0f;
+      color: #e0e0e0;
+    }
+    .header {
+      background: #161922;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .header h1 { font-size: 18px; font-weight: 600; }
+    .back { color: #00d4aa; text-decoration: none; font-size: 13px; }
+    .container {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 20px;
+      padding: 24px;
     }
-    h1 { font-size: 20px; margin-bottom: 20px; }
-    .back { font-size: 12px; margin-bottom: 16px; display: block; }
-    .back a { color: #000; }
-
-    .figure {
-      margin: 24px 0;
-      page-break-inside: avoid;
-    }
-    .figure-title {
-      font-size: 14px;
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
-    .figure-caption {
-      font-size: 12px;
-      color: #333;
-      margin-top: 8px;
-      font-style: italic;
-    }
-
-    .plot-container {
-      display: inline-block;
-      position: relative;
-      border: 1px solid #000;
-      background: #fff;
-    }
-    canvas { display: block; }
-
-    .subplot-grid {
+    .grid {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 20px;
     }
-
-    .code {
-      background: #f5f5f5;
-      border: 1px solid #ddd;
-      padding: 12px;
-      font-family: 'Courier New', monospace;
-      font-size: 11px;
-      margin: 16px 0;
-      white-space: pre;
-      overflow-x: auto;
+    .card {
+      background: #161922;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .card-header {
+      padding: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .card-body {
+      padding: 16px;
+    }
+    canvas {
+      width: 100%;
+      background: #0f1117;
+      border-radius: 8px;
+    }
+    .info {
+      margin-top: 12px;
+      font-size: 12px;
+      color: #5c6078;
+      display: flex;
+      gap: 16px;
     }
   </style>
 </head>
 <body>
-  <span class="back"><a href="../index.html">← Examples</a></span>
-  <h1>1D Trace Examples</h1>
-
-  <!-- Figure 1: Single trace -->
-  <div class="figure">
-    <div class="figure-title">Figure 1. Single seismic trace</div>
-    <div class="plot-container">
-      <canvas id="fig1" width="200" height="400"></canvas>
-    </div>
-    <div class="figure-caption">
-      Seismic trace with 500 samples at 4 ms sampling interval.
-    </div>
+  <div class="header">
+    <a class="back" href="../index.html">← Back</a>
+    <h1>1D Trace Examples</h1>
   </div>
 
-  <!-- Figure 2: Multi-trace section -->
-  <div class="figure">
-    <div class="figure-title">Figure 2. Multi-trace seismic section</div>
-    <div class="plot-container">
-      <canvas id="fig2" width="600" height="300"></canvas>
-    </div>
-    <div class="figure-caption">
-      Seismic section with 30 traces, displayed with variable area fill.
-    </div>
-  </div>
+  <div class="container">
+    <div class="grid">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Single Trace</div>
+        </div>
+        <div class="card-body">
+          <canvas id="single-trace" width="600" height="400"></canvas>
+          <div class="info">
+            <span>500 samples</span>
+            <span>4ms dt</span>
+          </div>
+        </div>
+      </div>
 
-  <!-- Figure 3: Filled area -->
-  <div class="figure">
-    <div class="figure-title">Figure 3. Variable area display</div>
-    <div class="subplot-grid">
-      <div>
-        <div class="plot-container">
-          <canvas id="fig3a" width="200" height="300"></canvas>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Multi Traces</div>
         </div>
-        <div class="figure-caption">(a) Positive fill</div>
-      </div>
-      <div>
-        <div class="plot-container">
-          <canvas id="fig3b" width="200" height="300"></canvas>
+        <div class="card-body">
+          <canvas id="multi-traces" width="600" height="400"></canvas>
+          <div class="info">
+            <span>30 traces</span>
+            <span>200 samples</span>
+          </div>
         </div>
-        <div class="figure-caption">(b) Negative fill</div>
       </div>
-      <div>
-        <div class="plot-container">
-          <canvas id="fig3c" width="200" height="300"></canvas>
-        </div>
-        <div class="figure-caption">(c) Both</div>
-      </div>
-    </div>
-  </div>
 
-  <!-- Figure 4: Wavelet comparison -->
-  <div class="figure">
-    <div class="figure-title">Figure 4. Wavelet comparison</div>
-    <div class="subplot-grid">
-      <div>
-        <div class="plot-container">
-          <canvas id="fig4a" width="200" height="200"></canvas>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Filled Area</div>
         </div>
-        <div class="figure-caption">(a) 20 Hz</div>
+        <div class="card-body">
+          <canvas id="filled-trace" width="600" height="400"></canvas>
+          <div class="info">
+            <span>Variable area</span>
+          </div>
+        </div>
       </div>
-      <div>
-        <div class="plot-container">
-          <canvas id="fig4b" width="200" height="200"></canvas>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Wavelet Comparison</div>
         </div>
-        <div class="figure-caption">(b) 30 Hz</div>
-      </div>
-      <div>
-        <div class="plot-container">
-          <canvas id="fig4c" width="200" height="200"></canvas>
+        <div class="card-body">
+          <canvas id="wavelets" width="600" height="300"></canvas>
+          <div class="info">
+            <span>20Hz, 30Hz, 40Hz</span>
+          </div>
         </div>
-        <div class="figure-caption">(c) 40 Hz</div>
       </div>
     </div>
   </div>
 
   <script>
-    // ================================================================
     // Generate Ricker wavelet
-    // ================================================================
     function rickerWavelet(nSamples, dt, freq) {
       const data = new Float32Array(nSamples);
       for (let i = 0; i < nSamples; i++) {
@@ -150,14 +134,11 @@
       return data;
     }
 
-    // ================================================================
     // Generate seismic trace
-    // ================================================================
     function generateTrace(nSamples, dt, freq) {
       const wavelet = rickerWavelet(64, dt, freq);
       const data = new Float32Array(nSamples);
       for (let i = 0; i < nSamples; i++) {
-        // Convolve with random reflectivity
         let val = 0;
         for (let j = 0; j < wavelet.length; j++) {
           const idx = i - Math.floor(wavelet.length / 2) + j;
@@ -171,35 +152,29 @@
       return data;
     }
 
-    // ================================================================
-    // Plot single trace (publication style)
-    // ================================================================
-    function plotSingleTrace(canvasId, data, options = {}) {
+    // Plot single trace
+    function plotSingleTrace(canvasId, data, color = '#00d4aa') {
       const canvas = document.getElementById(canvasId);
       const ctx = canvas.getContext('2d');
       const w = canvas.width;
       const h = canvas.height;
-      const { lineWidth = 1, color = '#000' } = options;
 
-      // Clear
-      ctx.fillStyle = '#fff';
+      ctx.fillStyle = '#0f1117';
       ctx.fillRect(0, 0, w, h);
 
-      // Find range
+      const margin = { left: 30, right: 10, top: 10, bottom: 20 };
+      const plotW = w - margin.left - margin.right;
+      const plotH = h - margin.top - margin.bottom;
+      const midX = margin.left + plotW / 2;
+
       let min = Infinity, max = -Infinity;
       for (let i = 0; i < data.length; i++) {
         if (data[i] < min) min = data[i];
         if (data[i] > max) max = data[i];
       }
 
-      // Draw trace
-      const margin = { left: 30, right: 10, top: 10, bottom: 20 };
-      const plotW = w - margin.left - margin.right;
-      const plotH = h - margin.top - margin.bottom;
-      const midX = margin.left + plotW / 2;
-
       // Zero line
-      ctx.strokeStyle = '#ccc';
+      ctx.strokeStyle = 'rgba(255,255,255,0.1)';
       ctx.lineWidth = 0.5;
       ctx.beginPath();
       ctx.moveTo(midX, margin.top);
@@ -208,7 +183,7 @@
 
       // Trace
       ctx.strokeStyle = color;
-      ctx.lineWidth = lineWidth;
+      ctx.lineWidth = 1.5;
       ctx.beginPath();
       for (let i = 0; i < data.length; i++) {
         const y = margin.top + (i / data.length) * plotH;
@@ -217,113 +192,71 @@
         else ctx.lineTo(x, y);
       }
       ctx.stroke();
-
-      // Axis labels
-      ctx.fillStyle = '#000';
-      ctx.font = '9px Times New Roman';
-      ctx.textAlign = 'center';
-      ctx.fillText('Amplitude', midX, h - 2);
-
-      ctx.save();
-      ctx.translate(10, margin.top + plotH / 2);
-      ctx.rotate(-Math.PI / 2);
-      ctx.fillText('Time (ms)', 0, 0);
-      ctx.restore();
     }
 
-    // ================================================================
-    // Plot multi-trace (publication style)
-    // ================================================================
-    function plotMultiTraces(canvasId, data, nTraces, nSamples, options = {}) {
+    // Plot multi traces
+    function plotMultiTraces(canvasId, nTraces, nSamples) {
       const canvas = document.getElementById(canvasId);
       const ctx = canvas.getContext('2d');
       const w = canvas.width;
       const h = canvas.height;
-      const { fill = true } = options;
 
-      ctx.fillStyle = '#fff';
+      ctx.fillStyle = '#0f1117';
       ctx.fillRect(0, 0, w, h);
 
       const margin = { left: 40, right: 20, top: 10, bottom: 20 };
       const plotW = w - margin.left - margin.right;
       const plotH = h - margin.top - margin.bottom;
 
-      // Find global range
-      let min = Infinity, max = -Infinity;
-      for (let i = 0; i < data.length; i++) {
-        if (data[i] < min) min = data[i];
-        if (data[i] > max) max = data[i];
-      }
-      const range = max - min || 1;
-
       const traceW = plotW / nTraces;
       const ampScale = traceW * 0.8;
 
-      // Draw each trace
       for (let t = 0; t < nTraces; t++) {
         const cx = margin.left + t * traceW + traceW / 2;
+        const data = generateTrace(nSamples, 4, 30);
 
-        // Variable area fill
-        if (fill) {
-          ctx.beginPath();
-          ctx.moveTo(cx, margin.top);
-          for (let i = 0; i < nSamples; i++) {
-            const y = margin.top + (i / nSamples) * plotH;
-            const val = (data[t * nSamples + i] - min) / range - 0.5;
-            const x = cx + val * ampScale;
-            ctx.lineTo(x, y);
-          }
-          ctx.lineTo(cx, h - margin.bottom);
-          ctx.closePath();
-          ctx.fillStyle = '#000';
-          ctx.fill();
+        let min = Infinity, max = -Infinity;
+        for (let i = 0; i < data.length; i++) {
+          if (data[i] < min) min = data[i];
+          if (data[i] > max) max = data[i];
         }
+        const range = max - min || 1;
 
-        // Trace line
+        // Fill
+        ctx.beginPath();
+        ctx.moveTo(cx, margin.top);
+        for (let i = 0; i < nSamples; i++) {
+          const y = margin.top + (i / nSamples) * plotH;
+          const val = (data[i] - min) / range - 0.5;
+          ctx.lineTo(cx + val * ampScale, y);
+        }
+        ctx.lineTo(cx, h - margin.bottom);
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(0, 212, 170, 0.2)';
+        ctx.fill();
+
+        // Line
         ctx.beginPath();
         for (let i = 0; i < nSamples; i++) {
           const y = margin.top + (i / nSamples) * plotH;
-          const val = (data[t * nSamples + i] - min) / range - 0.5;
-          const x = cx + val * ampScale;
-          if (i === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
+          const val = (data[i] - min) / range - 0.5;
+          if (i === 0) ctx.moveTo(cx + val * ampScale, y);
+          else ctx.lineTo(cx + val * ampScale, y);
         }
-        ctx.strokeStyle = '#000';
+        ctx.strokeStyle = '#00d4aa';
         ctx.lineWidth = 0.5;
         ctx.stroke();
       }
-
-      // Axis labels
-      ctx.fillStyle = '#000';
-      ctx.font = '9px Times New Roman';
-      ctx.textAlign = 'center';
-      ctx.fillText('Trace Number', w / 2, h - 2);
-
-      ctx.save();
-      ctx.translate(10, margin.top + plotH / 2);
-      ctx.rotate(-Math.PI / 2);
-      ctx.fillText('Time (ms)', 0, 0);
-      ctx.restore();
-
-      // Trace numbers
-      ctx.textAlign = 'center';
-      ctx.font = '8px Times New Roman';
-      for (let t = 0; t < nTraces; t += 5) {
-        ctx.fillText(t.toString(), margin.left + t * traceW + traceW / 2, h - margin.bottom + 12);
-      }
     }
 
-    // ================================================================
-    // Plot filled trace (publication style)
-    // ================================================================
-    function plotFilledTrace(canvasId, data, options = {}) {
+    // Plot filled trace
+    function plotFilledTrace(canvasId, data) {
       const canvas = document.getElementById(canvasId);
       const ctx = canvas.getContext('2d');
       const w = canvas.width;
       const h = canvas.height;
-      const { fillType = 'both' } = options;
 
-      ctx.fillStyle = '#fff';
+      ctx.fillStyle = '#0f1117';
       ctx.fillRect(0, 0, w, h);
 
       const margin = { left: 30, right: 10, top: 10, bottom: 20 };
@@ -336,107 +269,100 @@
         if (data[i] < min) min = data[i];
         if (data[i] > max) max = data[i];
       }
-      const range = max - min || 1;
 
       // Fill positive
-      if (fillType === 'positive' || fillType === 'both') {
-        ctx.beginPath();
-        ctx.moveTo(midX, margin.top);
-        for (let i = 0; i < data.length; i++) {
-          const y = margin.top + (i / data.length) * plotH;
-          const val = (data[i] - min) / range - 0.5;
-          if (val > 0) ctx.lineTo(midX + val * plotW, y);
-          else ctx.lineTo(midX, y);
-        }
-        ctx.lineTo(midX, h - margin.bottom);
-        ctx.closePath();
-        ctx.fillStyle = '#000';
-        ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(midX, margin.top);
+      for (let i = 0; i < data.length; i++) {
+        const y = margin.top + (i / data.length) * plotH;
+        const val = (data[i] - min) / (max - min) - 0.5;
+        if (val > 0) ctx.lineTo(midX + val * plotW, y);
+        else ctx.lineTo(midX, y);
       }
+      ctx.lineTo(midX, h - margin.bottom);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(0, 212, 170, 0.3)';
+      ctx.fill();
 
       // Fill negative
-      if (fillType === 'negative' || fillType === 'both') {
-        ctx.beginPath();
-        ctx.moveTo(midX, margin.top);
-        for (let i = 0; i < data.length; i++) {
-          const y = margin.top + (i / data.length) * plotH;
-          const val = (data[i] - min) / range - 0.5;
-          if (val < 0) ctx.lineTo(midX + val * plotW, y);
-          else ctx.lineTo(midX, y);
-        }
-        ctx.lineTo(midX, h - margin.bottom);
-        ctx.closePath();
-        ctx.fillStyle = '#999';
-        ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(midX, margin.top);
+      for (let i = 0; i < data.length; i++) {
+        const y = margin.top + (i / data.length) * plotH;
+        const val = (data[i] - min) / (max - min) - 0.5;
+        if (val < 0) ctx.lineTo(midX + val * plotW, y);
+        else ctx.lineTo(midX, y);
       }
+      ctx.lineTo(midX, h - margin.bottom);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(244, 63, 94, 0.3)';
+      ctx.fill();
 
-      // Trace line
+      // Line
       ctx.beginPath();
       for (let i = 0; i < data.length; i++) {
         const y = margin.top + (i / data.length) * plotH;
-        const x = midX + ((data[i] - min) / range - 0.5) * plotW;
+        const x = midX + ((data[i] - min) / (max - min) - 0.5) * plotW;
         if (i === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
       }
-      ctx.strokeStyle = '#000';
-      ctx.lineWidth = 0.5;
+      ctx.strokeStyle = '#00d4aa';
+      ctx.lineWidth = 1;
       ctx.stroke();
-
-      // Zero line
-      ctx.strokeStyle = '#ccc';
-      ctx.lineWidth = 0.5;
-      ctx.setLineDash([2, 2]);
-      ctx.beginPath();
-      ctx.moveTo(midX, margin.top);
-      ctx.lineTo(midX, h - margin.bottom);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      // Axis
-      ctx.fillStyle = '#000';
-      ctx.font = '9px Times New Roman';
-      ctx.textAlign = 'center';
-      ctx.fillText('Amplitude', midX, h - 2);
-
-      ctx.save();
-      ctx.translate(10, margin.top + plotH / 2);
-      ctx.rotate(-Math.PI / 2);
-      ctx.fillText('Time (ms)', 0, 0);
-      ctx.restore();
     }
 
-    // ================================================================
-    // Render all figures
-    // ================================================================
+    // Plot wavelets
+    function plotWavelets(canvasId) {
+      const canvas = document.getElementById(canvasId);
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
 
-    // Fig 1: Single trace
-    const trace1 = generateTrace(500, 4, 30);
-    plotSingleTrace('fig1', trace1);
+      ctx.fillStyle = '#0f1117';
+      ctx.fillRect(0, 0, w, h);
 
-    // Fig 2: Multi-trace
-    const nTraces = 30, nSamples = 200;
-    const multiData = new Float32Array(nTraces * nSamples);
-    for (let t = 0; t < nTraces; t++) {
-      const trace = generateTrace(nSamples, 4, 30);
-      for (let i = 0; i < nSamples; i++) {
-        multiData[t * nSamples + i] = trace[i];
+      const freqs = [20, 30, 40];
+      const colors = ['#00d4aa', '#0078d4', '#f43f5e'];
+
+      for (let f = 0; f < freqs.length; f++) {
+        const data = rickerWavelet(100, 4, freqs[f]);
+        const margin = { left: 40, right: 20, top: 20 + f * 80, bottom: 10 };
+        const plotW = w - margin.left - margin.right;
+        const plotH = 60;
+
+        // Label
+        ctx.fillStyle = colors[f];
+        ctx.font = '12px sans-serif';
+        ctx.fillText(`${freqs[f]} Hz`, margin.left, margin.top - 5);
+
+        // Zero line
+        ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.moveTo(margin.left, margin.top + plotH / 2);
+        ctx.lineTo(margin.left + plotW, margin.top + plotH / 2);
+        ctx.stroke();
+
+        // Wavelet
+        ctx.strokeStyle = colors[f];
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        for (let i = 0; i < data.length; i++) {
+          const x = margin.left + (i / data.length) * plotW;
+          const y = margin.top + plotH / 2 - data[i] * plotH * 0.8;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
       }
     }
-    plotMultiTraces('fig2', multiData, nTraces, nSamples);
 
-    // Fig 3: Filled traces
-    const trace3 = generateTrace(300, 4, 30);
-    plotFilledTrace('fig3a', trace3, { fillType: 'positive' });
-    plotFilledTrace('fig3b', trace3, { fillType: 'negative' });
-    plotFilledTrace('fig3c', trace3, { fillType: 'both' });
-
-    // Fig 4: Wavelet comparison
-    const wavelet20 = rickerWavelet(100, 4, 20);
-    const wavelet30 = rickerWavelet(100, 4, 30);
-    const wavelet40 = rickerWavelet(100, 4, 40);
-    plotSingleTrace('fig4a', wavelet20, { color: '#000', lineWidth: 1.5 });
-    plotSingleTrace('fig4b', wavelet30, { color: '#000', lineWidth: 1.5 });
-    plotSingleTrace('fig4c', wavelet40, { color: '#000', lineWidth: 1.5 });
+    // Generate and plot
+    const trace1 = generateTrace(500, 4, 30);
+    plotSingleTrace('single-trace', trace1);
+    plotMultiTraces('multi-traces', 30, 200);
+    plotFilledTrace('filled-trace', generateTrace(300, 4, 30));
+    plotWavelets('wavelets');
   </script>
 </body>
 </html>

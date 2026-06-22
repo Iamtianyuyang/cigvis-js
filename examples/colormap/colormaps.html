@@ -3,99 +3,113 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CIGVis — Colormaps</title>
+  <title>CIGVis - Colormaps</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Times New Roman', Georgia, serif;
-      background: #ffffff;
-      color: #000000;
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: #0a0a0f;
+      color: #e0e0e0;
+    }
+    .header {
+      background: #161922;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .header h1 { font-size: 18px; font-weight: 600; }
+    .back { color: #00d4aa; text-decoration: none; font-size: 13px; }
+    .container {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 20px;
+      padding: 24px;
     }
-    h1 { font-size: 20px; margin-bottom: 20px; }
-    .back { font-size: 12px; margin-bottom: 16px; display: block; }
-    .back a { color: #000; }
-
-    .figure { margin: 24px 0; }
-    .figure-title { font-size: 14px; font-weight: bold; margin-bottom: 8px; }
-    .figure-caption { font-size: 12px; color: #333; margin-top: 8px; font-style: italic; }
-
-    .cmap-grid {
+    .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: 12px;
     }
-    .cmap-item {
-      border: 1px solid #000;
-      padding: 8px;
+    .cmap-card {
+      background: #161922;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 8px;
+      padding: 12px;
       cursor: pointer;
+      transition: border-color 0.2s;
     }
-    .cmap-item:hover { background: #f5f5f5; }
-    .cmap-item.selected { background: #e8e8e8; }
+    .cmap-card:hover {
+      border-color: rgba(0, 212, 170, 0.3);
+    }
+    .cmap-card.selected {
+      border-color: #00d4aa;
+      background: rgba(0, 212, 170, 0.05);
+    }
     .cmap-name {
-      font-size: 12px;
-      font-weight: bold;
+      font-size: 13px;
+      font-weight: 600;
       margin-bottom: 4px;
     }
     .cmap-desc {
-      font-size: 10px;
-      color: #555;
-      margin-bottom: 6px;
+      font-size: 11px;
+      color: #5c6078;
+      margin-bottom: 8px;
     }
     .cmap-bar {
       height: 16px;
-      border: 1px solid #000;
+      border-radius: 4px;
     }
-    .cmap-range {
-      display: flex;
-      justify-content: space-between;
-      font-size: 9px;
-      margin-top: 2px;
-    }
-
     .preview {
       margin-top: 32px;
-      border: 1px solid #000;
-      padding: 16px;
+      background: #161922;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 24px;
     }
-    .preview-title { font-size: 14px; font-weight: bold; margin-bottom: 12px; }
+    .preview-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
     .preview-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 16px;
     }
     .preview-canvas {
-      border: 1px solid #000;
-      display: block;
+      width: 100%;
+      background: #0f1117;
+      border-radius: 8px;
     }
     .preview-label {
-      font-size: 10px;
+      font-size: 12px;
+      color: #5c6078;
       text-align: center;
-      margin-top: 4px;
+      margin-top: 8px;
     }
   </style>
 </head>
 <body>
-  <span class="back"><a href="../index.html">← Examples</a></span>
-  <h1>Colormaps</h1>
-
-  <div class="figure">
-    <div class="figure-title">Built-in Colormaps for Geophysical Data</div>
-    <div class="cmap-grid" id="cmap-grid"></div>
+  <div class="header">
+    <a class="back" href="../index.html">← Back</a>
+    <h1>Colormaps</h1>
   </div>
 
-  <div class="preview">
-    <div class="preview-title">Preview: <span id="selected-name">petrel</span></div>
-    <div class="preview-grid">
-      <div>
-        <canvas class="preview-canvas" id="preview-seismic" width="400" height="200"></canvas>
-        <div class="preview-label">Seismic Data</div>
-      </div>
-      <div>
-        <canvas class="preview-canvas" id="preview-gradient" width="400" height="40"></canvas>
-        <div class="preview-label">Gradient</div>
+  <div class="container">
+    <div class="grid" id="cmap-grid"></div>
+
+    <div class="preview">
+      <div class="preview-title">Preview: <span id="selected-name">petrel</span></div>
+      <div class="preview-grid">
+        <div>
+          <canvas class="preview-canvas" id="preview-seismic" width="400" height="200"></canvas>
+          <div class="preview-label">Seismic Data</div>
+        </div>
+        <div>
+          <canvas class="preview-canvas" id="preview-gradient" width="400" height="40"></canvas>
+          <div class="preview-label">Gradient</div>
+        </div>
       </div>
     </div>
   </div>
@@ -134,9 +148,9 @@
       const f = idx - i;
       if (i >= colors.length - 1) return colors[colors.length - 1];
       return [
-        Math.round(colors[i][0] + (colors[i + 1][0] - colors[i][0]) * f),
-        Math.round(colors[i][1] + (colors[i + 1][1] - colors[i][1]) * f),
-        Math.round(colors[i][2] + (colors[i + 1][2] - colors[i][2]) * f),
+        Math.round(colors[i][0] + (colors[i+1][0] - colors[i][0]) * f),
+        Math.round(colors[i][1] + (colors[i+1][1] - colors[i][1]) * f),
+        Math.round(colors[i][2] + (colors[i+1][2] - colors[i][2]) * f),
       ];
     }
 
@@ -171,21 +185,21 @@
     // Build grid
     const grid = document.getElementById('cmap-grid');
     for (const [name, cmap] of Object.entries(colormaps)) {
-      const item = document.createElement('div');
-      item.className = `cmap-item${name === selectedCmap ? ' selected' : ''}`;
-      item.innerHTML = `
+      const card = document.createElement('div');
+      card.className = `cmap-card${name === selectedCmap ? ' selected' : ''}`;
+      card.innerHTML = `
         <div class="cmap-name">${name}</div>
         <div class="cmap-desc">${cmap.desc}</div>
         <div class="cmap-bar" style="background: ${gradientCSS(cmap.colors)};"></div>
       `;
-      item.addEventListener('click', () => {
-        document.querySelectorAll('.cmap-item').forEach(i => i.classList.remove('selected'));
-        item.classList.add('selected');
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.cmap-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
         selectedCmap = name;
         document.getElementById('selected-name').textContent = name;
         renderPreview(name);
       });
-      grid.appendChild(item);
+      grid.appendChild(card);
     }
 
     renderPreview(selectedCmap);
