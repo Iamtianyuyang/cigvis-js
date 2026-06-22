@@ -2,7 +2,7 @@
 
 > 🌍 JavaScript/TypeScript 库，用于在浏览器中可视化多维地球物理数据
 
-[![npm version](https://img.shields.io/npm/v/cigvis.svg)](https://www.npmjs.com/package/cigvis)
+[![npm version](https://img.shields.io/npm/v/cigvis-js.svg)](https://www.npmjs.com/package/cigvis-js)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 **CIGVis.js** 是 Python [cigvis](https://github.com/JintaoLee-Roger/cigvis) 库的 JavaScript 移植版，由[中国科学技术大学计算解释组 (CIG)](https://cig.ustc.edu.cn/main.htm)开发。
