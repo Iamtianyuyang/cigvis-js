@@ -7,201 +7,259 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Times New Roman', Georgia, serif;
+      font-family: 'Times New Roman', Times, serif;
       background: #ffffff;
       color: #000000;
-      max-width: 1200px;
+      max-width: 1000px;
       margin: 0 auto;
-      padding: 20px;
+      padding: 30px 20px;
+      line-height: 1.4;
     }
-    h1 { font-size: 20px; margin-bottom: 20px; }
-    .back { font-size: 12px; margin-bottom: 16px; display: block; }
-    .back a { color: #000; }
+    h1 { font-size: 18px; font-weight: bold; margin-bottom: 24px; }
+    .back { font-size: 11px; margin-bottom: 12px; display: block; }
+    .back a { color: #000; text-decoration: none; }
 
-    .figure { margin: 24px 0; }
-    .figure-title { font-size: 14px; font-weight: bold; margin-bottom: 8px; }
-    .figure-caption { font-size: 12px; color: #333; margin-top: 8px; font-style: italic; }
-
-    .viewer-container {
+    /* Figure environment - publication style */
+    .figure {
+      margin: 28px 0;
+      page-break-inside: avoid;
+    }
+    .figure-content {
       display: flex;
-      gap: 16px;
+      flex-direction: column;
+      align-items: center;
+    }
+    .figure-title {
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      align-self: flex-start;
+    }
+    .figure-caption {
+      font-size: 11px;
+      color: #000;
+      margin-top: 10px;
+      text-align: justify;
+      max-width: 100%;
+    }
+
+    /* Viewer */
+    .viewer-wrapper {
+      display: flex;
+      gap: 0;
+      border: 0.5pt solid #000;
     }
     .viewer {
       flex: 1;
-      height: 500px;
-      border: 1px solid #000;
-      background: #f8f8f8;
+      height: 450px;
+      background: #ffffff;
       cursor: grab;
       position: relative;
     }
     .viewer:active { cursor: grabbing; }
     .viewer canvas { display: block; width: 100%; height: 100%; }
 
-    .controls {
-      width: 200px;
-      border: 1px solid #000;
+    /* Side panel - paper style */
+    .panel {
+      width: 220px;
+      border-left: 0.5pt solid #000;
       padding: 12px;
-      font-size: 12px;
+      font-size: 10pt;
+      background: #fff;
     }
-    .control-group {
-      margin-bottom: 16px;
+    .panel-section {
+      margin-bottom: 14px;
     }
-    .control-group h3 {
-      font-size: 12px;
+    .panel-section:last-child { margin-bottom: 0; }
+    .panel-title {
+      font-size: 9pt;
       font-weight: bold;
-      margin-bottom: 8px;
-      border-bottom: 1px solid #000;
-      padding-bottom: 4px;
+      margin-bottom: 6px;
+      padding-bottom: 3px;
+      border-bottom: 0.5pt solid #000;
     }
-    .control-row {
+    .panel-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin: 4px 0;
+      margin: 3px 0;
+      font-size: 9pt;
     }
-    .control-row label { font-size: 11px; }
-    .control-row input[type="range"] { width: 80px; }
-    .control-row .value { font-size: 10px; min-width: 30px; text-align: right; }
-    .control-row input[type="checkbox"] { margin-right: 4px; }
+    .panel-row label { flex: 1; }
+    .panel-row input[type="range"] { width: 70px; margin: 0 4px; }
+    .panel-row .val { min-width: 28px; text-align: right; font-size: 8pt; }
+    .panel-row input[type="checkbox"] { margin-right: 4px; }
+    .panel select {
+      width: 100%;
+      font-family: 'Times New Roman', serif;
+      font-size: 9pt;
+      padding: 2px;
+    }
 
-    .legend {
+    /* Colorbar - publication standard */
+    .colorbar-container {
       margin-top: 12px;
-      padding-top: 8px;
-      border-top: 1px solid #000;
     }
-    .legend-title { font-size: 11px; font-weight: bold; margin-bottom: 4px; }
-    .legend-item {
+    .colorbar-title {
+      font-size: 9pt;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+    .colorbar-main {
       display: flex;
       align-items: center;
-      gap: 6px;
-      margin: 2px 0;
-      font-size: 10px;
+      gap: 4px;
     }
-    .legend-color {
-      width: 12px;
-      height: 12px;
-      border: 1px solid #000;
-    }
-
-    .colorbar {
-      margin-top: 8px;
-    }
-    .colorbar-labels {
+    .colorbar-ticks-left,
+    .colorbar-ticks-right {
       display: flex;
+      flex-direction: column;
       justify-content: space-between;
-      font-size: 9px;
+      font-size: 7pt;
     }
+    .colorbar-ticks-left { text-align: right; }
+    .colorbar-ticks-right { text-align: left; }
     .colorbar-bar {
-      height: 8px;
-      border: 1px solid #000;
-      margin: 2px 0;
+      flex: 1;
+      height: 120px;
+      border: 0.5pt solid #000;
     }
 
+    /* Instructions */
     .instructions {
-      font-size: 10px;
-      color: #555;
-      margin-top: 12px;
-      line-height: 1.4;
+      font-size: 8pt;
+      color: #333;
+      margin-top: 10px;
+      line-height: 1.3;
+    }
+    .instructions strong { font-weight: bold; }
+
+    /* Subfigure labels */
+    .subfig-label {
+      font-size: 10pt;
+      font-weight: bold;
+      margin-bottom: 4px;
     }
   </style>
 </head>
 <body>
-  <span class="back"><a href="../index.html">← Examples</a></span>
+  <span class="back"><a href="../index.html">&larr; Back to Examples</a></span>
   <h1>3D Volume Visualization</h1>
 
+  <!-- Figure 1 -->
   <div class="figure">
-    <div class="figure-title">Figure 1. Interactive 3D volume with orthogonal slices</div>
-    <div class="viewer-container">
-      <div class="viewer" id="viewer"></div>
-      <div class="controls">
-        <div class="control-group">
-          <h3>Slice Position</h3>
-          <div class="control-row">
-            <label>X (Inline)</label>
-            <input type="range" id="slice-x" min="0" max="1" step="0.01" value="0.5">
-            <span class="value" id="val-x">0.50</span>
+    <div class="figure-title">Figure 1.</div>
+    <div class="figure-content">
+      <div class="viewer-wrapper">
+        <div class="viewer" id="viewer"></div>
+        <div class="panel">
+          <div class="panel-section">
+            <div class="panel-title">Slice Position</div>
+            <div class="panel-row">
+              <label><i>x</i> (Inline)</label>
+              <input type="range" id="slice-x" min="0" max="1" step="0.01" value="0.5">
+              <span class="val" id="val-x">0.50</span>
+            </div>
+            <div class="panel-row">
+              <label><i>y</i> (Crossline)</label>
+              <input type="range" id="slice-y" min="0" max="1" step="0.01" value="0.5">
+              <span class="val" id="val-y">0.50</span>
+            </div>
+            <div class="panel-row">
+              <label><i>z</i> (Time)</label>
+              <input type="range" id="slice-z" min="0" max="1" step="0.01" value="0.5">
+              <span class="val" id="val-z">0.50</span>
+            </div>
           </div>
-          <div class="control-row">
-            <label>Y (Crossline)</label>
-            <input type="range" id="slice-y" min="0" max="1" step="0.01" value="0.5">
-            <span class="value" id="val-y">0.50</span>
-          </div>
-          <div class="control-row">
-            <label>Z (Time)</label>
-            <input type="range" id="slice-z" min="0" max="1" step="0.01" value="0.5">
-            <span class="value" id="val-z">0.50</span>
-          </div>
-        </div>
 
-        <div class="control-group">
-          <h3>Visibility</h3>
-          <div class="control-row">
-            <label><input type="checkbox" id="show-x" checked> X Slice</label>
+          <div class="panel-section">
+            <div class="panel-title">Display</div>
+            <div class="panel-row">
+              <label><input type="checkbox" id="show-x" checked> <i>x</i>-slice</label>
+            </div>
+            <div class="panel-row">
+              <label><input type="checkbox" id="show-y" checked> <i>y</i>-slice</label>
+            </div>
+            <div class="panel-row">
+              <label><input type="checkbox" id="show-z" checked> <i>z</i>-slice</label>
+            </div>
           </div>
-          <div class="control-row">
-            <label><input type="checkbox" id="show-y" checked> Y Slice</label>
-          </div>
-          <div class="control-row">
-            <label><input type="checkbox" id="show-z" checked> Z Slice</label>
-          </div>
-        </div>
 
-        <div class="control-group">
-          <h3>Colormap</h3>
-          <div class="control-row">
-            <select id="colormap" style="width: 100%;">
+          <div class="panel-section">
+            <div class="panel-title">Colormap</div>
+            <select id="colormap">
               <option value="gray">Gray</option>
               <option value="petrel" selected>Petrel</option>
               <option value="seismic">Seismic</option>
               <option value="jet">Jet</option>
             </select>
           </div>
-        </div>
 
-        <div class="colorbar">
-          <div class="colorbar-labels">
-            <span>-1.0</span>
-            <span>1.0</span>
+          <div class="panel-section">
+            <div class="colorbar-container">
+              <div class="colorbar-title">Amplitude</div>
+              <div class="colorbar-main">
+                <div class="colorbar-ticks-left">
+                  <span>1.0</span>
+                  <span>0.5</span>
+                  <span>0.0</span>
+                  <span>-0.5</span>
+                  <span>-1.0</span>
+                </div>
+                <div class="colorbar-bar" id="colorbar"></div>
+              </div>
+            </div>
           </div>
-          <div class="colorbar-bar" id="colorbar" style="background: linear-gradient(to right, #0000ff, #00ffff, #00ff00, #ffff00, #ff0000);"></div>
-          <div style="text-align: center; font-size: 9px;">Amplitude</div>
-        </div>
 
-        <div class="instructions">
-          <strong>Controls:</strong><br>
-          • Left drag: Rotate<br>
-          • Right drag: Pan<br>
-          • Scroll: Zoom
+          <div class="instructions">
+            <strong>Controls:</strong> Left-drag: rotate; Right-drag: pan; Scroll: zoom.
+          </div>
         </div>
       </div>
     </div>
     <div class="figure-caption">
-      Interactive 3D visualization of seismic volume with three orthogonal slices.
-      Use mouse to rotate, pan, and zoom the view.
+      Interactive three-dimensional visualization of a synthetic seismic volume
+      (<i>n<sub>x</sub></i> &times; <i>n<sub>y</sub></i> &times; <i>n<sub>t</sub></i> = 64 &times; 64 &times; 64).
+      Three orthogonal slices are shown at normalized positions
+      (<i>x</i>, <i>y</i>, <i>z</i>) = (0.5, 0.5, 0.5).
+      The colormap can be selected from the panel.
     </div>
   </div>
 
-  <!-- Figure 2: Surface -->
+  <!-- Figure 2 -->
   <div class="figure">
-    <div class="figure-title">Figure 2. Horizon surface with amplitude</div>
-    <div class="viewer-container">
-      <div class="viewer" id="viewer-surface" style="height: 400px;"></div>
-      <div class="controls" style="width: 180px;">
-        <div class="control-group">
-          <h3>Surface</h3>
-          <div class="control-row">
-            <label>Vertical Exag.</label>
-            <input type="range" id="vert-exag" min="0.1" max="3" step="0.1" value="1">
-            <span class="value" id="val-exag">1.0</span>
+    <div class="figure-title">Figure 2.</div>
+    <div class="figure-content">
+      <div class="viewer-wrapper">
+        <div class="viewer" id="viewer-surface" style="height: 380px;"></div>
+        <div class="panel" style="width: 180px;">
+          <div class="panel-section">
+            <div class="panel-title">Parameters</div>
+            <div class="panel-row">
+              <label>Vert. Exag.</label>
+              <input type="range" id="vert-exag" min="0.1" max="3" step="0.1" value="1.0">
+              <span class="val" id="val-exag">1.0</span>
+            </div>
           </div>
-        </div>
-        <div class="instructions">
-          Drag to rotate the surface view.
+          <div class="panel-section">
+            <div class="colorbar-container">
+              <div class="colorbar-title">Amplitude</div>
+              <div class="colorbar-main">
+                <div class="colorbar-ticks-left">
+                  <span>1.0</span>
+                  <span>0.5</span>
+                  <span>0.0</span>
+                </div>
+                <div class="colorbar-bar" id="colorbar-surface" style="height: 80px;"></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
     <div class="figure-caption">
-      Horizon surface colored by amplitude values.
+      Horizon surface displayed with amplitude coloring.
+      The vertical exaggeration factor can be adjusted using the slider.
     </div>
   </div>
 
@@ -209,7 +267,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script>
     // ================================================================
-    // Orbit Controls (inline, no external dependency)
+    // OrbitControls (inline)
     // ================================================================
     class OrbitControls {
       constructor(camera, domElement) {
@@ -218,114 +276,67 @@
         this.target = new THREE.Vector3();
         this.enableDamping = true;
         this.dampingFactor = 0.05;
-
         this.spherical = new THREE.Spherical();
         this.sphericalDelta = new THREE.Spherical();
         this.panOffset = new THREE.Vector3();
         this.scale = 1;
-
         this.rotateSpeed = 1.0;
         this.panSpeed = 1.0;
         this.zoomSpeed = 1.0;
-
         this.mouseStart = new THREE.Vector2();
         this.mouseEnd = new THREE.Vector2();
         this.mouseDelta = new THREE.Vector2();
-
-        this.STATE = { NONE: -1, ROTATE: 0, PAN: 1, ZOOM: 2 };
+        this.STATE = { NONE: -1, ROTATE: 0, PAN: 1 };
         this.state = this.STATE.NONE;
-
         this.bindEvents();
         this.update();
       }
-
       bindEvents() {
-        this.domElement.addEventListener('mousedown', this.onMouseDown.bind(this));
-        this.domElement.addEventListener('mousemove', this.onMouseMove.bind(this));
-        this.domElement.addEventListener('mouseup', this.onMouseUp.bind(this));
-        this.domElement.addEventListener('wheel', this.onMouseWheel.bind(this));
+        this.domElement.addEventListener('mousedown', e => {
+          if (e.button === 0) { this.state = this.STATE.ROTATE; this.mouseStart.set(e.clientX, e.clientY); }
+          else if (e.button === 2) { this.state = this.STATE.PAN; this.mouseStart.set(e.clientX, e.clientY); }
+        });
+        this.domElement.addEventListener('mousemove', e => {
+          if (this.state === this.STATE.ROTATE) {
+            this.mouseEnd.set(e.clientX, e.clientY);
+            this.mouseDelta.subVectors(this.mouseEnd, this.mouseStart);
+            this.sphericalDelta.theta -= 2 * Math.PI * this.mouseDelta.x * this.rotateSpeed / this.domElement.clientHeight;
+            this.sphericalDelta.phi -= 2 * Math.PI * this.mouseDelta.y * this.rotateSpeed / this.domElement.clientHeight;
+            this.mouseStart.copy(this.mouseEnd);
+          } else if (this.state === this.STATE.PAN) {
+            this.mouseEnd.set(e.clientX, e.clientY);
+            this.mouseDelta.subVectors(this.mouseEnd, this.mouseStart);
+            this.pan(this.mouseDelta.x, this.mouseDelta.y);
+            this.mouseStart.copy(this.mouseEnd);
+          }
+        });
+        this.domElement.addEventListener('mouseup', () => this.state = this.STATE.NONE);
+        this.domElement.addEventListener('wheel', e => {
+          e.preventDefault();
+          this.scale *= e.deltaY < 0 ? 1 / Math.pow(0.95, this.zoomSpeed) : Math.pow(0.95, this.zoomSpeed);
+        });
         this.domElement.addEventListener('contextmenu', e => e.preventDefault());
       }
-
-      onMouseDown(e) {
-        if (e.button === 0) {
-          this.state = this.STATE.ROTATE;
-          this.mouseStart.set(e.clientX, e.clientY);
-        } else if (e.button === 2) {
-          this.state = this.STATE.PAN;
-          this.mouseStart.set(e.clientX, e.clientY);
-        }
-      }
-
-      onMouseMove(e) {
-        if (this.state === this.STATE.ROTATE) {
-          this.mouseEnd.set(e.clientX, e.clientY);
-          this.mouseDelta.subVectors(this.mouseEnd, this.mouseStart);
-          this.sphericalDelta.theta -= 2 * Math.PI * this.mouseDelta.x * this.rotateSpeed / this.domElement.clientHeight;
-          this.sphericalDelta.phi -= 2 * Math.PI * this.mouseDelta.y * this.rotateSpeed / this.domElement.clientHeight;
-          this.mouseStart.copy(this.mouseEnd);
-        } else if (this.state === this.STATE.PAN) {
-          this.mouseEnd.set(e.clientX, e.clientY);
-          this.mouseDelta.subVectors(this.mouseEnd, this.mouseStart);
-          this.pan(this.mouseDelta.x, this.mouseDelta.y);
-          this.mouseStart.copy(this.mouseEnd);
-        }
-      }
-
-      onMouseUp() { this.state = this.STATE.NONE; }
-
-      onMouseWheel(e) {
-        e.preventDefault();
-        if (e.deltaY < 0) this.scale /= Math.pow(0.95, this.zoomSpeed);
-        else this.scale *= Math.pow(0.95, this.zoomSpeed);
-      }
-
-      pan(deltaX, deltaY) {
-        const offset = new THREE.Vector3();
-        const element = this.domElement;
-        offset.copy(this.camera.position).sub(this.target);
-        let targetDistance = offset.length();
-        targetDistance *= Math.tan((this.camera.fov / 2) * Math.PI / 180);
-        this.panLeft(2 * deltaX * targetDistance * this.panSpeed / element.clientHeight, this.camera.matrix);
-        this.panUp(2 * deltaY * targetDistance * this.panSpeed / element.clientHeight, this.camera.matrix);
-      }
-
-      panLeft(distance, objectMatrix) {
+      pan(dx, dy) {
+        const offset = new THREE.Vector3().copy(this.camera.position).sub(this.target);
+        let d = offset.length() * Math.tan((this.camera.fov / 2) * Math.PI / 180);
         const v = new THREE.Vector3();
-        v.setFromMatrixColumn(objectMatrix, 0);
-        v.multiplyScalar(-distance);
+        v.setFromMatrixColumn(this.camera.matrix, 0).multiplyScalar(-2 * dx * d * this.panSpeed / this.domElement.clientHeight);
+        this.panOffset.add(v);
+        v.setFromMatrixColumn(this.camera.matrix, 1).multiplyScalar(2 * dy * d * this.panSpeed / this.domElement.clientHeight);
         this.panOffset.add(v);
       }
-
-      panUp(distance, objectMatrix) {
-        const v = new THREE.Vector3();
-        v.setFromMatrixColumn(objectMatrix, 1);
-        v.multiplyScalar(distance);
-        this.panOffset.add(v);
-      }
-
       update() {
-        const offset = new THREE.Vector3();
-        offset.copy(this.camera.position).sub(this.target);
+        const offset = new THREE.Vector3().copy(this.camera.position).sub(this.target);
         this.spherical.setFromVector3(offset);
-
-        if (this.enableDamping) {
-          this.spherical.theta += this.sphericalDelta.theta * this.dampingFactor;
-          this.spherical.phi += this.sphericalDelta.phi * this.dampingFactor;
-        } else {
-          this.spherical.theta += this.sphericalDelta.theta;
-          this.spherical.phi += this.sphericalDelta.phi;
-        }
-
+        this.spherical.theta += this.sphericalDelta.theta * (this.enableDamping ? this.dampingFactor : 1);
+        this.spherical.phi += this.sphericalDelta.phi * (this.enableDamping ? this.dampingFactor : 1);
         this.spherical.phi = Math.max(0.01, Math.min(Math.PI - 0.01, this.spherical.phi));
-        this.spherical.radius = offset.length() * this.scale;
-        this.spherical.radius = Math.max(1, Math.min(20, this.spherical.radius));
-
+        this.spherical.radius = Math.max(1, Math.min(20, offset.length() * this.scale));
         this.target.add(this.panOffset);
         offset.setFromSpherical(this.spherical);
         this.camera.position.copy(this.target).add(offset);
         this.camera.lookAt(this.target);
-
         if (this.enableDamping) {
           this.sphericalDelta.theta *= 1 - this.dampingFactor;
           this.sphericalDelta.phi *= 1 - this.dampingFactor;
@@ -364,17 +375,14 @@
     };
 
     // ================================================================
-    // Generate 3D volume data
+    // Generate 3D volume
     // ================================================================
     function generateVolume(nx, ny, nz) {
       const data = new Float32Array(nx * ny * nz);
       for (let z = 0; z < nz; z++) {
         for (let y = 0; y < ny; y++) {
           for (let x = 0; x < nx; x++) {
-            const fx = x / nx - 0.5;
-            const fy = y / ny - 0.5;
-            const fz = z / nz - 0.5;
-            // Create layered structure with some folds
+            const fx = x / nx - 0.5, fy = y / ny - 0.5, fz = z / nz - 0.5;
             const layer = Math.sin(fx * 6 + fz * 4) * 0.3;
             const fold = Math.cos(fy * 4 + fx * 2) * 0.2;
             const noise = (Math.sin(x * 13.7 + y * 7.3 + z * 11.1) * 0.5 + 0.5) * 0.1;
@@ -390,49 +398,58 @@
     // ================================================================
     function createSliceTexture(data, nx, ny, nz, axis, pos, cmapName) {
       const cmap = colormaps[cmapName] || colormaps.petrel;
-      let width, height, pixels;
-
+      let w, h, pixels;
       if (axis === 'x') {
-        width = nz; height = ny;
-        pixels = new Uint8Array(width * height * 4);
-        for (let y = 0; y < ny; y++) {
-          for (let z = 0; z < nz; z++) {
-            const val = data[pos * ny * nz + y * nz + z];
-            const t = Math.max(0, Math.min(1, (val + 0.5)));
-            const [r, g, b] = cmap(t);
-            const i = (y * nz + z) * 4;
-            pixels[i] = r * 255; pixels[i+1] = g * 255; pixels[i+2] = b * 255; pixels[i+3] = 255;
-          }
+        w = nz; h = ny;
+        pixels = new Uint8Array(w * h * 4);
+        for (let y = 0; y < ny; y++) for (let z = 0; z < nz; z++) {
+          const t = Math.max(0, Math.min(1, data[pos * ny * nz + y * nz + z] + 0.5));
+          const [r, g, b] = cmap(t);
+          const i = (y * nz + z) * 4;
+          pixels[i] = r * 255; pixels[i+1] = g * 255; pixels[i+2] = b * 255; pixels[i+3] = 255;
         }
       } else if (axis === 'y') {
-        width = nz; height = nx;
-        pixels = new Uint8Array(width * height * 4);
-        for (let x = 0; x < nx; x++) {
-          for (let z = 0; z < nz; z++) {
-            const val = data[x * ny * nz + pos * nz + z];
-            const t = Math.max(0, Math.min(1, (val + 0.5)));
-            const [r, g, b] = cmap(t);
-            const i = (x * nz + z) * 4;
-            pixels[i] = r * 255; pixels[i+1] = g * 255; pixels[i+2] = b * 255; pixels[i+3] = 255;
-          }
+        w = nz; h = nx;
+        pixels = new Uint8Array(w * h * 4);
+        for (let x = 0; x < nx; x++) for (let z = 0; z < nz; z++) {
+          const t = Math.max(0, Math.min(1, data[x * ny * nz + pos * nz + z] + 0.5));
+          const [r, g, b] = cmap(t);
+          const i = (x * nz + z) * 4;
+          pixels[i] = r * 255; pixels[i+1] = g * 255; pixels[i+2] = b * 255; pixels[i+3] = 255;
         }
       } else {
-        width = nx; height = ny;
-        pixels = new Uint8Array(width * height * 4);
-        for (let x = 0; x < nx; x++) {
-          for (let y = 0; y < ny; y++) {
-            const val = data[x * ny * nz + y * nz + pos];
-            const t = Math.max(0, Math.min(1, (val + 0.5)));
-            const [r, g, b] = cmap(t);
-            const i = (x * ny + y) * 4;
-            pixels[i] = r * 255; pixels[i+1] = g * 255; pixels[i+2] = b * 255; pixels[i+3] = 255;
-          }
+        w = nx; h = ny;
+        pixels = new Uint8Array(w * h * 4);
+        for (let x = 0; x < nx; x++) for (let y = 0; y < ny; y++) {
+          const t = Math.max(0, Math.min(1, data[x * ny * nz + y * nz + pos] + 0.5));
+          const [r, g, b] = cmap(t);
+          const i = (x * ny + y) * 4;
+          pixels[i] = r * 255; pixels[i+1] = g * 255; pixels[i+2] = b * 255; pixels[i+3] = 255;
         }
       }
-
-      const texture = new THREE.DataTexture(pixels, width, height, THREE.RGBAFormat);
+      const texture = new THREE.DataTexture(pixels, w, h, THREE.RGBAFormat);
       texture.needsUpdate = true;
       return texture;
+    }
+
+    // ================================================================
+    // Create label sprite (publication font)
+    // ================================================================
+    function createLabel(text, position, color, fontSize = 24) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 128; canvas.height = 48;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = color;
+      ctx.font = `${fontSize}px Times New Roman`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, 64, 24);
+      const texture = new THREE.CanvasTexture(canvas);
+      const material = new THREE.SpriteMaterial({ map: texture, depthTest: false });
+      const sprite = new THREE.Sprite(material);
+      sprite.position.copy(position);
+      sprite.scale.set(0.4, 0.15, 1);
+      return sprite;
     }
 
     // ================================================================
@@ -443,10 +460,10 @@
 
     const container1 = document.getElementById('viewer');
     const scene1 = new THREE.Scene();
-    scene1.background = new THREE.Color(0xf8f8f8);
+    scene1.background = new THREE.Color(0xffffff);
 
     const camera1 = new THREE.PerspectiveCamera(50, container1.clientWidth / container1.clientHeight, 0.1, 100);
-    camera1.position.set(2, 2, 2);
+    camera1.position.set(2.5, 2, 2.5);
 
     const renderer1 = new THREE.WebGLRenderer({ antialias: true });
     renderer1.setSize(container1.clientWidth, container1.clientHeight);
@@ -455,42 +472,75 @@
 
     const controls1 = new OrbitControls(camera1, renderer1.domElement);
 
-    // Ambient light
-    scene1.add(new THREE.AmbientLight(0xffffff, 0.8));
-    const dirLight = new THREE.DirectionalLight(0xffffff, 0.5);
-    dirLight.position.set(5, 5, 5);
-    scene1.add(dirLight);
+    // Lights
+    scene1.add(new THREE.AmbientLight(0xffffff, 0.6));
+    const dl = new THREE.DirectionalLight(0xffffff, 0.4);
+    dl.position.set(5, 5, 5);
+    scene1.add(dl);
 
-    // Axes helper
-    const axesHelper = new THREE.AxesHelper(1.5);
-    scene1.add(axesHelper);
+    // Axes
+    const axesLen = 1.6;
+    const axesGroup = new THREE.Group();
 
-    // Axes labels
-    function createLabel(text, position, color) {
-      const canvas = document.createElement('canvas');
-      canvas.width = 64; canvas.height = 32;
-      const ctx = canvas.getContext('2d');
-      ctx.fillStyle = color;
-      ctx.font = 'bold 20px Times New Roman';
-      ctx.textAlign = 'center';
-      ctx.fillText(text, 32, 24);
-      const texture = new THREE.CanvasTexture(canvas);
-      const material = new THREE.SpriteMaterial({ map: texture });
-      const sprite = new THREE.Sprite(material);
-      sprite.position.copy(position);
-      sprite.scale.set(0.3, 0.15, 1);
-      return sprite;
+    // X axis (red)
+    const xLine = new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,0), new THREE.Vector3(axesLen,0,0)]),
+      new THREE.LineBasicMaterial({ color: 0xcc0000, linewidth: 2 })
+    );
+    axesGroup.add(xLine);
+    axesGroup.add(createLabel('Inline', new THREE.Vector3(axesLen + 0.15, 0, 0), '#cc0000', 20));
+
+    // Y axis (green)
+    const yLine = new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,0), new THREE.Vector3(0,axesLen,0)]),
+      new THREE.LineBasicMaterial({ color: 0x00aa00, linewidth: 2 })
+    );
+    axesGroup.add(yLine);
+    axesGroup.add(createLabel('Crossline', new THREE.Vector3(0, axesLen + 0.15, 0), '#00aa00', 20));
+
+    // Z axis (blue)
+    const zLine = new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,0), new THREE.Vector3(0,0,axesLen)]),
+      new THREE.LineBasicMaterial({ color: 0x0000cc, linewidth: 2 })
+    );
+    axesGroup.add(zLine);
+    axesGroup.add(createLabel('Time', new THREE.Vector3(0, 0, axesLen + 0.15), '#0000cc', 20));
+
+    scene1.add(axesGroup);
+
+    // Bounding box
+    const box = new THREE.LineSegments(
+      new THREE.EdgesGeometry(new THREE.BoxGeometry(2, 2, 2)),
+      new THREE.LineBasicMaterial({ color: 0xcccccc })
+    );
+    box.position.set(0, 0, 0);
+    scene1.add(box);
+
+    // Tick marks on bounding box
+    function createTick(start, end) {
+      const geom = new THREE.BufferGeometry().setFromPoints([start, end]);
+      return new THREE.Line(geom, new THREE.LineBasicMaterial({ color: 0x999999 }));
     }
 
-    scene1.add(createLabel('X (Inline)', new THREE.Vector3(1.8, 0, 0), '#cc0000'));
-    scene1.add(createLabel('Y (Crossline)', new THREE.Vector3(0, 1.8, 0), '#00cc00'));
-    scene1.add(createLabel('Z (Time)', new THREE.Vector3(0, 0, 1.8), '#0000cc'));
-
-    // Volume bounding box
-    const boxGeom = new THREE.BoxGeometry(2, 2, 2);
-    const boxEdges = new THREE.EdgesGeometry(boxGeom);
-    const boxLine = new THREE.LineSegments(boxEdges, new THREE.LineBasicMaterial({ color: 0xcccccc }));
-    scene1.add(boxLine);
+    // X ticks
+    for (let i = 0; i <= 4; i++) {
+      const x = -1 + i * 0.5;
+      const tickLabel = Math.round(i * 16).toString();
+      axesGroup.add(createTick(new THREE.Vector3(x, -1, -1), new THREE.Vector3(x, -1.08, -1)));
+      axesGroup.add(createTick(new THREE.Vector3(x, -1, -1), new THREE.Vector3(x, -1, -1.08)));
+    }
+    // Y ticks
+    for (let i = 0; i <= 4; i++) {
+      const y = -1 + i * 0.5;
+      axesGroup.add(createTick(new THREE.Vector3(-1, y, -1), new THREE.Vector3(-1.08, y, -1)));
+      axesGroup.add(createTick(new THREE.Vector3(-1, y, -1), new THREE.Vector3(-1, y, -1.08)));
+    }
+    // Z ticks
+    for (let i = 0; i <= 4; i++) {
+      const z = -1 + i * 0.5;
+      axesGroup.add(createTick(new THREE.Vector3(-1, -1, z), new THREE.Vector3(-1.08, -1, z)));
+      axesGroup.add(createTick(new THREE.Vector3(-1, -1, z), new THREE.Vector3(-1, -1, z + 0.08)));
+    }
 
     // Slice meshes
     let currentCmap = 'petrel';
@@ -502,21 +552,12 @@
         map: texture,
         side: THREE.DoubleSide,
         transparent: true,
-        opacity: 0.9,
+        opacity: 0.92,
       });
       const mesh = new THREE.Mesh(geom, mat);
-
-      // Position and orient
-      if (axis === 'x') {
-        mesh.rotation.y = Math.PI / 2;
-        mesh.position.x = (pos - 0.5) * 2;
-      } else if (axis === 'y') {
-        mesh.rotation.x = -Math.PI / 2;
-        mesh.position.y = (pos - 0.5) * 2;
-      } else {
-        mesh.position.z = (pos - 0.5) * 2;
-      }
-
+      if (axis === 'x') { mesh.rotation.y = Math.PI / 2; mesh.position.x = (pos - 0.5) * 2; }
+      else if (axis === 'y') { mesh.rotation.x = -Math.PI / 2; mesh.position.y = (pos - 0.5) * 2; }
+      else { mesh.position.z = (pos - 0.5) * 2; }
       mesh.userData = { axis, pos };
       return mesh;
     }
@@ -526,12 +567,8 @@
       y: createSliceMesh('y', 0.5),
       z: createSliceMesh('z', 0.5),
     };
+    Object.values(slices).forEach(s => scene1.add(s));
 
-    scene1.add(slices.x);
-    scene1.add(slices.y);
-    scene1.add(slices.z);
-
-    // Update slice position
     function updateSlice(axis, pos) {
       scene1.remove(slices[axis]);
       slices[axis] = createSliceMesh(axis, pos);
@@ -539,40 +576,45 @@
       scene1.add(slices[axis]);
     }
 
-    // Wire up controls
+    // Wire controls
     ['x', 'y', 'z'].forEach(axis => {
       const slider = document.getElementById(`slice-${axis}`);
-      const valueEl = document.getElementById(`val-${axis}`);
+      const val = document.getElementById(`val-${axis}`);
       slider.addEventListener('input', () => {
-        const pos = parseFloat(slider.value);
-        valueEl.textContent = pos.toFixed(2);
-        updateSlice(axis, pos);
+        val.textContent = parseFloat(slider.value).toFixed(2);
+        updateSlice(axis, parseFloat(slider.value));
       });
-
-      const checkbox = document.getElementById(`show-${axis}`);
-      checkbox.addEventListener('change', () => {
-        slices[axis].visible = checkbox.checked;
+      document.getElementById(`show-${axis}`).addEventListener('change', e => {
+        slices[axis].visible = e.target.checked;
       });
     });
 
-    document.getElementById('colormap').addEventListener('change', (e) => {
+    document.getElementById('colormap').addEventListener('change', e => {
       currentCmap = e.target.value;
-      ['x', 'y', 'z'].forEach(axis => {
-        const pos = parseFloat(document.getElementById(`slice-${axis}`).value);
-        updateSlice(axis, pos);
-      });
-      // Update colorbar
-      const bar = document.getElementById('colorbar');
-      const gradients = {
-        gray: '#000000, #ffffff',
-        petrel: '#0000ff, #00ffff, #00ff00, #ffff00, #ff0000',
-        seismic: '#0000b2, #80ffff, #ffffff, #ffff80, #b20000',
-        jet: '#000080, #0000ff, #00ffff, #00ff00, #ffff00, #ff0000, #800000',
-      };
-      bar.style.background = `linear-gradient(to right, ${gradients[currentCmap]})`;
+      ['x', 'y', 'z'].forEach(axis => updateSlice(axis, parseFloat(document.getElementById(`slice-${axis}`).value)));
+      updateColorbar('colorbar', currentCmap);
     });
 
-    // Animation loop
+    // Colorbar rendering (publication style)
+    function updateColorbar(elementId, cmapName) {
+      const el = document.getElementById(elementId);
+      const cmap = colormaps[cmapName];
+      const canvas = document.createElement('canvas');
+      canvas.width = 1;
+      canvas.height = 256;
+      const ctx = canvas.getContext('2d');
+      for (let i = 0; i < 256; i++) {
+        const t = 1 - i / 255;
+        const [r, g, b] = cmap(t);
+        ctx.fillStyle = `rgb(${Math.round(r*255)},${Math.round(g*255)},${Math.round(b*255)})`;
+        ctx.fillRect(0, i, 1, 1);
+      }
+      el.style.backgroundImage = `url(${canvas.toDataURL()})`;
+      el.style.backgroundSize = 'cover';
+    }
+
+    updateColorbar('colorbar', 'petrel');
+
     function animate1() {
       requestAnimationFrame(animate1);
       controls1.update();
@@ -585,10 +627,10 @@
     // ================================================================
     const container2 = document.getElementById('viewer-surface');
     const scene2 = new THREE.Scene();
-    scene2.background = new THREE.Color(0xf8f8f8);
+    scene2.background = new THREE.Color(0xffffff);
 
     const camera2 = new THREE.PerspectiveCamera(50, container2.clientWidth / container2.clientHeight, 0.1, 100);
-    camera2.position.set(2, 2, 2);
+    camera2.position.set(2.5, 2, 2.5);
 
     const renderer2 = new THREE.WebGLRenderer({ antialias: true });
     renderer2.setSize(container2.clientWidth, container2.clientHeight);
@@ -597,68 +639,71 @@
 
     const controls2 = new OrbitControls(camera2, renderer2.domElement);
 
-    scene2.add(new THREE.AmbientLight(0xffffff, 0.8));
-    const dirLight2 = new THREE.DirectionalLight(0xffffff, 0.5);
-    dirLight2.position.set(5, 5, 5);
-    scene2.add(dirLight2);
+    scene2.add(new THREE.AmbientLight(0xffffff, 0.6));
+    const dl2 = new THREE.DirectionalLight(0xffffff, 0.4);
+    dl2.position.set(5, 5, 5);
+    scene2.add(dl2);
 
-    // Generate surface
-    function generateSurface(nx, ny) {
-      const heights = new Float32Array(nx * ny);
-      const values = new Float32Array(nx * ny);
-      for (let y = 0; y < ny; y++) {
-        for (let x = 0; x < nx; x++) {
-          const fx = x / nx - 0.5;
-          const fy = y / ny - 0.5;
-          heights[y * nx + x] = Math.sin(fx * 4) * Math.cos(fy * 4) * 0.3 + 0.5;
-          values[y * nx + x] = Math.sin(fx * 6 + fy * 3) * 0.5 + 0.5;
-        }
-      }
-      return { heights, values };
+    // Surface data
+    const SNX = 64, SNY = 64;
+    const surfHeights = new Float32Array(SNX * SNY);
+    const surfValues = new Float32Array(SNX * SNY);
+    for (let y = 0; y < SNY; y++) for (let x = 0; x < SNX; x++) {
+      const fx = x / SNX - 0.5, fy = y / SNY - 0.5;
+      surfHeights[y * SNX + x] = Math.sin(fx * 4) * Math.cos(fy * 4) * 0.3 + 0.5;
+      surfValues[y * SNX + x] = Math.sin(fx * 6 + fy * 3) * 0.5 + 0.5;
     }
 
-    const SURF_NX = 64, SURF_NY = 64;
-    const { heights, values } = generateSurface(SURF_NX, SURF_NY);
-
-    // Create surface mesh
     let vertExag = 1.0;
     let surfaceMesh;
 
     function createSurfaceMesh() {
-      const geometry = new THREE.PlaneGeometry(2, 2, SURF_NX - 1, SURF_NY - 1);
-      const positions = geometry.attributes.position;
+      const geom = new THREE.PlaneGeometry(2, 2, SNX - 1, SNY - 1);
+      const pos = geom.attributes.position;
+      for (let i = 0; i < pos.count; i++) pos.setZ(i, surfHeights[i] * vertExag);
+      geom.computeVertexNormals();
 
-      for (let i = 0; i < positions.count; i++) {
-        const height = heights[i] * vertExag;
-        positions.setZ(i, height);
-      }
-      geometry.computeVertexNormals();
-
-      // Color by values
-      const colors = new Float32Array(positions.count * 3);
+      const colors = new Float32Array(pos.count * 3);
       const cmap = colormaps.petrel;
-      for (let i = 0; i < positions.count; i++) {
-        const t = values[i];
-        const [r, g, b] = cmap(t);
-        colors[i * 3] = r;
-        colors[i * 3 + 1] = g;
-        colors[i * 3 + 2] = b;
+      for (let i = 0; i < pos.count; i++) {
+        const [r, g, b] = cmap(surfValues[i]);
+        colors[i * 3] = r; colors[i * 3 + 1] = g; colors[i * 3 + 2] = b;
       }
-      geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+      geom.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
 
-      const material = new THREE.MeshPhongMaterial({
+      return new THREE.Mesh(geom, new THREE.MeshPhongMaterial({
         vertexColors: true,
         side: THREE.DoubleSide,
-        shininess: 30,
-      });
-
-      return new THREE.Mesh(geometry, material);
+        shininess: 20,
+      }));
     }
 
     surfaceMesh = createSurfaceMesh();
     scene2.add(surfaceMesh);
 
-    document.getElementById('vert-exag').addEventListener('input', (e) => {
+    // Axes for surface
+    const axes2 = new THREE.Group();
+    axes2.add(new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-1,-1,0), new THREE.Vector3(1.3,-1,0)]),
+      new THREE.LineBasicMaterial({ color: 0xcc0000 })
+    ));
+    axes2.add(createLabel('Inline', new THREE.Vector3(1.45, -1, 0), '#cc0000', 18));
+    axes2.add(new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-1,-1,0), new THREE.Vector3(-1,1.3,0)]),
+      new THREE.LineBasicMaterial({ color: 0x00aa00 })
+    ));
+    axes2.add(createLabel('Crossline', new THREE.Vector3(-1, 1.45, 0), '#00aa00', 18));
+    scene2.add(axes2);
+
+    // Bounding box
+    scene2.add(new THREE.LineSegments(
+      new THREE.EdgesGeometry(new THREE.BoxGeometry(2, 2, 1)),
+      new THREE.LineBasicMaterial({ color: 0xcccccc })
+    ));
+
+    updateColorbar('colorbar-surface', 'petrel');
+
+    document.getElementById('vert-exag').addEventListener('input', e => {
       vertExag = parseFloat(e.target.value);
       document.getElementById('val-exag').textContent = vertExag.toFixed(1);
       scene2.remove(surfaceMesh);
@@ -673,12 +718,11 @@
     }
     animate2();
 
-    // Handle resize
+    // Resize
     window.addEventListener('resize', () => {
       camera1.aspect = container1.clientWidth / container1.clientHeight;
       camera1.updateProjectionMatrix();
       renderer1.setSize(container1.clientWidth, container1.clientHeight);
-
       camera2.aspect = container2.clientWidth / container2.clientHeight;
       camera2.updateProjectionMatrix();
       renderer2.setSize(container2.clientWidth, container2.clientHeight);
