@@ -25,6 +25,7 @@
     canvas { display: block; border: 0.5pt solid #000; }
     .plot-row { display: flex; gap: 20px; flex-wrap: wrap; }
     .plot-item { flex: 1; min-width: 240px; }
+    .plot-row-4 { display: flex; align-items: flex-start; gap: 10px; }
   </style>
 </head>
 <body>
@@ -54,12 +55,14 @@
 
     <div class="figure">
       <div class="figure-title">Figure 4.</div>
-      <div class="plot-row">
+      <div class="plot-row-4">
         <div class="plot-item"><canvas id="fig4a"></canvas><div class="figure-caption">(a) Inline = 30</div></div>
         <div class="plot-item"><canvas id="fig4b"></canvas><div class="figure-caption">(b) Inline = 60</div></div>
         <div class="plot-item"><canvas id="fig4c"></canvas><div class="figure-caption">(c) Inline = 90</div></div>
         <div class="plot-item"><canvas id="fig4d"></canvas><div class="figure-caption">(d) Inline = 120</div></div>
+        <div class="plot-item"><canvas id="fig4cbar"></canvas></div>
       </div>
+      <div class="figure-caption">All four panels share the same gray colormap and amplitude scale.</div>
     </div>
 
     <div class="figure">
@@ -94,10 +97,9 @@
     }
 
     function draw2D(canvasId, data, dataW, dataH, opts = {}) {
-      const { cmap = gray, clim: userClim } = opts;
+      const { cmap = gray, clim: userClim, plotW = 500, showColorbar = true } = opts;
 
-      const m = { l: 50, r: 80, t: 20, b: 40 };
-      const plotW = 500;
+      const m = { l: 50, r: showColorbar ? 80 : 15, t: 20, b: 40 };
       const plotH = Math.round(plotW * (dataH / dataW));
       const cbarW = 16;
       const cbarGap = 30;
@@ -192,27 +194,78 @@
       ctx.restore();
 
       // Colorbar
-      const cbarX = m.l + plotW + cbarGap;
-      const cbarY = m.t;
-      const cbarH = plotH;
+      if (showColorbar) {
+        const cbarX = m.l + plotW + cbarGap;
+        const cbarY = m.t;
+        const cbarH = plotH;
 
-      for (let y = 0; y < cbarH; y++) {
-        const t = 1 - y / (cbarH - 1);
+        for (let y = 0; y < cbarH; y++) {
+          const t = 1 - y / (cbarH - 1);
+          const [r, g, b] = cmap(t);
+          ctx.fillStyle = `rgb(${r},${g},${b})`;
+          ctx.fillRect(cbarX, cbarY + y, cbarW, 1);
+        }
+
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 0.5;
+        ctx.strokeRect(cbarX, cbarY, cbarW, cbarH);
+
+        ctx.fillStyle = '#000000';
+        ctx.font = '10px Times New Roman';
+        ctx.textAlign = 'left';
+        for (let i = 0; i <= 5; i++) {
+          const t = i / 5;
+          const y = cbarY + t * cbarH;
+          const value = (vmin + t * range).toFixed(2);
+          ctx.beginPath();
+          ctx.moveTo(cbarX + cbarW, y);
+          ctx.lineTo(cbarX + cbarW + 4, y);
+          ctx.stroke();
+          ctx.fillText(value, cbarX + cbarW + 8, y + 3);
+        }
+
+        ctx.save();
+        ctx.translate(cbarX + cbarW + 58, cbarY + cbarH / 2);
+        ctx.rotate(-Math.PI / 2);
+        ctx.font = '12px Times New Roman';
+        ctx.textAlign = 'center';
+        ctx.fillText('Amplitude', 0, 0);
+        ctx.restore();
+      }
+    }
+
+    // Standalone colorbar, shared by a row of panels that use the same clim.
+    function drawSharedColorbar(canvasId, cmap, vmin, vmax, height) {
+      const cbarW = 16, m = { t: 20, b: 40 };
+      const totalW = 90, totalH = m.t + height + m.b;
+      const canvas = document.getElementById(canvasId);
+      canvas.width = totalW * DPR;
+      canvas.height = totalH * DPR;
+      canvas.style.width = totalW + 'px';
+      canvas.style.height = totalH + 'px';
+      const ctx = canvas.getContext('2d');
+      ctx.scale(DPR, DPR);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, totalW, totalH);
+
+      const range = vmax - vmin || 1;
+      const cbarX = 8, cbarY = m.t;
+      for (let y = 0; y < height; y++) {
+        const t = 1 - y / (height - 1);
         const [r, g, b] = cmap(t);
         ctx.fillStyle = `rgb(${r},${g},${b})`;
         ctx.fillRect(cbarX, cbarY + y, cbarW, 1);
       }
-
       ctx.strokeStyle = '#000000';
       ctx.lineWidth = 0.5;
-      ctx.strokeRect(cbarX, cbarY, cbarW, cbarH);
+      ctx.strokeRect(cbarX, cbarY, cbarW, height);
 
       ctx.fillStyle = '#000000';
       ctx.font = '10px Times New Roman';
       ctx.textAlign = 'left';
       for (let i = 0; i <= 5; i++) {
         const t = i / 5;
-        const y = cbarY + t * cbarH;
+        const y = cbarY + t * height;
         const value = (vmin + t * range).toFixed(2);
         ctx.beginPath();
         ctx.moveTo(cbarX + cbarW, y);
@@ -222,7 +275,7 @@
       }
 
       ctx.save();
-      ctx.translate(cbarX + cbarW + 58, cbarY + cbarH / 2);
+      ctx.translate(totalW - 10, cbarY + height / 2);
       ctx.rotate(-Math.PI / 2);
       ctx.font = '12px Times New Roman';
       ctx.textAlign = 'center';
@@ -235,8 +288,8 @@
       draw2D(canvasId, data, w, h, { cmap: gray });
       const canvas = document.getElementById(canvasId);
       const ctx = canvas.getContext('2d');
+      // draw2D already applied ctx.scale(DPR, DPR) to this context — don't scale again.
       ctx.save();
-      ctx.scale(DPR, DPR);
 
       const m = { l: 50, r: 80, t: 20, b: 40 };
       const plotW = 500;
@@ -267,8 +320,8 @@
       draw2D(canvasId, data, w, h, { cmap: gray });
       const canvas = document.getElementById(canvasId);
       const ctx = canvas.getContext('2d');
+      // draw2D already applied ctx.scale(DPR, DPR) to this context — don't scale again.
       ctx.save();
-      ctx.scale(DPR, DPR);
 
       const m = { l: 50, r: 80, t: 20, b: 40 };
       const plotW = 500;
@@ -309,10 +362,24 @@
     draw2D('fig1', img, W, H, { cmap: gray });
     draw2D('fig2', img, W, H, { cmap: petrel });
     drawFault('fig3', img, W, H);
-    draw2D('fig4a', genSeismic(140, 105, 0), 140, 105, { cmap: gray });
-    draw2D('fig4b', genSeismic(140, 105, 1), 140, 105, { cmap: gray });
-    draw2D('fig4c', genSeismic(140, 105, 2), 140, 105, { cmap: gray });
-    draw2D('fig4d', genSeismic(140, 105, 3), 140, 105, { cmap: gray });
+
+    const fig4Data = [0, 1, 2, 3].map(ph => genSeismic(140, 105, ph));
+    let fig4Min = Infinity, fig4Max = -Infinity;
+    for (const d of fig4Data) {
+      for (let i = 0; i < d.length; i++) {
+        if (d[i] < fig4Min) fig4Min = d[i];
+        if (d[i] > fig4Max) fig4Max = d[i];
+      }
+    }
+    const fig4Clim = [fig4Min, fig4Max];
+    const fig4Opts = { cmap: gray, clim: fig4Clim, plotW: 160, showColorbar: false };
+    draw2D('fig4a', fig4Data[0], 140, 105, fig4Opts);
+    draw2D('fig4b', fig4Data[1], 140, 105, fig4Opts);
+    draw2D('fig4c', fig4Data[2], 140, 105, fig4Opts);
+    draw2D('fig4d', fig4Data[3], 140, 105, fig4Opts);
+    const fig4PlotH = Math.round(160 * (105 / 140));
+    drawSharedColorbar('fig4cbar', gray, fig4Min, fig4Max, fig4PlotH);
+
     drawWells('fig5', img, W, H, wells);
   </script>
 </body>

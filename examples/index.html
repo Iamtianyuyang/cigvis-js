@@ -4,66 +4,55 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CIGVis — Examples</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0c0c14;
-      --bg-card: #12121c;
-      --bg-card-hover: #1a1a28;
-      --border: rgba(255,255,255,0.06);
-      --border-hover: rgba(0,212,170,0.25);
-      --text: #e8eaed;
-      --text-2: #8b8fa3;
-      --text-3: #5c6078;
-      --accent: #00d4aa;
-      --accent-dim: rgba(0,212,170,0.08);
-      --sans: 'Inter', -apple-system, sans-serif;
-      --mono: 'JetBrains Mono', monospace;
-      --r-sm: 6px;
-      --r-md: 10px;
-      --r-lg: 16px;
+      --bg: #ffffff;
+      --surface: #fafafa;
+      --border: #000;
+      --border-soft: #ccc;
+      --ink: #000;
+      --ink-2: #444;
+      --ink-3: #888;
+      --accent: #1d4e89;
+      --serif: 'Times New Roman', Georgia, serif;
+      --mono: 'Courier New', monospace;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: var(--sans);
+      font-family: var(--serif);
       background: var(--bg);
-      color: var(--text);
+      color: var(--ink);
       min-height: 100vh;
     }
 
     /* Hero */
     .hero {
-      padding: 64px 24px 48px;
+      padding: 56px 24px 40px;
       text-align: center;
       border-bottom: 1px solid var(--border);
     }
     .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 12px;
-      background: var(--accent-dim);
-      border: 1px solid rgba(0,212,170,0.15);
-      border-radius: 999px;
+      display: inline-block;
       font-family: var(--mono);
       font-size: 11px;
-      color: var(--accent);
-      margin-bottom: 20px;
+      letter-spacing: 0.06em;
+      color: var(--ink-3);
+      border: 0.5pt solid var(--border-soft);
+      padding: 3px 10px;
+      border-radius: 2px;
+      margin-bottom: 18px;
     }
-    .hero-badge::before { content: '●'; font-size: 6px; }
     .hero h1 {
-      font-size: 36px;
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      line-height: 1.1;
-      margin-bottom: 12px;
+      font-size: 32px;
+      font-weight: bold;
+      line-height: 1.15;
+      margin-bottom: 10px;
     }
     .hero h1 span { color: var(--accent); }
     .hero p {
-      font-size: 15px;
-      color: var(--text-2);
-      max-width: 520px;
+      font-size: 14px;
+      color: var(--ink-2);
+      max-width: 540px;
       margin: 0 auto;
       line-height: 1.6;
     }
@@ -77,31 +66,29 @@
     .section-label {
       font-family: var(--mono);
       font-size: 11px;
-      font-weight: 500;
+      font-weight: bold;
       text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--text-3);
-      margin-bottom: 16px;
+      letter-spacing: 0.08em;
+      color: var(--ink-3);
+      margin-bottom: 14px;
+      padding-bottom: 6px;
+      border-bottom: 0.5pt solid var(--border-soft);
     }
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 16px;
       margin-bottom: 40px;
     }
 
     /* Card */
     .card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--r-lg);
+      border: 0.5pt solid var(--border);
+      border-radius: 4px;
       overflow: hidden;
-      transition: border-color 0.2s, transform 0.2s;
+      transition: background 0.15s;
     }
-    .card:hover {
-      border-color: var(--border-hover);
-      transform: translateY(-2px);
-    }
+    .card:hover { background: var(--surface); }
     .card a {
       text-decoration: none;
       color: inherit;
@@ -110,64 +97,57 @@
       height: 100%;
     }
     .card-visual {
-      height: 140px;
-      background: var(--accent-dim);
+      height: 64px;
       display: flex;
       align-items: center;
-      justify-content: center;
-      position: relative;
-      overflow: hidden;
+      padding: 0 16px;
+      border-bottom: 0.5pt solid var(--border-soft);
     }
-    .card-visual-icon {
-      font-size: 32px;
-      opacity: 0.6;
+    .card-visual-tag {
+      font-family: var(--mono);
+      font-size: 22px;
+      font-weight: bold;
+      color: var(--accent);
+      letter-spacing: -0.02em;
     }
     .card-body {
-      padding: 16px;
+      padding: 14px 16px;
       flex: 1;
     }
-    .card-tag {
-      font-family: var(--mono);
-      font-size: 10px;
-      color: var(--accent);
-      margin-bottom: 6px;
-    }
     .card-title {
-      font-size: 16px;
-      font-weight: 600;
+      font-size: 15px;
+      font-weight: bold;
       margin-bottom: 6px;
     }
     .card-desc {
-      font-size: 13px;
-      color: var(--text-2);
+      font-size: 12px;
+      color: var(--ink-2);
       line-height: 1.5;
     }
     .card-footer {
-      padding: 12px 16px;
-      border-top: 1px solid var(--border);
+      padding: 10px 16px;
+      border-top: 0.5pt solid var(--border-soft);
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
     .card-footer span {
       font-family: var(--mono);
-      font-size: 11px;
-      color: var(--text-3);
+      font-size: 10px;
+      color: var(--ink-3);
     }
     .card-footer .arrow {
       color: var(--accent);
-      font-size: 16px;
-      transition: transform 0.2s;
+      font-size: 14px;
     }
-    .card:hover .arrow { transform: translateX(3px); }
 
     /* Footer */
     .footer {
       text-align: center;
-      padding: 24px;
+      padding: 20px;
       border-top: 1px solid var(--border);
       font-size: 12px;
-      color: var(--text-3);
+      color: var(--ink-3);
     }
     .footer a { color: var(--accent); text-decoration: none; }
     .footer a:hover { text-decoration: underline; }
@@ -185,11 +165,8 @@
     <div class="grid">
       <div class="card">
         <a href="3d/volume.html">
-          <div class="card-visual">
-            <div class="card-visual-icon">🧊</div>
-          </div>
+          <div class="card-visual"><span class="card-visual-tag">3D</span></div>
           <div class="card-body">
-            <div class="card-tag">3D</div>
             <div class="card-title">Volume Slices</div>
             <div class="card-desc">Interactive 3D volume with orthogonal slices, surfaces, and well logs.</div>
           </div>
@@ -202,11 +179,8 @@
 
       <div class="card">
         <a href="2d/plot2d.html">
-          <div class="card-visual">
-            <div class="card-visual-icon">📊</div>
-          </div>
+          <div class="card-visual"><span class="card-visual-tag">2D</span></div>
           <div class="card-body">
-            <div class="card-tag">2D</div>
             <div class="card-title">Image Plot</div>
             <div class="card-desc">Seismic slices with colormaps, overlays, markers, and subplots.</div>
           </div>
@@ -219,11 +193,8 @@
 
       <div class="card">
         <a href="1d/trace.html">
-          <div class="card-visual">
-            <div class="card-visual-icon">📈</div>
-          </div>
+          <div class="card-visual"><span class="card-visual-tag">1D</span></div>
           <div class="card-body">
-            <div class="card-tag">1D</div>
             <div class="card-title">Trace Plot</div>
             <div class="card-desc">Single trace, multi-trace section, and variable area fill display.</div>
           </div>
@@ -239,11 +210,8 @@
     <div class="grid">
       <div class="card">
         <a href="colormap/colormaps.html">
-          <div class="card-visual">
-            <div class="card-visual-icon">🎨</div>
-          </div>
+          <div class="card-visual"><span class="card-visual-tag">Cmap</span></div>
           <div class="card-body">
-            <div class="card-tag">Colormap</div>
             <div class="card-title">Colormap Gallery</div>
             <div class="card-desc">Browse built-in colormaps with live seismic and gradient preview.</div>
           </div>
@@ -259,11 +227,8 @@
     <div class="grid">
       <div class="card">
         <a href="gui-test.html">
-          <div class="card-visual">
-            <div class="card-visual-icon">⚙️</div>
-          </div>
+          <div class="card-visual"><span class="card-visual-tag">GUI</span></div>
           <div class="card-body">
-            <div class="card-tag">GUI</div>
             <div class="card-title">Web Components</div>
             <div class="card-desc">Sliders, buttons, dropdowns, sidebar, and colormap picker.</div>
           </div>

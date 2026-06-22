@@ -4,8 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CIGVis — 1D Trace</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -118,16 +116,16 @@
     }
 
     function drawAxes(ctx, m, pw, ph) {
-      ctx.strokeStyle = 'rgba(255,255,255,0.12)';
-      ctx.lineWidth = 1;
+      ctx.strokeStyle = '#000000';
+      ctx.lineWidth = 0.5;
       ctx.beginPath();
       ctx.moveTo(m.l, m.t); ctx.lineTo(m.l, m.t+ph); ctx.lineTo(m.l+pw, m.t+ph);
       ctx.stroke();
     }
 
     function drawTicks(ctx, m, pw, ph, nx, ny, lx, ly) {
-      ctx.fillStyle = '#5c6078';
-      ctx.font = '10px JetBrains Mono';
+      ctx.fillStyle = '#000000';
+      ctx.font = '10px Times New Roman';
 
       ctx.textAlign = 'center';
       for (let i = 0; i <= nx; i++) {
@@ -145,8 +143,8 @@
     }
 
     function drawLabels(ctx, m, pw, ph, xLabel, yLabel) {
-      ctx.fillStyle = '#8b8fa3';
-      ctx.font = '11px Inter';
+      ctx.fillStyle = '#000000';
+      ctx.font = '12px Times New Roman';
       ctx.textAlign = 'center';
       ctx.fillText(xLabel, m.l+pw/2, m.t+ph+30);
       ctx.save();
@@ -174,15 +172,15 @@
 
       // Zero line
       const midX = m.l + ((0-mn)/(mx-mn))*pw;
-      ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+      ctx.strokeStyle = 'rgba(0,0,0,0.15)';
       ctx.lineWidth = 0.5;
       ctx.setLineDash([3,3]);
       ctx.beginPath(); ctx.moveTo(midX, m.t); ctx.lineTo(midX, m.t+ph); ctx.stroke();
       ctx.setLineDash([]);
 
       // Trace
-      ctx.strokeStyle = '#00d4aa';
-      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = '#000000';
+      ctx.lineWidth = 1;
       ctx.beginPath();
       for (let i=0;i<data.length;i++) {
         const x = m.l+((data[i]-mn)/(mx-mn))*pw;
@@ -232,15 +230,15 @@
       }
 
       // X ticks
-      ctx.fillStyle='#333333'; ctx.font='10px JetBrains Mono'; ctx.textAlign='center';
+      ctx.fillStyle='#000000'; ctx.font='10px Times New Roman'; ctx.textAlign='center';
       for(let t=0;t<n;t+=5) ctx.fillText(t.toString(), m.l+t*tw+tw/2, m.t+ph+14);
     }
 
-    function plotFill(id, data, type) {
+    function plotFill(id, data, type, dt=4) {
       const lw = 300, lh = 400;
       const ctx = setupCanvas(id, lw, lh);
       const w = lw, h = lh;
-      const m = {l:35, r:10, t:15, b:30};
+      const m = {l:38, r:10, t:15, b:30};
       const pw = w-m.l-m.r, ph = h-m.t-m.b;
       const mid = m.l+pw/2;
 
@@ -248,6 +246,25 @@
 
       let mn=Infinity, mx=-Infinity;
       for(let i=0;i<data.length;i++){if(data[i]<mn)mn=data[i];if(data[i]>mx)mx=data[i];}
+
+      // Axis (time on Y, no X scale — amplitude is folded around center)
+      drawAxes(ctx, m, pw, ph);
+      ctx.fillStyle = '#000000';
+      ctx.font = '10px Times New Roman';
+      ctx.textAlign = 'right';
+      for (let i = 0; i <= 4; i++) {
+        const y = m.t + (i/4)*ph;
+        const t = ((i/4) * data.length * dt / 1000).toFixed(2);
+        ctx.fillText(t, m.l-6, y+3);
+        ctx.beginPath(); ctx.moveTo(m.l-3, y); ctx.lineTo(m.l, y); ctx.stroke();
+      }
+      ctx.save();
+      ctx.translate(11, m.t+ph/2);
+      ctx.rotate(-Math.PI/2);
+      ctx.font = '11px Times New Roman';
+      ctx.textAlign = 'center';
+      ctx.fillText('Time (s)', 0, 0);
+      ctx.restore();
 
       // Zero line
       ctx.strokeStyle='rgba(0,0,0,0.1)'; ctx.lineWidth=0.5;
@@ -287,25 +304,40 @@
       ctx.strokeStyle='#000000'; ctx.lineWidth=1; ctx.stroke();
     }
 
-    function plotWavelet(id, freq) {
-      const d = ricker(100, 4, freq);
+    function plotWavelet(id, freq, dt=4) {
+      const n = 100;
+      const d = ricker(n, dt, freq);
       const lw = 300, lh = 180;
       const ctx = setupCanvas(id, lw, lh);
       const w = lw, h = lh;
-      const m = {l:30, r:10, t:15, b:25};
+      const m = {l:34, r:10, t:15, b:30};
       const pw = w-m.l-m.r, ph = h-m.t-m.b;
       const mid = m.t+ph/2;
 
-      ctx.fillStyle='#0c0c14'; ctx.fillRect(0,0,w,h);
+      ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,w,h);
+
+      // Axis
+      drawAxes(ctx, m, pw, ph);
+      ctx.fillStyle = '#000000';
+      ctx.font = '10px Times New Roman';
+      ctx.textAlign = 'center';
+      for (let i = 0; i <= 4; i++) {
+        const x = m.l + (i/4)*pw;
+        const t = Math.round((i/4 - 0.5) * n * dt);
+        ctx.fillText(t.toString(), x, m.t+ph+14);
+        ctx.beginPath(); ctx.moveTo(x, m.t+ph); ctx.lineTo(x, m.t+ph+3); ctx.stroke();
+      }
+      ctx.font = '11px Times New Roman';
+      ctx.fillText('Time (ms)', m.l+pw/2, m.t+ph+27);
 
       // Zero line
-      ctx.strokeStyle='rgba(0,0,0,0.1)'; ctx.lineWidth=0.5;
+      ctx.strokeStyle='rgba(0,0,0,0.15)'; ctx.lineWidth=0.5;
       ctx.setLineDash([3,3]);
       ctx.beginPath(); ctx.moveTo(m.l,mid); ctx.lineTo(m.l+pw,mid); ctx.stroke();
       ctx.setLineDash([]);
 
       // Wavelet
-      ctx.strokeStyle='#000000'; ctx.lineWidth=1.5;
+      ctx.strokeStyle='#000000'; ctx.lineWidth=1;
       ctx.beginPath();
       for(let i=0;i<d.length;i++){
         const x=m.l+(i/d.length)*pw;
@@ -313,9 +345,6 @@
         if(i===0)ctx.moveTo(x,y); else ctx.lineTo(x,y);
       }
       ctx.stroke();
-
-      ctx.fillStyle='#333333'; ctx.font='10px JetBrains Mono'; ctx.textAlign='center';
-      ctx.fillText(`${freq} Hz`, w/2, h-5);
     }
 
     // Render

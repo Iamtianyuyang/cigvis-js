@@ -4,28 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CIGVis — GUI Components</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0c0c14;
-      --bg-raised: #12121c;
-      --bg-surface: #1a1a28;
-      --border: rgba(255,255,255,0.06);
-      --border-hover: rgba(0,212,170,0.2);
-      --text: #e8eaed;
-      --text-2: #8b8fa3;
-      --text-3: #5c6078;
-      --accent: #00d4aa;
-      --accent-dim: rgba(0,212,170,0.08);
-      --sans: 'Inter', sans-serif;
-      --mono: 'JetBrains Mono', monospace;
-      --r-md: 10px;
-      --r-lg: 16px;
+      --bg: #ffffff;
+      --bg-raised: #fafafa;
+      --bg-surface: #f0f0f0;
+      --border: #000;
+      --border-soft: #ccc;
+      --text: #000;
+      --text-2: #444;
+      --text-3: #888;
+      --accent: #1d4e89;
+      --accent-dim: rgba(29,78,137,0.06);
+      --serif: 'Times New Roman', Georgia, serif;
+      --mono: 'Courier New', monospace;
+      --r-md: 3px;
+      --r-lg: 4px;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: var(--sans);
+      font-family: var(--serif);
       background: var(--bg);
       color: var(--text);
     }
@@ -43,19 +41,11 @@
     .topbar-left { display: flex; align-items: center; gap: 12px; }
     .logo { display: flex; align-items: center; gap: 6px; }
     .logo-mark {
-      width: 18px; height: 18px;
-      background: var(--accent);
-      border-radius: 4px;
-      position: relative;
-    }
-    .logo-mark::after {
-      content: '';
-      position: absolute;
-      inset: 4px;
-      background: var(--bg);
+      width: 16px; height: 16px;
+      border: 1.5px solid var(--text);
       border-radius: 2px;
     }
-    .logo-text { font-family: var(--mono); font-weight: 600; font-size: 13px; }
+    .logo-text { font-family: var(--mono); font-weight: bold; font-size: 13px; }
     .topbar-status {
       font-family: var(--mono);
       font-size: 11px;
@@ -80,14 +70,14 @@
 
     /* Section */
     .section {
-      background: var(--bg-raised);
-      border: 1px solid var(--border);
+      background: var(--bg);
+      border: 0.5pt solid var(--border);
       border-radius: var(--r-lg);
       overflow: hidden;
     }
     .section-head {
       padding: 10px 16px;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 0.5pt solid var(--border-soft);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -95,9 +85,9 @@
     .section-title {
       font-family: var(--mono);
       font-size: 11px;
-      font-weight: 600;
+      font-weight: bold;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.06em;
       color: var(--text-2);
     }
     .section-badge {
@@ -118,7 +108,7 @@
       gap: 12px;
       padding: 6px 0;
     }
-    .form-row + .form-row { border-top: 1px solid var(--border); }
+    .form-row + .form-row { border-top: 0.5pt solid var(--border-soft); }
     .form-label { font-size: 12px; color: var(--text-2); }
     .form-value {
       font-family: var(--mono);
@@ -137,9 +127,9 @@
       font-size: 11px;
       color: var(--text-3);
       padding: 8px 12px;
-      background: var(--bg);
+      background: var(--bg-raised);
       border-radius: var(--r-md);
-      border: 1px solid var(--border);
+      border: 0.5pt solid var(--border-soft);
       min-height: 32px;
       display: flex;
       align-items: center;
@@ -152,7 +142,7 @@
     /* Plot area */
     .plot-frame {
       background: var(--bg);
-      border: 1px solid var(--border);
+      border: 0.5pt solid var(--border);
       border-radius: var(--r-md);
       height: 240px;
       position: relative;
@@ -163,8 +153,8 @@
       position: absolute;
       inset: 0;
       background:
-        linear-gradient(90deg, var(--border) 1px, transparent 1px),
-        linear-gradient(0deg, var(--border) 1px, transparent 1px);
+        linear-gradient(90deg, var(--border-soft) 1px, transparent 1px),
+        linear-gradient(0deg, var(--border-soft) 1px, transparent 1px);
       background-size: 40px 40px;
       opacity: 0.4;
       pointer-events: none;
@@ -195,8 +185,8 @@
     }
     .statusbar-group { display: flex; gap: 16px; }
     .status-ok { color: var(--accent); }
-    .status-warn { color: #f59e0b; }
-    .status-err { color: #f43f5e; }
+    .status-warn { color: #b8860b; }
+    .status-err { color: #a33; }
   </style>
 </head>
 <body>
@@ -416,23 +406,23 @@
           const w = c.width, h = c.height;
           if (!w || !h) return;
 
-          x.fillStyle = '#0c0c14';
+          x.fillStyle = '#ffffff';
           x.fillRect(0, 0, w, h);
 
           // Grid
-          x.strokeStyle = 'rgba(255,255,255,0.04)';
+          x.strokeStyle = 'rgba(0,0,0,0.06)';
           x.lineWidth = 1;
           for (let i = 0; i < w; i += 40) { x.beginPath(); x.moveTo(i,0); x.lineTo(i,h); x.stroke(); }
           for (let i = 0; i < h; i += 40) { x.beginPath(); x.moveTo(0,i); x.lineTo(w,i); x.stroke(); }
 
           // Axes
-          x.strokeStyle = 'rgba(255,255,255,0.15)';
-          x.lineWidth = 1;
+          x.strokeStyle = '#000000';
+          x.lineWidth = 0.5;
           x.beginPath(); x.moveTo(40,15); x.lineTo(40,h-20); x.lineTo(w-15,h-20); x.stroke();
 
           // Y ticks
-          x.fillStyle = '#5c6078';
-          x.font = '10px JetBrains Mono';
+          x.fillStyle = '#444444';
+          x.font = '10px Courier New';
           x.textAlign = 'right';
           for (let i=0;i<=4;i++) {
             const y = 15+(h-35)*(1-i/4);
@@ -449,8 +439,8 @@
           }
 
           // Waveform
-          x.strokeStyle = '#00d4aa';
-          x.lineWidth = 1.5;
+          x.strokeStyle = '#000000';
+          x.lineWidth = 1;
           x.beginPath();
           const mid = h/2;
           for (let i=40;i<w-15;i++) {
@@ -464,12 +454,12 @@
 
           // Fill
           x.lineTo(w-15,mid); x.lineTo(40,mid); x.closePath();
-          x.fillStyle = 'rgba(0,212,170,0.06)';
+          x.fillStyle = 'rgba(0,0,0,0.06)';
           x.fill();
 
           // Labels
-          x.fillStyle = '#8b8fa3';
-          x.font = '11px Inter';
+          x.fillStyle = '#444444';
+          x.font = '11px Times New Roman';
           x.textAlign = 'center';
           x.fillText('Time (ms)',w/2,h-0);
           x.save(); x.translate(10,h/2); x.rotate(-Math.PI/2);
