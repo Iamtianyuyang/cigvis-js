@@ -312,6 +312,155 @@ export function paletteToNormalized(palette: ColorPalette): Array<[number, numbe
 }
 
 // ============================================================================
+// Visualization (ported from colors.py view_colors)
+// ============================================================================
+
+/**
+ * Visualize a color palette with multiple chart types.
+ * Ported from cigvis Python: view_colors
+ *
+ * @param colors - Array of hex color strings
+ * @returns Canvas element with visualization
+ *
+ * @example
+ * ```ts
+ * const canvas = viewColors(['#9392BE', '#D0E7ED', '#D5E4A8']);
+ * document.body.appendChild(canvas);
+ * ```
+ */
+export function viewColors(colors: string[]): HTMLCanvasElement {
+  const n = colors.length;
+  const canvas = document.createElement('canvas');
+  canvas.width = 800;
+  canvas.height = 500;
+  const ctx = canvas.getContext('2d')!;
+
+  // Background
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, 800, 500);
+
+  const cellW = 250;
+  const cellH = 150;
+  const gap = 20;
+
+  // 1. Color Blocks
+  const blockX = 20;
+  const blockY = 20;
+  ctx.fillStyle = '#000000';
+  ctx.font = '12px sans-serif';
+  ctx.fillText('Color Blocks', blockX, blockY);
+
+  const blockW = cellW / n;
+  for (let i = 0; i < n; i++) {
+    ctx.fillStyle = colors[i];
+    ctx.fillRect(blockX + i * blockW, blockY + 10, blockW, 40);
+    ctx.fillStyle = '#000000';
+    ctx.font = '8px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(colors[i], blockX + i * blockW + blockW / 2, blockY + 60);
+  }
+
+  // 2. Line Plot
+  const lineX = 20 + cellW + gap;
+  const lineY = 20;
+  ctx.fillStyle = '#000000';
+  ctx.font = '12px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('Line Plot', lineX, lineY);
+
+  for (let i = 0; i < n; i++) {
+    ctx.strokeStyle = colors[i];
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let x = 0; x < 10; x++) {
+      const px = lineX + x * (cellW / 10);
+      const py = lineY + 20 + (x + i) * 10;
+      if (x === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+  }
+
+  // 3. Bar Plot
+  const barX = 20;
+  const barY = 20 + cellH + gap;
+  ctx.fillStyle = '#000000';
+  ctx.font = '12px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('Bar Plot', barX, barY);
+
+  const barW = cellW / n;
+  const maxBarH = 80;
+  for (let i = 0; i < n; i++) {
+    const barH = (i + 1) * (maxBarH / n);
+    ctx.fillStyle = colors[i];
+    ctx.fillRect(barX + i * barW, barY + 20 + maxBarH - barH, barW - 2, barH);
+    ctx.fillStyle = '#000000';
+    ctx.font = '8px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`${i + 1}`, barX + i * barW + barW / 2, barY + 20 + maxBarH + 12);
+  }
+
+  // 4. Scatter Plot
+  const scatterX = 20 + cellW + gap;
+  const scatterY = 20 + cellH + gap;
+  ctx.fillStyle = '#000000';
+  ctx.font = '12px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('Scatter Plot', scatterX, scatterY);
+
+  for (let i = 0; i < n; i++) {
+    ctx.fillStyle = colors[i];
+    for (let x = 0; x < 10; x++) {
+      const px = scatterX + x * (cellW / 10);
+      const py = scatterY + 20 + (x + i) * 8;
+      ctx.beginPath();
+      ctx.arc(px, py, 4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  // 5. Pie Chart
+  const pieX = 20 + (cellW + gap) / 2;
+  const pieY = 20 + (cellH + gap) * 2 + 40;
+  const pieR = 50;
+  ctx.fillStyle = '#000000';
+  ctx.font = '12px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Pie Chart', pieX, pieY - pieR - 10);
+
+  let startAngle = 0;
+  const sliceAngle = (2 * Math.PI) / n;
+  for (let i = 0; i < n; i++) {
+    ctx.fillStyle = colors[i];
+    ctx.beginPath();
+    ctx.moveTo(pieX, pieY);
+    ctx.arc(pieX, pieY, pieR, startAngle, startAngle + sliceAngle);
+    ctx.closePath();
+    ctx.fill();
+    startAngle += sliceAngle;
+  }
+
+  // 6. Histogram
+  const histX = 20 + cellW + gap + (cellW + gap) / 2;
+  const histY = 20 + (cellH + gap) * 2 + 40;
+  ctx.fillStyle = '#000000';
+  ctx.font = '12px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Histogram', histX, histY - 30);
+
+  const histW = cellW / n;
+  const maxHistH = 80;
+  for (let i = 0; i < n; i++) {
+    const histH = (i + 1) * (maxHistH / n);
+    ctx.fillStyle = colors[i];
+    ctx.fillRect(histX - cellW / 2 + i * histW, histY + maxHistH - histH, histW - 2, histH);
+  }
+
+  return canvas;
+}
+
+// ============================================================================
 // Agent interface
 // ============================================================================
 
@@ -333,5 +482,6 @@ export function createColorsAgent() {
     hexToNormalized,
     normalizedToHex,
     paletteToNormalized,
+    viewColors,
   };
 }
