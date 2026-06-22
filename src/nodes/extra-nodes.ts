@@ -262,9 +262,26 @@ export function createLineLogs(
   }
 
   for (const log of logs) {
-    // Each log is [x,y,z, value?] per row
-    const nCols = log.length > 0 ? 3 : 0; // Assume 3 columns for now
-    const nRows = log.length / nCols;
+    // Each log is [x,y,z] or [x,y,z,value] per row
+    // Detect number of columns: try 4 first, then 3
+    let nCols = 3;
+    if (log.length > 0) {
+      // Try to detect if 4 columns (x,y,z,value) or 3 columns (x,y,z)
+      // Heuristic: if length is divisible by 4 and the 4th column has different
+      // values than the 3rd, assume 4 columns
+      if (log.length % 4 === 0) {
+        // Check if 4th column values differ from 3rd column values
+        let hasDiff = false;
+        for (let i = 0; i < Math.min(10, log.length / 4); i++) {
+          if (log[i * 4 + 3] !== log[i * 4 + 2]) {
+            hasDiff = true;
+            break;
+          }
+        }
+        if (hasDiff) nCols = 4;
+      }
+    }
+    const nRows = Math.floor(log.length / nCols);
 
     const positions = new Float32Array(nRows * 3);
     let values: Float32Array | null = null;

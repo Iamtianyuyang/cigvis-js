@@ -82,13 +82,17 @@ export function bilinearInterpolate(
   x: number,
   y: number
 ): number {
-  const x0 = Math.floor(x);
-  const y0 = Math.floor(y);
+  // Clamp to valid range
+  const cx = Math.max(0, Math.min(width - 1, x));
+  const cy = Math.max(0, Math.min(height - 1, y));
+
+  const x0 = Math.floor(cx);
+  const y0 = Math.floor(cy);
   const x1 = Math.min(x0 + 1, width - 1);
   const y1 = Math.min(y0 + 1, height - 1);
 
-  const fx = x - x0;
-  const fy = y - y0;
+  const fx = cx - x0;
+  const fy = cy - y0;
 
   const v00 = data[y0 * width + x0];
   const v10 = data[y0 * width + x1];
@@ -114,9 +118,14 @@ export function trilinearInterpolate(
   y: number,
   z: number
 ): number {
-  const x0 = Math.floor(x);
-  const y0 = Math.floor(y);
-  const z0 = Math.floor(z);
+  // Clamp to valid range
+  const cx = Math.max(0, Math.min(nx - 1, x));
+  const cy = Math.max(0, Math.min(ny - 1, y));
+  const cz = Math.max(0, Math.min(nz - 1, z));
+
+  const x0 = Math.floor(cx);
+  const y0 = Math.floor(cy);
+  const z0 = Math.floor(cz);
   const x1 = Math.min(x0 + 1, nx - 1);
   const y1 = Math.min(y0 + 1, ny - 1);
   const z1 = Math.min(z0 + 1, nz - 1);

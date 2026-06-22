@@ -61,6 +61,13 @@ export class CameraControls {
   };
   private state: number = this.STATE.NONE;
 
+  // Store bound handlers for cleanup
+  private _boundMouseDown: (e: MouseEvent) => void;
+  private _boundMouseMove: (e: MouseEvent) => void;
+  private _boundMouseUp: (e: MouseEvent) => void;
+  private _boundWheel: (e: WheelEvent) => void;
+  private _boundContextMenu: (e: Event) => void;
+
   constructor(
     camera: THREE.PerspectiveCamera | THREE.OrthographicCamera,
     domElement: HTMLElement,
@@ -78,16 +85,23 @@ export class CameraControls {
       Object.assign(this, options);
     }
 
+    // Bind handlers
+    this._boundMouseDown = this.onMouseDown.bind(this);
+    this._boundMouseMove = this.onMouseMove.bind(this);
+    this._boundMouseUp = this.onMouseUp.bind(this);
+    this._boundWheel = this.onMouseWheel.bind(this);
+    this._boundContextMenu = (e) => e.preventDefault();
+
     this.bindEvents();
     this.update();
   }
 
   private bindEvents(): void {
-    this.domElement.addEventListener('mousedown', this.onMouseDown.bind(this));
-    this.domElement.addEventListener('mousemove', this.onMouseMove.bind(this));
-    this.domElement.addEventListener('mouseup', this.onMouseUp.bind(this));
-    this.domElement.addEventListener('wheel', this.onMouseWheel.bind(this));
-    this.domElement.addEventListener('contextmenu', (e) => e.preventDefault());
+    this.domElement.addEventListener('mousedown', this._boundMouseDown);
+    this.domElement.addEventListener('mousemove', this._boundMouseMove);
+    this.domElement.addEventListener('mouseup', this._boundMouseUp);
+    this.domElement.addEventListener('wheel', this._boundWheel);
+    this.domElement.addEventListener('contextmenu', this._boundContextMenu);
   }
 
   private onMouseDown(event: MouseEvent): void {
@@ -243,6 +257,10 @@ export class CameraControls {
    * Dispose event listeners
    */
   dispose(): void {
-    // In a real implementation, we'd store bound functions and remove them
+    this.domElement.removeEventListener('mousedown', this._boundMouseDown);
+    this.domElement.removeEventListener('mousemove', this._boundMouseMove);
+    this.domElement.removeEventListener('mouseup', this._boundMouseUp);
+    this.domElement.removeEventListener('wheel', this._boundWheel);
+    this.domElement.removeEventListener('contextmenu', this._boundContextMenu);
   }
 }
