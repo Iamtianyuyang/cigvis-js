@@ -3,294 +3,283 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CIGVis.js Examples</title>
+  <title>CIGVis — Examples</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg: #0c0c14;
+      --bg-card: #12121c;
+      --bg-card-hover: #1a1a28;
+      --border: rgba(255,255,255,0.06);
+      --border-hover: rgba(0,212,170,0.25);
+      --text: #e8eaed;
+      --text-2: #8b8fa3;
+      --text-3: #5c6078;
+      --accent: #00d4aa;
+      --accent-dim: rgba(0,212,170,0.08);
+      --sans: 'Inter', -apple-system, sans-serif;
+      --mono: 'JetBrains Mono', monospace;
+      --r-sm: 6px;
+      --r-md: 10px;
+      --r-lg: 16px;
+    }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #0a0a0f;
-      color: #e0e0e0;
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
       min-height: 100vh;
     }
-    .header {
-      background: linear-gradient(135deg, #1a1a2e, #16213e);
-      padding: 40px 24px;
+
+    /* Hero */
+    .hero {
+      padding: 64px 24px 48px;
       text-align: center;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+      border-bottom: 1px solid var(--border);
     }
-    .header h1 {
-      font-size: 32px;
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(0,212,170,0.15);
+      border-radius: 999px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+    .hero-badge::before { content: '●'; font-size: 6px; }
+    .hero h1 {
+      font-size: 36px;
       font-weight: 700;
-      margin-bottom: 8px;
-      background: linear-gradient(135deg, #00d4aa, #0078d4);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 12px;
     }
-    .header p {
-      font-size: 16px;
-      color: #8b8fa3;
-      max-width: 600px;
+    .hero h1 span { color: var(--accent); }
+    .hero p {
+      font-size: 15px;
+      color: var(--text-2);
+      max-width: 520px;
       margin: 0 auto;
+      line-height: 1.6;
     }
+
+    /* Grid */
     .container {
-      max-width: 1200px;
+      max-width: 1080px;
       margin: 0 auto;
-      padding: 40px 24px;
+      padding: 40px 24px 80px;
+    }
+    .section-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-3);
+      margin-bottom: 16px;
     }
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 20px;
+      gap: 16px;
+      margin-bottom: 40px;
     }
+
+    /* Card */
     .card {
-      background: #161922;
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
       overflow: hidden;
-      transition: transform 0.2s, border-color 0.2s;
+      transition: border-color 0.2s, transform 0.2s;
     }
     .card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(0, 212, 170, 0.3);
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
     }
-    .card-header {
-      padding: 16px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+    .card a {
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
     }
-    .card-category {
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #00d4aa;
-      margin-bottom: 8px;
+    .card-visual {
+      height: 140px;
+      background: var(--accent-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
     }
-    .card-title {
-      font-size: 18px;
-      font-weight: 600;
+    .card-visual-icon {
+      font-size: 32px;
+      opacity: 0.6;
     }
     .card-body {
       padding: 16px;
+      flex: 1;
+    }
+    .card-tag {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 6px;
     }
     .card-desc {
-      font-size: 14px;
-      color: #8b8fa3;
+      font-size: 13px;
+      color: var(--text-2);
       line-height: 1.5;
-    }
-    .card-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 12px;
-    }
-    .tag {
-      font-size: 11px;
-      padding: 2px 8px;
-      background: rgba(0, 212, 170, 0.1);
-      color: #00d4aa;
-      border-radius: 4px;
     }
     .card-footer {
       padding: 12px 16px;
-      border-top: 1px solid rgba(255,255,255,0.06);
+      border-top: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-    .card-footer a {
-      color: #00d4aa;
-      text-decoration: none;
-      font-size: 13px;
-      font-weight: 500;
+    .card-footer span {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-3);
     }
-    .card-footer a:hover {
-      text-decoration: underline;
+    .card-footer .arrow {
+      color: var(--accent);
+      font-size: 16px;
+      transition: transform 0.2s;
     }
-    .section-title {
-      font-size: 20px;
-      font-weight: 600;
-      margin: 40px 0 20px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
+    .card:hover .arrow { transform: translateX(3px); }
+
+    /* Footer */
     .footer {
       text-align: center;
-      padding: 40px 24px;
-      color: #5c6078;
-      font-size: 13px;
+      padding: 24px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text-3);
     }
-    .footer a {
-      color: #00d4aa;
-      text-decoration: none;
-    }
-    .code-block {
-      background: #0f1117;
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 8px;
-      padding: 16px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 13px;
-      overflow-x: auto;
-      margin: 16px 0;
-    }
+    .footer a { color: var(--accent); text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
-  <div class="header">
-    <h1>CIGVis.js</h1>
-    <p>JavaScript/TypeScript 库，用于在浏览器中可视化多维地球物理数据</p>
+  <div class="hero">
+    <div class="hero-badge">v0.1.0</div>
+    <h1>cigvis <span>examples</span></h1>
+    <p>Interactive demonstrations of geophysical data visualization — 1D traces, 2D slices, 3D volumes, colormaps, and more.</p>
   </div>
 
   <div class="container">
-    <h2 class="section-title">示例</h2>
-
+    <div class="section-label">Visualization</div>
     <div class="grid">
-      <!-- 3D Volume -->
       <div class="card">
-        <div class="card-header">
-          <div class="card-category">3D</div>
-          <div class="card-title">体积切片</div>
-        </div>
-        <div class="card-body">
-          <div class="card-desc">
-            交互式 3D 体积可视化，支持正交切片、曲面和测井显示。
-            使用 Three.js/WebGL 渲染。
+        <a href="3d/volume.html">
+          <div class="card-visual">
+            <div class="card-visual-icon">🧊</div>
           </div>
-          <div class="card-tags">
-            <span class="tag">createSlices</span>
-            <span class="tag">createSurfaces</span>
-            <span class="tag">createWellLog</span>
+          <div class="card-body">
+            <div class="card-tag">3D</div>
+            <div class="card-title">Volume Slices</div>
+            <div class="card-desc">Interactive 3D volume with orthogonal slices, surfaces, and well logs.</div>
           </div>
-        </div>
-        <div class="card-footer">
-          <a href="3d/volume.html">查看示例 →</a>
-        </div>
+          <div class="card-footer">
+            <span>createSlices · createSurfaces</span>
+            <span class="arrow">→</span>
+          </div>
+        </a>
       </div>
 
-      <!-- 2D Plot -->
       <div class="card">
-        <div class="card-header">
-          <div class="card-category">2D</div>
-          <div class="card-title">图像显示</div>
-        </div>
-        <div class="card-body">
-          <div class="card-desc">
-            2D 图像可视化，支持多种色表、叠加层、标记和注释。
-            使用 Canvas API 渲染。
+        <a href="2d/plot2d.html">
+          <div class="card-visual">
+            <div class="card-visual-icon">📊</div>
           </div>
-          <div class="card-tags">
-            <span class="tag">plot2D</span>
-            <span class="tag">fgImageArgs</span>
-            <span class="tag">lineArgs</span>
+          <div class="card-body">
+            <div class="card-tag">2D</div>
+            <div class="card-title">Image Plot</div>
+            <div class="card-desc">Seismic slices with colormaps, overlays, markers, and subplots.</div>
           </div>
-        </div>
-        <div class="card-footer">
-          <a href="2d/plot2d.html">查看示例 →</a>
-        </div>
+          <div class="card-footer">
+            <span>plot2D · fgImageArgs</span>
+            <span class="arrow">→</span>
+          </div>
+        </a>
       </div>
 
-      <!-- 1D Plot -->
       <div class="card">
-        <div class="card-header">
-          <div class="card-category">1D</div>
-          <div class="card-title">道显示</div>
-        </div>
-        <div class="card-body">
-          <div class="card-desc">
-            1D 道数据可视化，支持单道、多道和填充面积显示。
-            适用于测井曲线和地震道显示。
+        <a href="1d/trace.html">
+          <div class="card-visual">
+            <div class="card-visual-icon">📈</div>
           </div>
-          <div class="card-tags">
-            <span class="tag">plot1D</span>
-            <span class="tag">plotMultiTraces</span>
-            <span class="tag">plotWithFill</span>
+          <div class="card-body">
+            <div class="card-tag">1D</div>
+            <div class="card-title">Trace Plot</div>
+            <div class="card-desc">Single trace, multi-trace section, and variable area fill display.</div>
           </div>
-        </div>
-        <div class="card-footer">
-          <a href="1d/trace.html">查看示例 →</a>
-        </div>
+          <div class="card-footer">
+            <span>plot1D · plotMultiTraces</span>
+            <span class="arrow">→</span>
+          </div>
+        </a>
       </div>
+    </div>
 
-      <!-- Colormap -->
+    <div class="section-label">Color</div>
+    <div class="grid">
       <div class="card">
-        <div class="card-header">
-          <div class="card-category">Color</div>
-          <div class="card-title">色表库</div>
-        </div>
-        <div class="card-body">
-          <div class="card-desc">
-            内置地球物理专用色表，包括 Petrel、seismic、viridis 等。
-            支持自定义色表和 alpha 混合。
+        <a href="colormap/colormaps.html">
+          <div class="card-visual">
+            <div class="card-visual-icon">🎨</div>
           </div>
-          <div class="card-tags">
-            <span class="tag">petrel</span>
-            <span class="tag">seismic</span>
-            <span class="tag">viridis</span>
+          <div class="card-body">
+            <div class="card-tag">Colormap</div>
+            <div class="card-title">Colormap Gallery</div>
+            <div class="card-desc">Browse built-in colormaps with live seismic and gradient preview.</div>
           </div>
-        </div>
-        <div class="card-footer">
-          <a href="colormap/colormaps.html">查看示例 →</a>
-        </div>
+          <div class="card-footer">
+            <span>petrel · seismic · viridis</span>
+            <span class="arrow">→</span>
+          </div>
+        </a>
       </div>
+    </div>
 
-      <!-- GUI -->
+    <div class="section-label">UI</div>
+    <div class="grid">
       <div class="card">
-        <div class="card-header">
-          <div class="card-category">UI</div>
-          <div class="card-title">Web Components</div>
-        </div>
-        <div class="card-body">
-          <div class="card-desc">
-            可复用的 Web Components，包括滑块、按钮、下拉框和侧边栏。
-            框架无关，可在任何项目中使用。
+        <a href="gui-test.html">
+          <div class="card-visual">
+            <div class="card-visual-icon">⚙️</div>
           </div>
-          <div class="card-tags">
-            <span class="tag">RangeSlider</span>
-            <span class="tag">Button</span>
-            <span class="tag">Sidebar</span>
+          <div class="card-body">
+            <div class="card-tag">GUI</div>
+            <div class="card-title">Web Components</div>
+            <div class="card-desc">Sliders, buttons, dropdowns, sidebar, and colormap picker.</div>
           </div>
-        </div>
-        <div class="card-footer">
-          <a href="gui-test.html">查看示例 →</a>
-        </div>
-      </div>
-
-      <!-- Quick Start -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-category">Start</div>
-          <div class="card-title">快速开始</div>
-        </div>
-        <div class="card-body">
-          <div class="card-code">
-            <pre class="code-block"><code>import * as cigvis from 'cigvis';
-
-const { data, shape } = await cigvis.io.readVolume(
-  'seismic.bin', [192, 200, 240]
-);
-
-const nodes = cigvis.createSlices({
-  data, shape,
-  pos: { z: 120 },
-  cmap: 'petrel',
-});
-
-cigvis.plot3D({ nodes, container: '#viewer' });</code></pre>
+          <div class="card-footer">
+            <span>RangeSlider · Sidebar · Button</span>
+            <span class="arrow">→</span>
           </div>
-        </div>
-        <div class="card-footer">
-          <a href="https://github.com/Iamtianyuyang/cigvis-js">GitHub →</a>
-        </div>
+        </a>
       </div>
     </div>
   </div>
 
   <div class="footer">
-    <p>
-      CIGVis.js - 移植自 <a href="https://github.com/JintaoLee-Roger/cigvis">Python cigvis</a>
-      · MIT License
-      · <a href="https://github.com/Iamtianyuyang/cigvis-js">GitHub</a>
-    </p>
+    <a href="https://github.com/Iamtianyuyang/cigvis-js">GitHub</a> ·
+    Ported from <a href="https://github.com/JintaoLee-Roger/cigvis">Python cigvis</a> ·
+    MIT License
   </div>
 </body>
 </html>
