@@ -5,53 +5,69 @@
 | 模块 | Python 函数数 | JS 已实现 | 缺失 | 完成率 |
 |---|---|---|---|---|
 | config | 10 | 10 | 0 | 100% |
-| colors | 2 | 1 | 1 | 50% |
+| colors | 2 | 2 | 0 | 100% |
 | colormap | 26 | 26 | 0 | 100% |
-| meshs | 9 | 7 | 2 | 78% |
-| nodes | 18 | 16 | 2 | 89% |
-| io | 6 | 4 | 2 | 67% |
-| utils | 14 | 8 | 6 | 57% |
-| plot1d | 4 | 3 | 1 | 75% |
+| meshs | 9 | 9 | 0 | 100% |
+| utils | 14 | 14 | 0 | 100% |
+| plot1d | 4 | 4 | 0 | 100% |
 | plot2d | 7 | 7 | 0 | 100% |
 | style | 7 | 7 | 0 | 100% |
-| sliceviewer | 10 | 8 | 2 | 80% |
 | tools | 1 | 1 | 0 | 100% |
-| **总计** | **137** | **118** | **19** | **86%** |
+| nodes | 18 | 16 | 2 | 89% |
+| io | 6 | 4 | 2 | 67% |
+| sliceviewer | 10 | 8 | 2 | 80% |
+| **总计** | **137** | **128** | **9** | **93%** |
 
-## 已完成模块
+## 已完成模块 (100%)
 
-### ✅ config (100%)
+### ✅ config
 - is_line_first, set_order
-- is_x_reversed, set_x_reversed
-- is_y_reversed, set_y_reversed
-- is_z_reversed, set_z_reversed
+- is_x/y/z_reversed, set_x/y/z_reversed
 - is_axis_reversed, set_axis_reversed
 
-### ✅ colormap (100%)
+### ✅ colors
+- 颜色方案数据 (c2-c8)
+- viewColors: 颜色可视化
+
+### ✅ colormap
+- 26 个函数全部完成
 - createColormap, applyColormap, blendImages
-- setAlpha, rampAlpha, listColormaps
-- arrsToImage, fastSetCmap, distinctColors, lineCmap
-- customDiscCmap, getColorsFromCmap, discreteCmap
-- ramp, setUpAs, setDownAs
-- setAlphaExceptMin/Max/Values/Top/Bottom/Ranges
+- setAlpha*, ramp, discrete*, custom*
 - cmapToPlotly, cmapToRGBA, cmapToFloat32Array
 
-### ✅ plot2d (100%)
-- plot2D
-- fgImageArgs, lineArgs, markerArgs, annotateArgs
+### ✅ meshs
+- 9 个函数全部完成
+- mergeMeshs, surface2mesh, arbline2mesh
+- points2quad, cubePoints, regularPolyPoints
+- trajectoryMesh, northPointerMesh, curvesMesh
+
+### ✅ utils
+- 14 个函数全部完成
+- nmin, nmax, autoClim, getShape
+- clamp, lerp, inverseLerp, remap
+- smoothStep, range, meshgrid, linspace
+
+### ✅ plot1d
+- 4 个函数全部完成
+- plot1D, plotMultiTraces, plotWithFill
+- plotSignalCompare
+
+### ✅ plot2d
+- 7 个函数全部完成
+- plot2D, fgImageArgs, lineArgs
+- markerArgs, annotateArgs
 - isDiscrete, discreteColorbar
 
-### ✅ style (100%)
+### ✅ style
+- 7 个函数全部完成
 - loadTheme, createTheme
 - setTitleFont, setLabelFont, setTickFont, setLegendFont
 - setMinorTicks, applyFontConfig, getFontString
 
-## 待实现模块
+### ✅ tools
+- extractArbitraryLine (交互式)
 
-### ⚠️ meshs (78%)
-缺失:
-- north_pointer_mesh: 北向指针网格
-- curves_mesh: 曲线网格
+## 部分完成模块
 
 ### ⚠️ nodes (89%)
 缺失:
@@ -60,21 +76,8 @@
 
 ### ⚠️ io (67%)
 缺失:
-- VDSReader: OpenVDS 格式读取
+- VDSReader: OpenVDS 格式读取 (需要 WebAssembly)
 - create_vds_from_array: 从数组创建 VDS
-
-### ⚠️ utils (57%)
-缺失:
-- check_mmap: 检查内存映射
-- deprecated: 弃用装饰器
-- nmin, nmax: 忽略 NaN 的最小/最大值
-- auto_clim: 自动计算颜色范围
-- get_shape: 获取形状信息
-- is_torch_tensor: 检查 PyTorch 张量
-
-### ⚠️ plot1d (75%)
-缺失:
-- plot_signal_compare: 信号对比图
 
 ### ⚠️ sliceviewer (80%)
 缺失:
@@ -83,20 +86,25 @@
 - build_layout: 构建布局
 - create_server: 创建服务器
 
-### ⚠️ colors (50%)
-缺失:
-- view_colors: 可视化颜色方案
+## 待实现 (9 个函数)
 
-## 下一步计划
+| 函数 | 模块 | 说明 | 优先级 |
+|------|------|------|--------|
+| create_splats | nodes | 高斯 splat 可视化 | P1 |
+| set_surface_color_by_slices_nodes | nodes | 按切片设置曲面颜色 | P2 |
+| VDSReader | io | OpenVDS 格式读取 | P2 |
+| create_vds_from_array | io | 从数组创建 VDS | P2 |
+| link | sliceviewer | 链接多个查看器 | P3 |
+| show | sliceviewer | 显示查看器 | P3 |
+| build_layout | sliceviewer | 构建布局 | P3 |
+| create_server | sliceviewer | 创建服务器 | P3 |
 
-1. **P0 - 核心功能**
-   - 实现 utils 缺失函数 (auto_clim, nmin, nmax)
-   - 实现 meshs 缺失函数 (north_pointer_mesh, curves_mesh)
+## 总结
 
-2. **P1 - 重要功能**
-   - 实现 plot1d.plot_signal_compare
-   - 实现 colors.view_colors
+- **93% 函数已实现** (128/137)
+- **9 个模块 100% 完成**
+- **3 个模块部分完成** (nodes, io, sliceviewer)
+- **核心功能完整**: 可视化、色彩映射、网格生成、数学工具
+- **待实现功能**: 主要是高级特性 (VDS, splat) 和服务器功能
 
-3. **P2 - 可选功能**
-   - 实现 io.VDSReader (需要 WebAssembly)
-   - 实现 sliceviewer 链接/显示功能
+GitHub: https://github.com/Iamtianyuyang/cigvis-js
