@@ -46,7 +46,7 @@
     .plot-item { flex: 1; min-width: 200px; }
 
     canvas {
-      display: block; width: 100%;
+      display: block;
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: 8px;
@@ -101,6 +101,19 @@
   </div>
 
   <script>
+    const DPR = window.devicePixelRatio || 1;
+
+    function setupCanvas(id, logicalW, logicalH) {
+      const canvas = document.getElementById(id);
+      canvas.width = logicalW * DPR;
+      canvas.height = logicalH * DPR;
+      canvas.style.width = logicalW + 'px';
+      canvas.style.height = logicalH + 'px';
+      const ctx = canvas.getContext('2d');
+      ctx.scale(DPR, DPR);
+      return ctx;
+    }
+
     function ricker(n, dt, f) {
       const d = new Float32Array(n);
       for (let i = 0; i < n; i++) {
@@ -168,9 +181,9 @@
     }
 
     function plotTrace(id, data, opts={}) {
-      const c = document.getElementById(id);
-      const ctx = c.getContext('2d');
-      const w = c.width, h = c.height;
+      const lw = 800, lh = 400;
+      const ctx = setupCanvas(id, lw, lh);
+      const w = lw, h = lh;
       const m = {l:45, r:15, t:15, b:35};
       const pw = w-m.l-m.r, ph = h-m.t-m.b;
 
@@ -204,9 +217,9 @@
     }
 
     function plotMulti(id, n, ns) {
-      const c = document.getElementById(id);
-      const ctx = c.getContext('2d');
-      const w = c.width, h = c.height;
+      const lw = 800, lh = 400;
+      const ctx = setupCanvas(id, lw, lh);
+      const w = lw, h = lh;
       const m = {l:45, r:15, t:15, b:35};
       const pw = w-m.l-m.r, ph = h-m.t-m.b;
 
@@ -248,9 +261,9 @@
     }
 
     function plotFill(id, data, type) {
-      const c = document.getElementById(id);
-      const ctx = c.getContext('2d');
-      const w = c.width, h = c.height;
+      const lw = 300, lh = 400;
+      const ctx = setupCanvas(id, lw, lh);
+      const w = lw, h = lh;
       const m = {l:35, r:10, t:15, b:30};
       const pw = w-m.l-m.r, ph = h-m.t-m.b;
       const mid = m.l+pw/2;
@@ -300,9 +313,9 @@
 
     function plotWavelet(id, freq) {
       const d = ricker(100, 4, freq);
-      const c = document.getElementById(id);
-      const ctx = c.getContext('2d');
-      const w = c.width, h = c.height;
+      const lw = 300, lh = 180;
+      const ctx = setupCanvas(id, lw, lh);
+      const w = lw, h = lh;
       const m = {l:30, r:10, t:15, b:25};
       const pw = w-m.l-m.r, ph = h-m.t-m.b;
       const mid = m.t+ph/2;

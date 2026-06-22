@@ -115,13 +115,18 @@
 
     function renderPreview(name) {
       const c = cmaps[name].c;
+      const DPR = window.devicePixelRatio || 1;
 
       // Seismic
       const sc = document.getElementById('prev-seis');
+      const sw = 500, sh = 250;
+      sc.width = sw * DPR; sc.height = sh * DPR;
+      sc.style.width = sw + 'px'; sc.style.height = sh + 'px';
       const sx = sc.getContext('2d');
-      for (let y = 0; y < sc.height; y++) {
-        for (let x = 0; x < sc.width; x++) {
-          const t = x / sc.width;
+      sx.scale(DPR, DPR);
+      for (let y = 0; y < sh; y++) {
+        for (let x = 0; x < sw; x++) {
+          const t = x / sw;
           const v = Math.sin(t * Math.PI * 8 + y * 0.05) * Math.exp(-t * 3);
           const [r, g, b] = interp(c, (v+1)/2);
           sx.fillStyle = `rgb(${r},${g},${b})`;
@@ -131,11 +136,15 @@
 
       // Gradient
       const gc = document.getElementById('prev-grad');
+      const gw = 500, gh = 50;
+      gc.width = gw * DPR; gc.height = gh * DPR;
+      gc.style.width = gw + 'px'; gc.style.height = gh + 'px';
       const gx = gc.getContext('2d');
-      for (let x = 0; x < gc.width; x++) {
-        const [r, g, b] = interp(c, x / gc.width);
+      gx.scale(DPR, DPR);
+      for (let x = 0; x < gw; x++) {
+        const [r, g, b] = interp(c, x / gw);
         gx.fillStyle = `rgb(${r},${g},${b})`;
-        gx.fillRect(x, 0, 1, gc.height);
+        gx.fillRect(x, 0, 1, gh);
       }
     }
 
