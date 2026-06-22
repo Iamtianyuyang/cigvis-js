@@ -254,7 +254,7 @@
       const lw = 300, lh = 400;
       const ctx = setupCanvas(id, lw, lh);
       const w = lw, h = lh;
-      const m = {l:38, r:10, t:15, b:30};
+      const m = {l:38, r:10, t:15, b:34};
       const pw = w-m.l-m.r, ph = h-m.t-m.b;
       const mid = m.l+pw/2;
 
@@ -263,7 +263,8 @@
       let mn=Infinity, mx=-Infinity;
       for(let i=0;i<data.length;i++){if(data[i]<mn)mn=data[i];if(data[i]>mx)mx=data[i];}
 
-      // Axis (time on Y, no X scale — amplitude is folded around center)
+      // Axis: time on Y, amplitude on X (the line/fill are plotted at
+      // x = m.l + ((data[i]-mn)/(mx-mn))*pw, so ticks use the same mapping).
       drawAxes(ctx, m, pw, ph);
       ctx.fillStyle = '#000000';
       ctx.font = '10px Times New Roman';
@@ -281,6 +282,17 @@
       ctx.textAlign = 'center';
       ctx.fillText('Time (s)', 0, 0);
       ctx.restore();
+
+      ctx.font = '10px Times New Roman';
+      ctx.textAlign = 'center';
+      for (let i = 0; i <= 4; i++) {
+        const x = m.l + (i/4)*pw;
+        const v = (mn + (i/4)*(mx-mn)).toFixed(2);
+        ctx.fillText(v, x, m.t+ph+14);
+        ctx.beginPath(); ctx.moveTo(x, m.t+ph); ctx.lineTo(x, m.t+ph+3); ctx.stroke();
+      }
+      ctx.font = '11px Times New Roman';
+      ctx.fillText('Amplitude', m.l+pw/2, m.t+ph+28);
 
       // Zero line
       ctx.strokeStyle='rgba(0,0,0,0.1)'; ctx.lineWidth=0.5;
