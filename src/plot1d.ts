@@ -653,6 +653,167 @@ export function plotWithFill(options: PlotWithFillOptions): HTMLCanvasElement {
 }
 
 // ============================================================================
+// Signal comparison plot (ported from mpl1dplot.py)
+// ============================================================================
+
+/**
+ * Plot signal comparison for seismic data.
+ * Ported from cigvis Python: plot_signal_compare
+ *
+ * @param data - 3D array [nStations, 3, nSamples] (3 components)
+ * @param options - Optional parameters
+ * @returns Canvas element
+ *
+ * @example
+ * ```ts
+ * const canvas = plotSignalCompare(seismicData, {
+ *   ntstart: 0,
+ *   ntend: 6144,
+ * });
+ * ```
+ */
+export function plotSignalCompare(
+  data: Float32Array,
+  shape: [number, number, number],
+  options: {
+    offsetDf?: Float32Array;
+    offsetIndex?: Uint32Array;
+    withOffset?: boolean;
+    ntstart?: number;
+    ntend?: number;
+    width?: number;
+    height?: number;
+  } = {}
+): HTMLCanvasElement {
+  const {
+    offsetDf,
+    offsetIndex,
+    withOffset = false,
+    ntstart = 0,
+    ntend = 6144,
+    width = 800,
+    height = 400,
+  } = options;
+
+  const [nStations, nComponents, nSamples] = shape;
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d')!;
+
+  // Clear
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, width, height);
+
+  // Plot margins
+  const margin = { left: 60, right: 20, top: 20, bottom: 40 };
+  const plotW = width - margin.left - margin.right;
+  const plotH = height - margin.top - margin.bottom;
+
+  // Calculate scale
+  const scale = 10;
+  const timeRange = ntend - ntstart;
+  const dt = 0.01;
+
+  // Draw traces
+  ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+  ctx.lineWidth = 0.5;
+
+  if (!withOffset) {
+    // Without offset
+    for (let j = 0; j < nStations; j++) {
+      for (let comp = 0; comp < nComponents; comp++) {
+        ctx.beginPath();
+        for (let i = 0; i < nSamples; i++) {
+          const t = ntstart / 100 + i * dt;
+          const x = margin.left + (t / (ntend / 100)) * plotW;
+          const value = data[j * nComponents * nSamples + comp * nSamples + i];
+          const y = margin.top + (j * scale + value) * (plotH / (nStations * scale));
+
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+    }
+  } else {
+    // With offset
+    if (!offsetDf || !offsetIndex) {
+      throw new Error('offsetDf and offsetIndex required when withOffset=true');
+    }
+
+    for (let j = 0; j < nStations; j++) {
+      const idx = offsetIndex[j];
+      const offset = offsetDf[j];
+
+      for (let comp = 0; comp < nComponents; comp++) {
+        ctx.beginPath();
+        for (let i = 0; i < nSamples; i++) {
+          const t = ntstart / 100 + i * dt;
+          const x = margin.left + (t / (ntend / 100)) * plotW;
+          const value = data[idx * nComponents * nSamples + comp * nSamples + i];
+          const y = margin.top + (offset + value) * (plotH / (offsetDf[nStations - 1] - offsetDf[0]));
+
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+    }
+  }
+
+  // Draw axes
+  ctx.strokeStyle = '#000000';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(margin.left, margin.top);
+  ctx.lineTo(margin.left, height - margin.bottom);
+  ctx.lineTo(width - margin.right, height - margin.bottom);
+  ctx.stroke();
+
+  // X axis labels
+  ctx.fillStyle = '#000000';
+  ctx.font = '12px Times New Roman';
+  ctx.textAlign = 'center';
+  ctx.fillText('Time (s)', width / 2, height - 5);
+
+  // X ticks
+  const xTicks = [];
+  for (let t = 0; t <= 64; t += 5) {
+    xTicks.push(t);
+  }
+  for (const t of xTicks) {
+    const x = margin.left + (t / 64) * plotW;
+    ctx.beginPath();
+    ctx.moveTo(x, height - margin.bottom);
+    ctx.lineTo(x, height - margin.bottom + 5);
+    ctx.stroke();
+    ctx.fillText(t.toString(), x, height - margin.bottom + 15);
+  }
+
+  // Y axis label
+  ctx.save();
+  ctx.translate(15, margin.top + plotH / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.textAlign = 'center';
+  ctx.fillText(withOffset ? 'Offset (km)' : 'Station', 0, 0);
+  ctx.restore();
+
+  // Minor ticks
+  ctx.strokeStyle = '#cccccc';
+  ctx.lineWidth = 0.5;
+  for (let i = 0; i < nStations; i++) {
+    const y = margin.top + i * scale * (plotH / (nStations * scale));
+    ctx.beginPath();
+    ctx.moveTo(margin.left - 2, y);
+    ctx.lineTo(margin.left, y);
+    ctx.stroke();
+  }
+
+  return canvas;
+}
+
+// ============================================================================
 // Agent interface
 // ============================================================================
 
@@ -664,5 +825,6 @@ export function createPlot1DAgent() {
     plot1D,
     plotMultiTraces,
     plotWithFill,
+    plotSignalCompare,
   };
 }
