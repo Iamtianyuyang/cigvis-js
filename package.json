@@ -1,0 +1,74 @@
+{
+  "name": "cigvis",
+  "version": "0.1.0",
+  "description": "CIGVis - A tool for visualizing multidimensional geophysical data in the browser",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./colormap": {
+      "types": "./dist/colormap/index.d.ts",
+      "import": "./dist/colormap/index.mjs",
+      "require": "./dist/colormap/index.js"
+    },
+    "./nodes": {
+      "types": "./dist/nodes/index.d.ts",
+      "import": "./dist/nodes/index.mjs",
+      "require": "./dist/nodes/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src --ext .ts",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "geophysics",
+    "seismic",
+    "visualization",
+    "3d",
+    "volume",
+    "slice",
+    "well-log",
+    "colormap",
+    "three.js",
+    "webgl"
+  ],
+  "author": "tianyy",
+  "license": "MIT",
+  "dependencies": {
+    "three": "^0.170.0"
+  },
+  "peerDependencies": {
+    "plotly.js-dist-min": "^2.35.0"
+  },
+  "peerDependenciesMeta": {
+    "plotly.js-dist-min": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/three": "^0.170.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.5.0",
+    "vitest": "^2.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tianyy/cigvis-js"
+  },
+  "homepage": "https://github.com/tianyy/cigvis-js"
+}
