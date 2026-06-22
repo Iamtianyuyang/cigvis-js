@@ -193,14 +193,6 @@ function applyColormapToData(
   return imageData;
 }
 
-/**
- * Check if data is discrete (few unique values).
- */
-function isDiscrete(data: Float32Array): boolean {
-  const unique = new Set(data);
-  return unique.size <= 20;
-}
-
 // ============================================================================
 // Main plot function
 // ============================================================================
@@ -657,6 +649,205 @@ function drawLegend(
 }
 
 // ============================================================================
+// Helper functions (ported from mpl2dplot.py)
+// ============================================================================
+
+/**
+ * Create foreground image arguments.
+ * Ported from cigvis Python: fg_image_args
+ */
+export function fgImageArgs(
+  data: Float32Array,
+  width: number,
+  height: number,
+  options: {
+    cmap?: string;
+    clim?: [number, number];
+    alpha?: number;
+    interpolation?: 'nearest' | 'bicubic';
+    showColorbar?: boolean;
+  } = {}
+): ImageForeground {
+  const {
+    cmap = 'jet',
+    clim,
+    alpha = 1.0,
+    interpolation = 'bicubic',
+  } = options;
+
+  // Compute clim if not provided
+  const finalClim: [number, number] = clim || (() => {
+    let min = Infinity;
+    let max = -Infinity;
+    for (let i = 0; i < data.length; i++) {
+      if (data[i] < min) min = data[i];
+      if (data[i] > max) max = data[i];
+    }
+    return [min, max] as [number, number];
+  })();
+
+  return {
+    type: 'image',
+    data,
+    width,
+    height,
+    cmap,
+    clim: finalClim,
+    alpha,
+    interpolation,
+  };
+}
+
+/**
+ * Create line arguments.
+ * Ported from cigvis Python: line_args
+ */
+export function lineArgs(
+  x: Float32Array,
+  y: Float32Array,
+  options: {
+    color?: string;
+    alpha?: number;
+    lineWidth?: number;
+    label?: string;
+    marker?: string;
+    lineStyle?: string;
+    markerSize?: number;
+  } = {}
+): LineForeground {
+  const {
+    color = '#1f77b4',
+    alpha = 1.0,
+    lineWidth = 1,
+    label = '',
+    marker = '',
+    lineStyle = 'solid',
+    markerSize = 6,
+  } = options;
+
+  return {
+    type: 'line',
+    x,
+    y,
+    color,
+    alpha,
+    lineWidth,
+    label,
+    marker,
+    lineStyle,
+    markerSize,
+  };
+}
+
+/**
+ * Create marker arguments.
+ * Ported from cigvis Python: marker_args
+ */
+export function markerArgs(
+  x: Float32Array,
+  y: Float32Array,
+  options: {
+    size?: number;
+    color?: string | Float32Array;
+    marker?: string;
+    cmap?: string;
+    vmin?: number;
+    vmax?: number;
+    alpha?: number;
+  } = {}
+): MarkerForeground {
+  const {
+    size = 20,
+    color = '#1f77b4',
+    marker = 'o',
+    cmap = 'jet',
+    alpha = 1.0,
+  } = options;
+
+  return {
+    type: 'marker',
+    x,
+    y,
+    size,
+    color,
+    marker,
+    cmap,
+    alpha,
+  };
+}
+
+/**
+ * Create annotate arguments.
+ * Ported from cigvis Python: annotate_args
+ */
+export function annotateArgs(
+  x: Float32Array,
+  y: Float32Array,
+  text: string[],
+  options: {
+    offsetX?: number;
+    offsetY?: number;
+  } = {}
+): AnnotateForeground {
+  const { offsetX = 1, offsetY = 1 } = options;
+
+  return {
+    type: 'annotate',
+    x,
+    y,
+    text,
+    offsetX,
+    offsetY,
+  };
+}
+
+/**
+ * Check if data is discrete (few unique values).
+ * Ported from cigvis Python: _check_is_disceret
+ */
+export function isDiscrete(data: Float32Array, threshold: number = 20): boolean {
+  const sampleSize = Math.max(1, Math.floor(data.length * 0.01));
+  const step = Math.max(1, Math.floor(data.length / sampleSize));
+
+  const unique = new Set<number>();
+  for (let i = 0; i < data.length; i += step) {
+    unique.add(data[i]);
+    if (unique.size > threshold) return false;
+  }
+
+  return true;
+}
+
+/**
+ * Create discrete colorbar data.
+ * Ported from cigvis Python: discrete_cbar
+ */
+export function discreteColorbar(
+  data: Float32Array,
+  cmap: string,
+  clim: [number, number],
+  options: {
+    tickLabels?: string[];
+    removeTransparent?: boolean;
+  } = {}
+): { values: number[]; ticks: number[]; tickLabels: string[] } {
+  const { tickLabels, removeTransparent = true } = options;
+
+  if (!isDiscrete(data)) {
+    throw new Error('Data is not discrete. Use discrete=false or provide discrete data.');
+  }
+
+  const uniqueValues = Array.from(new Set(data)).sort((a, b) => a - b);
+  const ticks = uniqueValues.map((_, i) => i);
+
+  return {
+    values: uniqueValues,
+    ticks,
+    tickLabels: tickLabels || uniqueValues.map(v => v.toString()),
+  };
+}
+
+// ============================================================================
 // Agent interface
 // ============================================================================
 
@@ -666,5 +857,11 @@ function drawLegend(
 export function createPlot2DAgent() {
   return {
     plot2D,
+    fgImageArgs,
+    lineArgs,
+    markerArgs,
+    annotateArgs,
+    isDiscrete,
+    discreteColorbar,
   };
 }
