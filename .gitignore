@@ -16,6 +16,7 @@ cigvis/
 
 # Agents
 .agents/
+skills-lock.json
 
 # Documentation
 docs/
