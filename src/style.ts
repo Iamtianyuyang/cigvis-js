@@ -156,10 +156,12 @@ export function loadTheme(themeName: string | ThemeConfig): StyleContext {
     : themeName;
 
   let savedState: Partial<CanvasRenderingContext2D> = {};
+  let currentCtx: CanvasRenderingContext2D | null = null;
 
   return {
     apply(ctx: CanvasRenderingContext2D) {
       // Save current state
+      currentCtx = ctx;
       savedState = {
         font: ctx.font,
         strokeStyle: ctx.strokeStyle,
@@ -176,11 +178,12 @@ export function loadTheme(themeName: string | ThemeConfig): StyleContext {
 
     restore() {
       // Restore saved state
-      if (savedState.font) ctx.font = savedState.font;
-      if (savedState.strokeStyle) ctx.strokeStyle = savedState.strokeStyle;
-      if (savedState.fillStyle) ctx.fillStyle = savedState.fillStyle;
-      if (savedState.lineWidth) ctx.lineWidth = savedState.lineWidth;
-      if (savedState.globalAlpha !== undefined) ctx.globalAlpha = savedState.globalAlpha;
+      if (!currentCtx) return;
+      if (savedState.font) currentCtx.font = savedState.font;
+      if (savedState.strokeStyle) currentCtx.strokeStyle = savedState.strokeStyle;
+      if (savedState.fillStyle) currentCtx.fillStyle = savedState.fillStyle;
+      if (savedState.lineWidth) currentCtx.lineWidth = savedState.lineWidth;
+      if (savedState.globalAlpha !== undefined) currentCtx.globalAlpha = savedState.globalAlpha;
     },
   };
 }

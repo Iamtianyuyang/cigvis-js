@@ -8,14 +8,24 @@
  */
 
 // ============================================================================
-// Component exports
+// Component imports
 // ============================================================================
 
-export { ColormapPicker } from './colormap-picker';
-export type { ColormapPickerOptions, ColormapChangeEvent } from './colormap-picker';
+import { ColormapPicker as _ColormapPicker } from './colormap-picker';
+import type { ColormapPickerOptions, ColormapChangeEvent } from './colormap-picker';
 
-export { Sidebar, SidebarSection } from './sidebar';
-export type { SidebarSection as SidebarSectionType, SidebarOptions } from './sidebar';
+import { Sidebar as _Sidebar, SidebarSection as _SidebarSection } from './sidebar';
+import type { SidebarSection as SidebarSectionType, SidebarOptions } from './sidebar';
+
+// ============================================================================
+// Re-exports
+// ============================================================================
+
+export const ColormapPicker = _ColormapPicker;
+export const Sidebar = _Sidebar;
+export const SidebarSection = _SidebarSection;
+
+export type { ColormapPickerOptions, ColormapChangeEvent, SidebarSectionType, SidebarOptions };
 
 // ============================================================================
 // Additional components

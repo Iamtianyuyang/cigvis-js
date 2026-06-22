@@ -30,6 +30,15 @@
 // Core types
 export * from './types';
 
+// Configuration
+export * from './config';
+
+// Colors
+export * from './colors';
+
+// Style/Themes
+export * from './style';
+
 // Colormap module
 export * from './colormap';
 
@@ -69,6 +78,27 @@ export * as io from './io';
 // Math utilities
 export * as utils from './utils';
 
+// 1D plotting
+export * as plot1d from './plot1d';
+
+// 2D plotting
+export * as plot2d from './plot2d';
+
+// Plotly integration
+export * as plotly from './plotly';
+
+// Viser integration
+export * as viser from './viser';
+
+// Slice viewer
+export * as sliceviewer from './sliceviewer';
+
+// Interactive tools
+export * as tools from './tools';
+
+// GUI Web Components
+export * as gui from './gui';
+
 // Renderer
 export { VolumeRenderer } from './renderer/volume-renderer';
 export type { RendererOptions } from './renderer/volume-renderer';
@@ -102,8 +132,30 @@ import { plot3D as _plot3D, createViewer as _createViewer, quickPlot as _quickPl
 import * as _io from './io';
 import * as _utils from './utils';
 import * as _colormap from './colormap';
+import * as _config from './config';
+import * as _colors from './colors';
+import * as _style from './style';
+import * as _plot1d from './plot1d';
+import * as _plot2d from './plot2d';
+import * as _plotly from './plotly';
+import * as _viser from './viser';
+import * as _sliceviewer from './sliceviewer';
+import * as _tools from './tools';
+import * as _gui from './gui';
 
 export const cigvis = {
+  // Configuration
+  config: _config,
+
+  // Colors
+  colors: _colors,
+
+  // Style/Themes
+  style: _style,
+
+  // Colormap
+  colormap: _colormap,
+
   // Node creation
   createSlices: _createSlices,
   addMask: _addMask,
@@ -128,7 +180,13 @@ export const cigvis = {
   // Sub-modules
   io: _io,
   utils: _utils,
-  colormap: _colormap,
+  plot1d: _plot1d,
+  plot2d: _plot2d,
+  plotly: _plotly,
+  viser: _viser,
+  sliceviewer: _sliceviewer,
+  tools: _tools,
+  gui: _gui,
 
   // Version
   VERSION,

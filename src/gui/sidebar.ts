@@ -11,8 +11,8 @@
 // Types
 // ============================================================================
 
-/** Sidebar section */
-export interface SidebarSection {
+/** Sidebar section configuration */
+export interface SidebarSectionConfig {
   /** Section title */
   title: string;
   /** Section content */
@@ -53,7 +53,7 @@ export class Sidebar extends HTMLElement {
   private _width: number = 250;
   private _position: 'left' | 'right' = 'right';
   private _backgroundColor: string = '#f5f5f5';
-  private _sections: SidebarSection[] = [];
+  private _sections: SidebarSectionConfig[] = [];
   private _container: HTMLDivElement | null = null;
 
   static get observedAttributes() {
@@ -103,7 +103,7 @@ export class Sidebar extends HTMLElement {
   }
 
   /** Add a section */
-  addSection(section: SidebarSection): void {
+  addSection(section: SidebarSectionConfig): void {
     this._sections.push(section);
     this.render();
   }
