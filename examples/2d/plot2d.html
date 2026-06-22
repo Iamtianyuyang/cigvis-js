@@ -99,7 +99,7 @@
     function draw2D(canvasId, data, dataW, dataH, opts = {}) {
       const { cmap = gray, clim: userClim, plotW = 500, showColorbar = true } = opts;
 
-      const m = { l: 50, r: showColorbar ? 80 : 15, t: 20, b: 40 };
+      const m = { l: 50, r: showColorbar ? 122 : 15, t: 20, b: 40 };
       const plotH = Math.round(plotW * (dataH / dataW));
       const cbarW = 16;
       const cbarGap = 30;
@@ -195,67 +195,22 @@
 
       // Colorbar
       if (showColorbar) {
-        const cbarX = m.l + plotW + cbarGap;
-        const cbarY = m.t;
-        const cbarH = plotH;
-
-        for (let y = 0; y < cbarH; y++) {
-          const t = 1 - y / (cbarH - 1);
-          const [r, g, b] = cmap(t);
-          ctx.fillStyle = `rgb(${r},${g},${b})`;
-          ctx.fillRect(cbarX, cbarY + y, cbarW, 1);
-        }
-
-        ctx.strokeStyle = '#000000';
-        ctx.lineWidth = 0.5;
-        ctx.strokeRect(cbarX, cbarY, cbarW, cbarH);
-
-        ctx.fillStyle = '#000000';
-        ctx.font = '10px Times New Roman';
-        ctx.textAlign = 'left';
-        for (let i = 0; i <= 5; i++) {
-          const t = i / 5;
-          const y = cbarY + t * cbarH;
-          const value = (vmin + t * range).toFixed(2);
-          ctx.beginPath();
-          ctx.moveTo(cbarX + cbarW, y);
-          ctx.lineTo(cbarX + cbarW + 4, y);
-          ctx.stroke();
-          ctx.fillText(value, cbarX + cbarW + 8, y + 3);
-        }
-
-        ctx.save();
-        ctx.translate(cbarX + cbarW + 58, cbarY + cbarH / 2);
-        ctx.rotate(-Math.PI / 2);
-        ctx.font = '12px Times New Roman';
-        ctx.textAlign = 'center';
-        ctx.fillText('Amplitude', 0, 0);
-        ctx.restore();
+        drawColorbar(ctx, m.l + plotW + cbarGap, m.t, plotH, cmap, vmin, vmax);
       }
     }
 
-    // Standalone colorbar, shared by a row of panels that use the same clim.
-    function drawSharedColorbar(canvasId, cmap, vmin, vmax, height) {
-      const cbarW = 16, m = { t: 20, b: 40 };
-      const totalW = 90, totalH = m.t + height + m.b;
-      const canvas = document.getElementById(canvasId);
-      canvas.width = totalW * DPR;
-      canvas.height = totalH * DPR;
-      canvas.style.width = totalW + 'px';
-      canvas.style.height = totalH + 'px';
-      const ctx = canvas.getContext('2d');
-      ctx.scale(DPR, DPR);
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, totalW, totalH);
-
+    // Vertical colorbar: bar + tick labels + rotated "Amplitude" axis label.
+    function drawColorbar(ctx, cbarX, cbarY, height, cmap, vmin, vmax) {
+      const cbarW = 16;
       const range = vmax - vmin || 1;
-      const cbarX = 8, cbarY = m.t;
+
       for (let y = 0; y < height; y++) {
         const t = 1 - y / (height - 1);
         const [r, g, b] = cmap(t);
         ctx.fillStyle = `rgb(${r},${g},${b})`;
         ctx.fillRect(cbarX, cbarY + y, cbarW, 1);
       }
+
       ctx.strokeStyle = '#000000';
       ctx.lineWidth = 0.5;
       ctx.strokeRect(cbarX, cbarY, cbarW, height);
@@ -275,12 +230,29 @@
       }
 
       ctx.save();
-      ctx.translate(totalW - 10, cbarY + height / 2);
+      ctx.translate(cbarX + cbarW + 58, cbarY + height / 2);
       ctx.rotate(-Math.PI / 2);
       ctx.font = '12px Times New Roman';
       ctx.textAlign = 'center';
       ctx.fillText('Amplitude', 0, 0);
       ctx.restore();
+    }
+
+    // Standalone colorbar canvas, shared by a row of panels that use the same clim.
+    function drawSharedColorbar(canvasId, cmap, vmin, vmax, height) {
+      const m = { t: 20, b: 40 };
+      const totalW = 95, totalH = m.t + height + m.b;
+      const canvas = document.getElementById(canvasId);
+      canvas.width = totalW * DPR;
+      canvas.height = totalH * DPR;
+      canvas.style.width = totalW + 'px';
+      canvas.style.height = totalH + 'px';
+      const ctx = canvas.getContext('2d');
+      ctx.scale(DPR, DPR);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, totalW, totalH);
+
+      drawColorbar(ctx, 8, m.t, height, cmap, vmin, vmax);
     }
 
     // Fault overlay — clamped to plot area

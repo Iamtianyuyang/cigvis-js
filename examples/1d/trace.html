@@ -123,21 +123,25 @@
       ctx.stroke();
     }
 
-    function drawTicks(ctx, m, pw, ph, nx, ny, lx, ly) {
+    // xRange/yRange are [min, max] for the horizontal/vertical axis respectively —
+    // each tick is positioned by fraction of pw/ph and labeled by the matching
+    // fraction of the data range, so axes with a non-zero minimum (e.g. amplitude) label correctly.
+    function drawTicks(ctx, m, pw, ph, nx, ny, xRange, yRange, xFmt = v => Math.round(v).toString(), yFmt = v => Math.round(v).toString()) {
+      const [xmin, xmax] = xRange, [ymin, ymax] = yRange;
       ctx.fillStyle = '#000000';
       ctx.font = '10px Times New Roman';
 
       ctx.textAlign = 'center';
       for (let i = 0; i <= nx; i++) {
         const x = m.l + (i/nx)*pw;
-        ctx.fillText(Math.round(i/nx*lx).toString(), x, m.t+ph+14);
+        ctx.fillText(xFmt(xmin + (i/nx)*(xmax-xmin)), x, m.t+ph+14);
         ctx.beginPath(); ctx.moveTo(x, m.t+ph); ctx.lineTo(x, m.t+ph+3); ctx.stroke();
       }
 
       ctx.textAlign = 'right';
       for (let i = 0; i <= ny; i++) {
         const y = m.t + (i/ny)*ph;
-        ctx.fillText((i/ny*ly).toFixed(1), m.l-6, y+3);
+        ctx.fillText(yFmt(ymin + (i/ny)*(ymax-ymin)), m.l-6, y+3);
         ctx.beginPath(); ctx.moveTo(m.l-3, y); ctx.lineTo(m.l, y); ctx.stroke();
       }
     }
@@ -167,8 +171,11 @@
       let mn=Infinity, mx=-Infinity;
       for (let i=0;i<data.length;i++) { if(data[i]<mn)mn=data[i]; if(data[i]>mx)mx=data[i]; }
 
-      drawTicks(ctx, m, pw, ph, 5, 5, data.length*4/1000, mx-mn);
-      drawLabels(ctx, m, pw, ph, 'Time (s)', 'Amplitude');
+      // The trace is plotted with amplitude along x (horizontal) and time along y
+      // (vertical, increasing downward) — the standard convention for a single
+      // wiggle trace — so the axes must be labeled to match.
+      drawTicks(ctx, m, pw, ph, 5, 5, [mn, mx], [0, data.length*4/1000], v => v.toFixed(2), v => v.toFixed(2));
+      drawLabels(ctx, m, pw, ph, 'Amplitude', 'Time (s)');
 
       // Zero line
       const midX = m.l + ((0-mn)/(mx-mn))*pw;
@@ -229,9 +236,18 @@
         ctx.strokeStyle='#000000'; ctx.lineWidth=0.5; ctx.stroke();
       }
 
-      // X ticks
+      // X ticks (trace index)
       ctx.fillStyle='#000000'; ctx.font='10px Times New Roman'; ctx.textAlign='center';
       for(let t=0;t<n;t+=5) ctx.fillText(t.toString(), m.l+t*tw+tw/2, m.t+ph+14);
+
+      // Y ticks (time, increasing downward)
+      ctx.strokeStyle='#000000'; ctx.lineWidth=0.5; ctx.textAlign='right';
+      for (let i = 0; i <= 4; i++) {
+        const y = m.t + (i/4)*ph;
+        const time = ((i/4) * ns * 4 / 1000).toFixed(2);
+        ctx.fillText(time, m.l-6, y+3);
+        ctx.beginPath(); ctx.moveTo(m.l-3, y); ctx.lineTo(m.l, y); ctx.stroke();
+      }
     }
 
     function plotFill(id, data, type, dt=4) {
@@ -329,6 +345,14 @@
       }
       ctx.font = '11px Times New Roman';
       ctx.fillText('Time (ms)', m.l+pw/2, m.t+ph+27);
+
+      ctx.save();
+      ctx.translate(11, m.t+ph/2);
+      ctx.rotate(-Math.PI/2);
+      ctx.font = '11px Times New Roman';
+      ctx.textAlign = 'center';
+      ctx.fillText('Amplitude', 0, 0);
+      ctx.restore();
 
       // Zero line
       ctx.strokeStyle='rgba(0,0,0,0.15)'; ctx.lineWidth=0.5;
