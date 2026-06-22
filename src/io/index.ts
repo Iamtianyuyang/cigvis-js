@@ -50,3 +50,17 @@ export type {
   Endianness,
   ValueType,
 } from './fault-skin';
+
+// VDS (Volume Data Store)
+export {
+  VDSReader,
+  createVDSFromArray,
+  downloadVDS,
+  isVDSFile,
+  readVDSHeader,
+} from './vds';
+export type {
+  VDSHeader,
+  VDSReaderOptions,
+  CreateVDSOptions,
+} from './vds';
