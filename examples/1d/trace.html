@@ -3,468 +3,341 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CIGVis - 1D Trace Examples</title>
+  <title>CIGVis — 1D Trace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg: #0c0c14;
+      --bg-card: #12121c;
+      --border: rgba(255,255,255,0.06);
+      --text: #e8eaed;
+      --text-2: #8b8fa3;
+      --text-3: #5c6078;
+      --accent: #00d4aa;
+      --sans: 'Inter', sans-serif;
+      --mono: 'JetBrains Mono', monospace;
+    }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Times New Roman', Georgia, serif;
-      background: #ffffff;
-      color: #000000;
+    body { font-family: var(--sans); background: var(--bg); color: var(--text); }
+
+    .topbar {
+      display: flex; align-items: center; gap: 12px;
+      padding: 0 24px; height: 48px;
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
     }
-    .header {
-      padding: 16px 24px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      border-bottom: 1px solid #000;
-    }
-    .header h1 { font-size: 18px; font-weight: bold; }
-    .back { color: #000; text-decoration: none; font-size: 13px; }
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 24px;
-    }
-    .figure {
-      margin-bottom: 32px;
-    }
+    .back { color: var(--accent); text-decoration: none; font-size: 12px; font-family: var(--mono); }
+    .topbar-title { font-size: 14px; font-weight: 600; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
+
+    .figure { margin-bottom: 32px; }
     .figure-title {
-      font-size: 14px;
-      font-weight: bold;
-      margin-bottom: 8px;
+      font-family: var(--mono); font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-2); margin-bottom: 12px;
     }
     .figure-caption {
-      font-size: 12px;
-      color: #333;
-      margin-top: 8px;
-      font-style: italic;
+      font-size: 12px; color: var(--text-3); margin-top: 8px;
     }
+
+    .plot-row { display: flex; gap: 16px; flex-wrap: wrap; }
+    .plot-item { flex: 1; min-width: 200px; }
+
     canvas {
-      border: 0.5pt solid #000;
+      display: block; width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
     }
   </style>
 </head>
 <body>
-  <div class="header">
-    <a class="back" href="../index.html">← Examples</a>
-    <h1>1D Trace Examples</h1>
+  <div class="topbar">
+    <a class="back" href="../index.html">← back</a>
+    <span class="topbar-title">1D Trace</span>
   </div>
 
   <div class="container">
     <div class="figure">
-      <div class="figure-title">Figure 1.</div>
-      <canvas id="single-trace" width="200" height="400"></canvas>
-      <div class="figure-caption">Single seismic trace with 500 samples at 4 ms sampling interval.</div>
+      <div class="figure-title">Single Trace</div>
+      <canvas id="single" width="800" height="400"></canvas>
+      <div class="figure-caption">500 samples · 4 ms dt · 30 Hz Ricker wavelet</div>
     </div>
 
     <div class="figure">
-      <div class="figure-title">Figure 2.</div>
-      <canvas id="multi-traces" width="600" height="300"></canvas>
-      <div class="figure-caption">Seismic section with 30 traces, displayed with variable area fill.</div>
+      <div class="figure-title">Multi-Trace Section</div>
+      <canvas id="multi" width="800" height="400"></canvas>
+      <div class="figure-caption">30 traces · variable area fill</div>
     </div>
 
     <div class="figure">
-      <div class="figure-title">Figure 3.</div>
-      <div style="display: flex; gap: 16px;">
-        <div>
-          <canvas id="filled-pos" width="200" height="300"></canvas>
-          <div class="figure-caption">(a) Positive fill</div>
+      <div class="figure-title">Fill Modes</div>
+      <div class="plot-row">
+        <div class="plot-item">
+          <canvas id="fill-pos" width="300" height="400"></canvas>
+          <div class="figure-caption">Positive fill</div>
         </div>
-        <div>
-          <canvas id="filled-neg" width="200" height="300"></canvas>
-          <div class="figure-caption">(b) Negative fill</div>
+        <div class="plot-item">
+          <canvas id="fill-neg" width="300" height="400"></canvas>
+          <div class="figure-caption">Negative fill</div>
         </div>
-        <div>
-          <canvas id="filled-both" width="200" height="300"></canvas>
-          <div class="figure-caption">(c) Both</div>
+        <div class="plot-item">
+          <canvas id="fill-both" width="300" height="400"></canvas>
+          <div class="figure-caption">Both</div>
         </div>
       </div>
     </div>
 
     <div class="figure">
-      <div class="figure-title">Figure 4.</div>
-      <div style="display: flex; gap: 16px;">
-        <div>
-          <canvas id="wavelet-20" width="200" height="150"></canvas>
-          <div class="figure-caption">(a) 20 Hz Ricker wavelet</div>
-        </div>
-        <div>
-          <canvas id="wavelet-30" width="200" height="150"></canvas>
-          <div class="figure-caption">(b) 30 Hz Ricker wavelet</div>
-        </div>
-        <div>
-          <canvas id="wavelet-40" width="200" height="150"></canvas>
-          <div class="figure-caption">(c) 40 Hz Ricker wavelet</div>
-        </div>
+      <div class="figure-title">Ricker Wavelets</div>
+      <div class="plot-row">
+        <div class="plot-item"><canvas id="w20" width="300" height="180"></canvas><div class="figure-caption">20 Hz</div></div>
+        <div class="plot-item"><canvas id="w30" width="300" height="180"></canvas><div class="figure-caption">30 Hz</div></div>
+        <div class="plot-item"><canvas id="w40" width="300" height="180"></canvas><div class="figure-caption">40 Hz</div></div>
       </div>
     </div>
   </div>
 
   <script>
-    // Ricker wavelet
-    function rickerWavelet(n, dt, freq) {
-      const data = new Float32Array(n);
+    function ricker(n, dt, f) {
+      const d = new Float32Array(n);
       for (let i = 0; i < n; i++) {
-        const t = (i - n / 2) * dt / 1000;
-        const pi2f2 = (Math.PI * freq) ** 2;
-        data[i] = (1 - 2 * pi2f2 * t * t) * Math.exp(-pi2f2 * t * t);
+        const t = (i - n/2) * dt / 1000;
+        const p = (Math.PI*f)**2;
+        d[i] = (1 - 2*p*t*t) * Math.exp(-p*t*t);
       }
-      return data;
+      return d;
     }
 
-    // Generate trace with reflectivity
-    function generateTrace(n, dt, freq) {
-      const w = rickerWavelet(64, dt, freq);
-      const data = new Float32Array(n);
+    function genTrace(n, dt, f) {
+      const w = ricker(64, dt, f);
+      const d = new Float32Array(n);
       for (let i = 0; i < n; i++) {
-        let val = 0;
+        let v = 0;
         for (let j = 0; j < w.length; j++) {
-          const idx = i - Math.floor(w.length / 2) + j;
-          if (idx >= 0 && idx < n) {
-            const r = Math.random() > 0.95 ? (Math.random() - 0.5) * 2 : 0;
-            val += w[j] * r;
+          const k = i - 32 + j;
+          if (k >= 0 && k < n) {
+            const r = Math.random() > 0.95 ? (Math.random()-0.5)*2 : 0;
+            v += w[j] * r;
           }
         }
-        data[i] = val;
+        d[i] = v;
       }
-      return data;
+      return d;
     }
 
-    // Publication-style plot with axes
-    function plotTrace(canvasId, data, options = {}) {
-      const canvas = document.getElementById(canvasId);
-      const ctx = canvas.getContext('2d');
-      const w = canvas.width, h = canvas.height;
-      const { dt = 4, color = '#000', lineWidth = 1, title = '' } = options;
-
-      // Clear
-      ctx.fillStyle = '#fff';
-      ctx.fillRect(0, 0, w, h);
-
-      // Margins
-      const m = { l: 35, r: 10, t: 20, b: 30 };
-      const pw = w - m.l - m.r, ph = h - m.t - m.b;
-
-      // Data range
-      let min = Infinity, max = -Infinity;
-      for (let i = 0; i < data.length; i++) {
-        if (data[i] < min) min = data[i];
-        if (data[i] > max) max = data[i];
-      }
-
-      // Axes
-      ctx.strokeStyle = '#000';
-      ctx.lineWidth = 0.5;
+    function drawAxes(ctx, m, pw, ph) {
+      ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+      ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.moveTo(m.l, m.t);
-      ctx.lineTo(m.l, h - m.b);
-      ctx.lineTo(w - m.r, h - m.b);
+      ctx.moveTo(m.l, m.t); ctx.lineTo(m.l, m.t+ph); ctx.lineTo(m.l+pw, m.t+ph);
       ctx.stroke();
+    }
 
-      // Y ticks (Time)
-      ctx.fillStyle = '#000';
-      ctx.font = '9px Times New Roman';
+    function drawTicks(ctx, m, pw, ph, nx, ny, lx, ly) {
+      ctx.fillStyle = '#5c6078';
+      ctx.font = '10px JetBrains Mono';
+
+      ctx.textAlign = 'center';
+      for (let i = 0; i <= nx; i++) {
+        const x = m.l + (i/nx)*pw;
+        ctx.fillText(Math.round(i/nx*lx).toString(), x, m.t+ph+14);
+        ctx.beginPath(); ctx.moveTo(x, m.t+ph); ctx.lineTo(x, m.t+ph+3); ctx.stroke();
+      }
+
       ctx.textAlign = 'right';
-      const yTicks = 5;
-      for (let i = 0; i <= yTicks; i++) {
-        const y = m.t + (i / yTicks) * ph;
-        const val = (i / yTicks * data.length * dt / 1000).toFixed(1);
-        ctx.fillText(val, m.l - 4, y + 3);
-        ctx.beginPath();
-        ctx.moveTo(m.l - 3, y);
-        ctx.lineTo(m.l, y);
-        ctx.stroke();
+      for (let i = 0; i <= ny; i++) {
+        const y = m.t + (i/ny)*ph;
+        ctx.fillText((i/ny*ly).toFixed(1), m.l-6, y+3);
+        ctx.beginPath(); ctx.moveTo(m.l-3, y); ctx.lineTo(m.l, y); ctx.stroke();
       }
+    }
 
-      // X ticks (Amplitude)
+    function drawLabels(ctx, m, pw, ph, xLabel, yLabel) {
+      ctx.fillStyle = '#8b8fa3';
+      ctx.font = '11px Inter';
       ctx.textAlign = 'center';
-      const xTicks = 5;
-      for (let i = 0; i <= xTicks; i++) {
-        const x = m.l + (i / xTicks) * pw;
-        const val = (min + (i / xTicks) * (max - min)).toFixed(2);
-        ctx.fillText(val, x, h - m.b + 12);
-        ctx.beginPath();
-        ctx.moveTo(x, h - m.b);
-        ctx.lineTo(x, h - m.b + 3);
-        ctx.stroke();
-      }
-
-      // Labels
-      ctx.font = '11px Times New Roman';
-      ctx.textAlign = 'center';
-      ctx.fillText('Time (s)', m.l - 20, m.t + ph / 2);
+      ctx.fillText(xLabel, m.l+pw/2, m.t+ph+30);
       ctx.save();
-      ctx.translate(m.l - 20, m.t + ph / 2);
-      ctx.rotate(-Math.PI / 2);
-      ctx.fillText('Amplitude', 0, 0);
+      ctx.translate(12, m.t+ph/2);
+      ctx.rotate(-Math.PI/2);
+      ctx.fillText(yLabel, 0, 0);
       ctx.restore();
+    }
+
+    function plotTrace(id, data, opts={}) {
+      const c = document.getElementById(id);
+      const ctx = c.getContext('2d');
+      const w = c.width, h = c.height;
+      const m = {l:45, r:15, t:15, b:35};
+      const pw = w-m.l-m.r, ph = h-m.t-m.b;
+
+      ctx.fillStyle = '#0c0c14'; ctx.fillRect(0,0,w,h);
+      drawAxes(ctx, m, pw, ph);
+
+      let mn=Infinity, mx=-Infinity;
+      for (let i=0;i<data.length;i++) { if(data[i]<mn)mn=data[i]; if(data[i]>mx)mx=data[i]; }
+
+      drawTicks(ctx, m, pw, ph, 5, 5, data.length*4/1000, mx-mn);
+      drawLabels(ctx, m, pw, ph, 'Time (s)', 'Amplitude');
 
       // Zero line
-      const midX = m.l + ((0 - min) / (max - min)) * pw;
-      ctx.strokeStyle = '#ccc';
+      const midX = m.l + ((0-mn)/(mx-mn))*pw;
+      ctx.strokeStyle = 'rgba(255,255,255,0.08)';
       ctx.lineWidth = 0.5;
-      ctx.setLineDash([2, 2]);
-      ctx.beginPath();
-      ctx.moveTo(midX, m.t);
-      ctx.lineTo(midX, h - m.b);
-      ctx.stroke();
+      ctx.setLineDash([3,3]);
+      ctx.beginPath(); ctx.moveTo(midX, m.t); ctx.lineTo(midX, m.t+ph); ctx.stroke();
       ctx.setLineDash([]);
 
       // Trace
-      ctx.strokeStyle = color;
-      ctx.lineWidth = lineWidth;
+      ctx.strokeStyle = '#00d4aa';
+      ctx.lineWidth = 1.5;
       ctx.beginPath();
-      for (let i = 0; i < data.length; i++) {
-        const x = m.l + ((data[i] - min) / (max - min)) * pw;
-        const y = m.t + (i / data.length) * ph;
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+      for (let i=0;i<data.length;i++) {
+        const x = m.l+((data[i]-mn)/(mx-mn))*pw;
+        const y = m.t+(i/data.length)*ph;
+        if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
       }
       ctx.stroke();
     }
 
-    // Multi-trace plot
-    function plotMultiTraces(canvasId, nTraces, nSamples, options = {}) {
-      const canvas = document.getElementById(canvasId);
-      const ctx = canvas.getContext('2d');
-      const w = canvas.width, h = canvas.height;
-      const { dt = 4 } = options;
+    function plotMulti(id, n, ns) {
+      const c = document.getElementById(id);
+      const ctx = c.getContext('2d');
+      const w = c.width, h = c.height;
+      const m = {l:45, r:15, t:15, b:35};
+      const pw = w-m.l-m.r, ph = h-m.t-m.b;
 
-      ctx.fillStyle = '#fff';
-      ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = '#0c0c14'; ctx.fillRect(0,0,w,h);
+      drawAxes(ctx, m, pw, ph);
+      drawLabels(ctx, m, pw, ph, 'Trace', 'Time (s)');
 
-      const m = { l: 40, r: 20, t: 15, b: 30 };
-      const pw = w - m.l - m.r, ph = h - m.t - m.b;
-      const traceW = pw / nTraces;
-      const ampScale = traceW * 0.8;
+      const tw = pw/n;
+      const amp = tw*0.8;
 
-      // Axes
-      ctx.strokeStyle = '#000';
-      ctx.lineWidth = 0.5;
-      ctx.beginPath();
-      ctx.moveTo(m.l, m.t);
-      ctx.lineTo(m.l, h - m.b);
-      ctx.lineTo(w - m.r, h - m.b);
-      ctx.stroke();
+      for (let t=0;t<n;t++) {
+        const cx = m.l + t*tw + tw/2;
+        const d = genTrace(ns, 4, 30);
+        let mn=Infinity, mx=-Infinity;
+        for (let i=0;i<d.length;i++) { if(d[i]<mn)mn=d[i]; if(d[i]>mx)mx=d[i]; }
+        const r = mx-mn||1;
 
-      // Y label
-      ctx.fillStyle = '#000';
-      ctx.font = '11px Times New Roman';
-      ctx.textAlign = 'center';
-      ctx.fillText('Time (s)', m.l - 20, m.t + ph / 2);
-      ctx.save();
-      ctx.translate(m.l - 20, m.t + ph / 2);
-      ctx.rotate(-Math.PI / 2);
-      ctx.fillText('Amplitude', 0, 0);
-      ctx.restore();
+        // Fill
+        ctx.beginPath(); ctx.moveTo(cx, m.t);
+        for (let i=0;i<ns;i++) {
+          const y=m.t+(i/ns)*ph; const v=(d[i]-mn)/r-0.5;
+          ctx.lineTo(cx+v*amp, y);
+        }
+        ctx.lineTo(cx, m.t+ph); ctx.closePath();
+        ctx.fillStyle='rgba(0,212,170,0.15)'; ctx.fill();
 
-      // X label
-      ctx.textAlign = 'center';
-      ctx.fillText('Trace Number', w / 2, h - 5);
+        // Line
+        ctx.beginPath();
+        for (let i=0;i<ns;i++) {
+          const y=m.t+(i/ns)*ph; const v=(d[i]-mn)/r-0.5;
+          if(i===0)ctx.moveTo(cx+v*amp,y); else ctx.lineTo(cx+v*amp,y);
+        }
+        ctx.strokeStyle='#00d4aa'; ctx.lineWidth=0.5; ctx.stroke();
+      }
 
       // X ticks
-      ctx.font = '9px Times New Roman';
-      for (let t = 0; t < nTraces; t += 5) {
-        const x = m.l + t * traceW + traceW / 2;
-        ctx.fillText(t.toString(), x, h - m.b + 12);
-      }
-
-      // Draw traces
-      for (let t = 0; t < nTraces; t++) {
-        const cx = m.l + t * traceW + traceW / 2;
-        const data = generateTrace(nSamples, dt, 30);
-
-        let min = Infinity, max = -Infinity;
-        for (let i = 0; i < data.length; i++) {
-          if (data[i] < min) min = data[i];
-          if (data[i] > max) max = data[i];
-        }
-        const range = max - min || 1;
-
-        // Variable area fill
-        ctx.beginPath();
-        ctx.moveTo(cx, m.t);
-        for (let i = 0; i < nSamples; i++) {
-          const y = m.t + (i / nSamples) * ph;
-          const val = (data[i] - min) / range - 0.5;
-          ctx.lineTo(cx + val * ampScale, y);
-        }
-        ctx.lineTo(cx, h - m.b);
-        ctx.closePath();
-        ctx.fillStyle = '#000';
-        ctx.fill();
-
-        // Trace line
-        ctx.beginPath();
-        for (let i = 0; i < nSamples; i++) {
-          const y = m.t + (i / nSamples) * ph;
-          const val = (data[i] - min) / range - 0.5;
-          if (i === 0) ctx.moveTo(cx + val * ampScale, y);
-          else ctx.lineTo(cx + val * ampScale, y);
-        }
-        ctx.strokeStyle = '#000';
-        ctx.lineWidth = 0.3;
-        ctx.stroke();
-      }
+      ctx.fillStyle='#5c6078'; ctx.font='10px JetBrains Mono'; ctx.textAlign='center';
+      for(let t=0;t<n;t+=5) ctx.fillText(t.toString(), m.l+t*tw+tw/2, m.t+ph+14);
     }
 
-    // Filled trace
-    function plotFilledTrace(canvasId, data, fillType, options = {}) {
-      const canvas = document.getElementById(canvasId);
-      const ctx = canvas.getContext('2d');
-      const w = canvas.width, h = canvas.height;
-      const { dt = 4 } = options;
+    function plotFill(id, data, type) {
+      const c = document.getElementById(id);
+      const ctx = c.getContext('2d');
+      const w = c.width, h = c.height;
+      const m = {l:35, r:10, t:15, b:30};
+      const pw = w-m.l-m.r, ph = h-m.t-m.b;
+      const mid = m.l+pw/2;
 
-      ctx.fillStyle = '#fff';
-      ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = '#0c0c14'; ctx.fillRect(0,0,w,h);
 
-      const m = { l: 35, r: 10, t: 15, b: 30 };
-      const pw = w - m.l - m.r, ph = h - m.t - m.b;
-      const midX = m.l + pw / 2;
-
-      let min = Infinity, max = -Infinity;
-      for (let i = 0; i < data.length; i++) {
-        if (data[i] < min) min = data[i];
-        if (data[i] > max) max = data[i];
-      }
-
-      // Axes
-      ctx.strokeStyle = '#000';
-      ctx.lineWidth = 0.5;
-      ctx.beginPath();
-      ctx.moveTo(m.l, m.t);
-      ctx.lineTo(m.l, h - m.b);
-      ctx.lineTo(w - m.r, h - m.b);
-      ctx.stroke();
+      let mn=Infinity, mx=-Infinity;
+      for(let i=0;i<data.length;i++){if(data[i]<mn)mn=data[i];if(data[i]>mx)mx=data[i];}
 
       // Zero line
-      ctx.strokeStyle = '#ccc';
-      ctx.lineWidth = 0.5;
-      ctx.setLineDash([2, 2]);
-      ctx.beginPath();
-      ctx.moveTo(midX, m.t);
-      ctx.lineTo(midX, h - m.b);
-      ctx.stroke();
+      ctx.strokeStyle='rgba(255,255,255,0.08)'; ctx.lineWidth=0.5;
+      ctx.setLineDash([3,3]);
+      ctx.beginPath(); ctx.moveTo(mid,m.t); ctx.lineTo(mid,m.t+ph); ctx.stroke();
       ctx.setLineDash([]);
 
-      // Fill positive
-      if (fillType === 'positive' || fillType === 'both') {
-        ctx.beginPath();
-        ctx.moveTo(midX, m.t);
-        for (let i = 0; i < data.length; i++) {
-          const y = m.t + (i / data.length) * ph;
-          const val = (data[i] - min) / (max - min) - 0.5;
-          if (val > 0) ctx.lineTo(midX + val * pw, y);
-          else ctx.lineTo(midX, y);
+      // Fill
+      if(type==='pos'||type==='both'){
+        ctx.beginPath(); ctx.moveTo(mid,m.t);
+        for(let i=0;i<data.length;i++){
+          const y=m.t+(i/data.length)*ph;
+          const v=(data[i]-mn)/(mx-mn)-0.5;
+          if(v>0)ctx.lineTo(mid+v*pw,y); else ctx.lineTo(mid,y);
         }
-        ctx.lineTo(midX, h - m.b);
-        ctx.closePath();
-        ctx.fillStyle = '#000';
-        ctx.fill();
+        ctx.lineTo(mid,m.t+ph); ctx.closePath();
+        ctx.fillStyle='rgba(0,212,170,0.2)'; ctx.fill();
+      }
+      if(type==='neg'||type==='both'){
+        ctx.beginPath(); ctx.moveTo(mid,m.t);
+        for(let i=0;i<data.length;i++){
+          const y=m.t+(i/data.length)*ph;
+          const v=(data[i]-mn)/(mx-mn)-0.5;
+          if(v<0)ctx.lineTo(mid+v*pw,y); else ctx.lineTo(mid,y);
+        }
+        ctx.lineTo(mid,m.t+ph); ctx.closePath();
+        ctx.fillStyle='rgba(244,63,94,0.2)'; ctx.fill();
       }
 
-      // Fill negative
-      if (fillType === 'negative' || fillType === 'both') {
-        ctx.beginPath();
-        ctx.moveTo(midX, m.t);
-        for (let i = 0; i < data.length; i++) {
-          const y = m.t + (i / data.length) * ph;
-          const val = (data[i] - min) / (max - min) - 0.5;
-          if (val < 0) ctx.lineTo(midX + val * pw, y);
-          else ctx.lineTo(midX, y);
-        }
-        ctx.lineTo(midX, h - m.b);
-        ctx.closePath();
-        ctx.fillStyle = '#999';
-        ctx.fill();
-      }
-
-      // Trace line
+      // Line
       ctx.beginPath();
-      for (let i = 0; i < data.length; i++) {
-        const x = m.l + ((data[i] - min) / (max - min)) * pw;
-        const y = m.t + (i / data.length) * ph;
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+      for(let i=0;i<data.length;i++){
+        const x=m.l+((data[i]-mn)/(mx-mn))*pw;
+        const y=m.t+(i/data.length)*ph;
+        if(i===0)ctx.moveTo(x,y); else ctx.lineTo(x,y);
       }
-      ctx.strokeStyle = '#000';
-      ctx.lineWidth = 0.5;
-      ctx.stroke();
-
-      // Labels
-      ctx.fillStyle = '#000';
-      ctx.font = '11px Times New Roman';
-      ctx.textAlign = 'center';
-      ctx.fillText('Time (s)', m.l - 15, m.t + ph / 2);
-      ctx.save();
-      ctx.translate(m.l - 15, m.t + ph / 2);
-      ctx.rotate(-Math.PI / 2);
-      ctx.fillText('Amplitude', 0, 0);
-      ctx.restore();
+      ctx.strokeStyle='#00d4aa'; ctx.lineWidth=1; ctx.stroke();
     }
 
-    // Wavelet plot
-    function plotWavelet(canvasId, freq, color) {
-      const data = rickerWavelet(100, 4, freq);
-      const canvas = document.getElementById(canvasId);
-      const ctx = canvas.getContext('2d');
-      const w = canvas.width, h = canvas.height;
+    function plotWavelet(id, freq) {
+      const d = ricker(100, 4, freq);
+      const c = document.getElementById(id);
+      const ctx = c.getContext('2d');
+      const w = c.width, h = c.height;
+      const m = {l:30, r:10, t:15, b:25};
+      const pw = w-m.l-m.r, ph = h-m.t-m.b;
+      const mid = m.t+ph/2;
 
-      ctx.fillStyle = '#fff';
-      ctx.fillRect(0, 0, w, h);
-
-      const m = { l: 30, r: 10, t: 15, b: 25 };
-      const pw = w - m.l - m.r, ph = h - m.t - m.b;
-      const midY = m.t + ph / 2;
-
-      // Axes
-      ctx.strokeStyle = '#000';
-      ctx.lineWidth = 0.5;
-      ctx.beginPath();
-      ctx.moveTo(m.l, m.t);
-      ctx.lineTo(m.l, h - m.b);
-      ctx.lineTo(w - m.r, h - m.b);
-      ctx.stroke();
+      ctx.fillStyle='#0c0c14'; ctx.fillRect(0,0,w,h);
 
       // Zero line
-      ctx.strokeStyle = '#ccc';
-      ctx.lineWidth = 0.5;
-      ctx.setLineDash([2, 2]);
-      ctx.beginPath();
-      ctx.moveTo(m.l, midY);
-      ctx.lineTo(w - m.r, midY);
-      ctx.stroke();
+      ctx.strokeStyle='rgba(255,255,255,0.08)'; ctx.lineWidth=0.5;
+      ctx.setLineDash([3,3]);
+      ctx.beginPath(); ctx.moveTo(m.l,mid); ctx.lineTo(m.l+pw,mid); ctx.stroke();
       ctx.setLineDash([]);
 
       // Wavelet
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 1.5;
+      ctx.strokeStyle='#00d4aa'; ctx.lineWidth=1.5;
       ctx.beginPath();
-      for (let i = 0; i < data.length; i++) {
-        const x = m.l + (i / data.length) * pw;
-        const y = midY - data[i] * ph * 0.4;
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+      for(let i=0;i<d.length;i++){
+        const x=m.l+(i/d.length)*pw;
+        const y=mid-d[i]*ph*0.4;
+        if(i===0)ctx.moveTo(x,y); else ctx.lineTo(x,y);
       }
       ctx.stroke();
 
-      // Label
-      ctx.fillStyle = '#000';
-      ctx.font = '10px Times New Roman';
-      ctx.textAlign = 'center';
-      ctx.fillText(`${freq} Hz`, w / 2, h - 5);
+      ctx.fillStyle='#5c6078'; ctx.font='10px JetBrains Mono'; ctx.textAlign='center';
+      ctx.fillText(`${freq} Hz`, w/2, h-5);
     }
 
-    // Generate and plot
-    const trace = generateTrace(500, 4, 30);
-    plotTrace('single-trace', trace, { dt: 4 });
-    plotMultiTraces('multi-traces', 30, 200);
-    plotFilledTrace('filled-pos', generateTrace(300, 4, 30), 'positive');
-    plotFilledTrace('filled-neg', generateTrace(300, 4, 30), 'negative');
-    plotFilledTrace('filled-both', generateTrace(300, 4, 30), 'both');
-    plotWavelet('wavelet-20', 20, '#000');
-    plotWavelet('wavelet-30', 30, '#000');
-    plotWavelet('wavelet-40', 40, '#000');
+    // Render
+    plotTrace('single', genTrace(500, 4, 30));
+    plotMulti('multi', 30, 200);
+    plotFill('fill-pos', genTrace(300, 4, 30), 'pos');
+    plotFill('fill-neg', genTrace(300, 4, 30), 'neg');
+    plotFill('fill-both', genTrace(300, 4, 30), 'both');
+    plotWavelet('w20', 20);
+    plotWavelet('w30', 30);
+    plotWavelet('w40', 40);
   </script>
 </body>
 </html>
