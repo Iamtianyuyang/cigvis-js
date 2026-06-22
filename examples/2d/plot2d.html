@@ -46,32 +46,39 @@
     .plot-with-colorbar {
       display: flex;
       align-items: flex-start;
-      gap: 8px;
+      gap: 12px;
     }
     .colorbar-vertical {
       display: flex;
-      flex-direction: column;
-      align-items: center;
+      flex-direction: row;
+      align-items: stretch;
       height: 300px;
     }
     .colorbar-title-v {
       font-size: 10px;
       writing-mode: vertical-rl;
       text-orientation: mixed;
-      margin-right: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .colorbar-bar-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
     }
     .colorbar-bar-v {
-      width: 12px;
-      flex: 1;
+      width: 16px;
+      height: 100%;
       border: 0.5pt solid #000;
     }
     .colorbar-ticks-v {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      height: 100%;
       font-size: 9px;
-      margin-left: 4px;
+      height: 100%;
     }
     .subplot-grid {
       display: grid;
@@ -94,13 +101,15 @@
         <canvas id="fig1" width="400" height="300"></canvas>
         <div class="colorbar-vertical">
           <span class="colorbar-title-v">Amplitude</span>
-          <div class="colorbar-bar-v" style="background: linear-gradient(to bottom, #ffffff, #000000);"></div>
-          <div class="colorbar-ticks-v">
-            <span>1.0</span>
-            <span>0.5</span>
-            <span>0.0</span>
-            <span>-0.5</span>
-            <span>-1.0</span>
+          <div class="colorbar-bar-container">
+            <div class="colorbar-ticks-v">
+              <span>1.0</span>
+              <span>0.5</span>
+              <span>0.0</span>
+              <span>-0.5</span>
+              <span>-1.0</span>
+            </div>
+            <div class="colorbar-bar-v" style="background: linear-gradient(to bottom, #ffffff, #000000);"></div>
           </div>
         </div>
       </div>
@@ -114,13 +123,15 @@
         <canvas id="fig2" width="400" height="300"></canvas>
         <div class="colorbar-vertical">
           <span class="colorbar-title-v">Amplitude</span>
-          <div class="colorbar-bar-v" style="background: linear-gradient(to bottom, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff);"></div>
-          <div class="colorbar-ticks-v">
-            <span>1.0</span>
-            <span>0.5</span>
-            <span>0.0</span>
-            <span>-0.5</span>
-            <span>-1.0</span>
+          <div class="colorbar-bar-container">
+            <div class="colorbar-ticks-v">
+              <span>1.0</span>
+              <span>0.5</span>
+              <span>0.0</span>
+              <span>-0.5</span>
+              <span>-1.0</span>
+            </div>
+            <div class="colorbar-bar-v" style="background: linear-gradient(to bottom, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff);"></div>
           </div>
         </div>
       </div>
@@ -134,13 +145,15 @@
         <canvas id="fig3" width="400" height="300"></canvas>
         <div class="colorbar-vertical">
           <span class="colorbar-title-v">Amplitude</span>
-          <div class="colorbar-bar-v" style="background: linear-gradient(to bottom, #ffffff, #000000);"></div>
-          <div class="colorbar-ticks-v">
-            <span>1.0</span>
-            <span>0.5</span>
-            <span>0.0</span>
-            <span>-0.5</span>
-            <span>-1.0</span>
+          <div class="colorbar-bar-container">
+            <div class="colorbar-ticks-v">
+              <span>1.0</span>
+              <span>0.5</span>
+              <span>0.0</span>
+              <span>-0.5</span>
+              <span>-1.0</span>
+            </div>
+            <div class="colorbar-bar-v" style="background: linear-gradient(to bottom, #ffffff, #000000);"></div>
           </div>
         </div>
       </div>
@@ -177,13 +190,15 @@
         <canvas id="fig5" width="400" height="300"></canvas>
         <div class="colorbar-vertical">
           <span class="colorbar-title-v">Amplitude</span>
-          <div class="colorbar-bar-v" style="background: linear-gradient(to bottom, #ffffff, #000000);"></div>
-          <div class="colorbar-ticks-v">
-            <span>1.0</span>
-            <span>0.5</span>
-            <span>0.0</span>
-            <span>-0.5</span>
-            <span>-1.0</span>
+          <div class="colorbar-bar-container">
+            <div class="colorbar-ticks-v">
+              <span>1.0</span>
+              <span>0.5</span>
+              <span>0.0</span>
+              <span>-0.5</span>
+              <span>-1.0</span>
+            </div>
+            <div class="colorbar-bar-v" style="background: linear-gradient(to bottom, #ffffff, #000000);"></div>
           </div>
         </div>
       </div>
