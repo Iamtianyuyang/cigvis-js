@@ -155,20 +155,13 @@ export function loadTheme(themeName: string | ThemeConfig): StyleContext {
     ? THEMES[themeName] || DEFAULT_THEME
     : themeName;
 
-  let savedState: Partial<CanvasRenderingContext2D> = {};
   let currentCtx: CanvasRenderingContext2D | null = null;
 
   return {
     apply(ctx: CanvasRenderingContext2D) {
-      // Save current state
+      // Use native save/restore stack — saves ALL context state
+      ctx.save();
       currentCtx = ctx;
-      savedState = {
-        font: ctx.font,
-        strokeStyle: ctx.strokeStyle,
-        fillStyle: ctx.fillStyle,
-        lineWidth: ctx.lineWidth,
-        globalAlpha: ctx.globalAlpha,
-      };
 
       // Apply theme
       if (theme.fontFamily) {
@@ -177,13 +170,11 @@ export function loadTheme(themeName: string | ThemeConfig): StyleContext {
     },
 
     restore() {
-      // Restore saved state
       if (!currentCtx) return;
-      if (savedState.font) currentCtx.font = savedState.font;
-      if (savedState.strokeStyle) currentCtx.strokeStyle = savedState.strokeStyle;
-      if (savedState.fillStyle) currentCtx.fillStyle = savedState.fillStyle;
-      if (savedState.lineWidth) currentCtx.lineWidth = savedState.lineWidth;
-      if (savedState.globalAlpha !== undefined) currentCtx.globalAlpha = savedState.globalAlpha;
+      // Native restore() recovers ALL saved state (font, strokeStyle, fillStyle,
+      // lineWidth, globalAlpha, lineCap, transform, clip, etc.)
+      currentCtx.restore();
+      currentCtx = null;
     },
   };
 }

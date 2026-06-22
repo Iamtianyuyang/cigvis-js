@@ -15,7 +15,7 @@
 export interface SidebarSectionConfig {
   /** Section title */
   title: string;
-  /** Section content */
+  /** Section content (string HTML or HTMLElement) */
   content: HTMLElement | string;
   /** Is collapsed */
   collapsed?: boolean;
@@ -30,7 +30,18 @@ export interface SidebarOptions {
   /** Background color */
   backgroundColor?: string;
   /** Sections */
-  sections?: SidebarSection[];
+  sections?: SidebarSectionConfig[];
+}
+
+// ============================================================================
+// Helpers
+// ============================================================================
+
+/** Safely register a custom element (skip if already defined) */
+function safeDefine(name: string, constructor: CustomElementConstructor): void {
+  if (typeof customElements !== 'undefined' && !customElements.get(name)) {
+    customElements.define(name, constructor);
+  }
 }
 
 // ============================================================================
@@ -69,11 +80,11 @@ export class Sidebar extends HTMLElement {
     this.render();
   }
 
-  attributeChangedCallback(name: string, oldValue: string, newValue: string) {
+  attributeChangedCallback(name: string, _oldValue: string, newValue: string) {
     if (name === 'width') {
       this._width = parseInt(newValue) || 250;
     } else if (name === 'position') {
-      this._position = (newValue as 'left' | 'right') || 'right';
+      this._position = (newValue === 'left' || newValue === 'right') ? newValue : 'right';
     } else if (name === 'background-color') {
       this._backgroundColor = newValue || '#f5f5f5';
     }
@@ -181,28 +192,83 @@ export class Sidebar extends HTMLElement {
       const title = slot.getAttribute('title') || 'Section';
       const collapsed = slot.hasAttribute('collapsed');
 
-      const section = this.createSection(title, slot.innerHTML, collapsed);
+      // Clone children instead of serializing to outerHTML (preserves event listeners)
+      const section = this.createSectionFromChildren(title, slot, collapsed);
       this._container.appendChild(section);
     }
 
     // Sections from programmatic API
     for (const section of this._sections) {
-      const content = typeof section.content === 'string'
-        ? section.content
-        : section.content.outerHTML;
-
-      const sectionEl = this.createSection(section.title, content, section.collapsed);
+      const sectionEl = this.createSectionFromConfig(section);
       this._container.appendChild(sectionEl);
     }
 
     this.shadowRoot.appendChild(this._container);
   }
 
-  private createSection(title: string, content: string, collapsed: boolean = false): HTMLElement {
+  /**
+   * Create a section from a slotted child element.
+   * Clones children directly to preserve event listeners and state.
+   */
+  private createSectionFromChildren(title: string, source: Element, collapsed: boolean = false): HTMLElement {
     const section = document.createElement('div');
     section.className = 'section';
 
     // Header
+    const header = this.createHeader(title, collapsed);
+
+    // Content — clone children to preserve listeners and state
+    const contentEl = document.createElement('div');
+    contentEl.className = `section-content${collapsed ? ' collapsed' : ''}`;
+
+    // Clone child nodes (preserves event listeners on the clones)
+    for (const child of Array.from(source.childNodes)) {
+      contentEl.appendChild(child.cloneNode(true));
+    }
+
+    // Toggle handler
+    this.attachToggleHandler(header, contentEl, title);
+
+    section.appendChild(header);
+    section.appendChild(contentEl);
+    return section;
+  }
+
+  /**
+   * Create a section from a SidebarSectionConfig.
+   * If content is an HTMLElement, appends it directly (preserves listeners).
+   * If content is a string, uses innerHTML.
+   */
+  private createSectionFromConfig(section: SidebarSectionConfig): HTMLElement {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'section';
+
+    // Header
+    const header = this.createHeader(section.title, section.collapsed ?? false);
+
+    // Content
+    const contentEl = document.createElement('div');
+    contentEl.className = `section-content${section.collapsed ? ' collapsed' : ''}`;
+
+    if (typeof section.content === 'string') {
+      contentEl.innerHTML = section.content;
+    } else {
+      // Append the actual element directly — preserves listeners and state
+      contentEl.appendChild(section.content);
+    }
+
+    // Toggle handler
+    this.attachToggleHandler(header, contentEl, section.title);
+
+    wrapper.appendChild(header);
+    wrapper.appendChild(contentEl);
+    return wrapper;
+  }
+
+  /**
+   * Create a section header element.
+   */
+  private createHeader(title: string, collapsed: boolean): HTMLElement {
     const header = document.createElement('div');
     header.className = 'section-header';
 
@@ -216,29 +282,24 @@ export class Sidebar extends HTMLElement {
 
     header.appendChild(titleEl);
     header.appendChild(toggle);
+    return header;
+  }
 
-    // Content
-    const contentEl = document.createElement('div');
-    contentEl.className = `section-content${collapsed ? ' collapsed' : ''}`;
-    contentEl.innerHTML = content;
-
-    // Toggle handler
+  /**
+   * Attach collapse/expand toggle handler to a header.
+   */
+  private attachToggleHandler(header: HTMLElement, contentEl: HTMLElement, title: string): void {
     header.addEventListener('click', () => {
       const isCollapsed = contentEl.classList.toggle('collapsed');
-      toggle.classList.toggle('collapsed', isCollapsed);
+      const toggle = header.querySelector('.section-toggle');
+      if (toggle) toggle.classList.toggle('collapsed', isCollapsed);
 
-      // Dispatch toggle event
       this.dispatchEvent(new CustomEvent('toggle', {
         detail: { title, collapsed: isCollapsed },
         bubbles: true,
         composed: true,
       }));
     });
-
-    section.appendChild(header);
-    section.appendChild(contentEl);
-
-    return section;
   }
 }
 
@@ -280,8 +341,6 @@ export class SidebarSection extends HTMLElement {
   }
 }
 
-// Register components
-if (typeof customElements !== 'undefined') {
-  customElements.define('cigvis-sidebar', Sidebar);
-  customElements.define('cigvis-sidebar-section', SidebarSection);
-}
+// Register components (safe against double-registration)
+safeDefine('cigvis-sidebar', Sidebar);
+safeDefine('cigvis-sidebar-section', SidebarSection);

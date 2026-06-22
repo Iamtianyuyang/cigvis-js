@@ -58,7 +58,6 @@ export class ColormapPicker extends HTMLElement {
     'cool', 'spring', 'summer', 'autumn', 'winter',
     'bone', 'copper', 'pink', 'rainbow', 'terrain',
   ];
-  private _itemHeight: number = 30;
   private _container: HTMLDivElement | null = null;
 
   static get observedAttributes() {
@@ -74,7 +73,7 @@ export class ColormapPicker extends HTMLElement {
     this.render();
   }
 
-  attributeChangedCallback(name: string, oldValue: string, newValue: string) {
+  attributeChangedCallback(name: string, _oldValue: string, newValue: string) {
     if (name === 'selected') {
       this._selected = newValue;
       this.render();
@@ -228,7 +227,7 @@ export class ColormapPicker extends HTMLElement {
   }
 }
 
-// Register component
-if (typeof customElements !== 'undefined') {
+// Register component (safe against double-registration)
+if (typeof customElements !== 'undefined' && !customElements.get('cigvis-colormap-picker')) {
   customElements.define('cigvis-colormap-picker', ColormapPicker);
 }

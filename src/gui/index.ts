@@ -8,24 +8,43 @@
  */
 
 // ============================================================================
-// Component imports
+// Component imports and re-exports
 // ============================================================================
 
-import { ColormapPicker as _ColormapPicker } from './colormap-picker';
-import type { ColormapPickerOptions, ColormapChangeEvent } from './colormap-picker';
+import { ColormapPicker } from './colormap-picker';
+export { ColormapPicker };
+export type { ColormapPickerOptions, ColormapChangeEvent } from './colormap-picker';
 
-import { Sidebar as _Sidebar, SidebarSection as _SidebarSection } from './sidebar';
-import type { SidebarSection as SidebarSectionType, SidebarOptions } from './sidebar';
+import { Sidebar, SidebarSection } from './sidebar';
+export { Sidebar, SidebarSection };
+export type { SidebarSectionConfig, SidebarOptions } from './sidebar';
 
 // ============================================================================
-// Re-exports
+// Helpers
 // ============================================================================
 
-export const ColormapPicker = _ColormapPicker;
-export const Sidebar = _Sidebar;
-export const SidebarSection = _SidebarSection;
+/** Escape HTML special characters to prevent XSS */
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
 
-export type { ColormapPickerOptions, ColormapChangeEvent, SidebarSectionType, SidebarOptions };
+/** Parse a float with proper zero handling (avoids falsy-zero pitfall) */
+function parseNumber(value: string, fallback: number): number {
+  const parsed = parseFloat(value);
+  return isNaN(parsed) ? fallback : parsed;
+}
+
+/** Safely register a custom element (skip if already defined) */
+function safeDefine(name: string, constructor: CustomElementConstructor): void {
+  if (typeof customElements !== 'undefined' && !customElements.get(name)) {
+    customElements.define(name, constructor);
+  }
+}
 
 // ============================================================================
 // Additional components
@@ -40,6 +59,7 @@ export class RangeSlider extends HTMLElement {
   private _value: number = 50;
   private _step: number = 1;
   private _label: string = '';
+  private _observer: ResizeObserver | null = null;
 
   static get observedAttributes() {
     return ['min', 'max', 'value', 'step', 'label'];
@@ -54,11 +74,18 @@ export class RangeSlider extends HTMLElement {
     this.render();
   }
 
+  disconnectedCallback() {
+    if (this._observer) {
+      this._observer.disconnect();
+      this._observer = null;
+    }
+  }
+
   attributeChangedCallback(name: string, oldValue: string, newValue: string) {
-    if (name === 'min') this._min = parseFloat(newValue) || 0;
-    else if (name === 'max') this._max = parseFloat(newValue) || 100;
-    else if (name === 'value') this._value = parseFloat(newValue) || 50;
-    else if (name === 'step') this._step = parseFloat(newValue) || 1;
+    if (name === 'min') this._min = parseNumber(newValue, 0);
+    else if (name === 'max') this._max = parseNumber(newValue, 100);
+    else if (name === 'value') this._value = parseNumber(newValue, 50);
+    else if (name === 'step') this._step = parseNumber(newValue, 1);
     else if (name === 'label') this._label = newValue || '';
     this.render();
   }
@@ -82,7 +109,7 @@ export class RangeSlider extends HTMLElement {
         .value { min-width: 40px; text-align: right; color: #666; }
       </style>
       <div class="container">
-        <span class="label">${this._label}</span>
+        <span class="label">${escapeHtml(this._label)}</span>
         <input type="range" min="${this._min}" max="${this._max}" step="${this._step}" value="${this._value}">
         <span class="value">${this._value}</span>
       </div>
@@ -126,7 +153,10 @@ export class CigvisButton extends HTMLElement {
 
   attributeChangedCallback(name: string, oldValue: string, newValue: string) {
     if (name === 'label') this._label = newValue || 'Button';
-    else if (name === 'variant') this._variant = (newValue as any) || 'primary';
+    else if (name === 'variant') {
+      const valid = ['primary', 'secondary', 'ghost'];
+      this._variant = valid.includes(newValue) ? (newValue as typeof this._variant) : 'primary';
+    }
     this.render();
   }
 
@@ -159,7 +189,7 @@ export class CigvisButton extends HTMLElement {
         }
         button:hover { background-color: ${c.hover}; }
       </style>
-      <button>${this._label}</button>
+      <button>${escapeHtml(this._label)}</button>
     `;
 
     this.shadowRoot.querySelector('button')!.addEventListener('click', () => {
@@ -193,7 +223,11 @@ export class DropdownSelect extends HTMLElement {
     if (name === 'value') this._value = newValue || '';
     else if (name === 'label') this._label = newValue || '';
     else if (name === 'options') {
-      try { this._options = JSON.parse(newValue); } catch {}
+      try {
+        this._options = JSON.parse(newValue);
+      } catch (e) {
+        console.warn('[cigvis] DropdownSelect: invalid options JSON:', e);
+      }
     }
     this.render();
   }
@@ -209,6 +243,10 @@ export class DropdownSelect extends HTMLElement {
   private render() {
     if (!this.shadowRoot) return;
 
+    const optionsHtml = this._options
+      .map(o => `<option value="${escapeHtml(o.value)}"${o.value === this._value ? ' selected' : ''}>${escapeHtml(o.label)}</option>`)
+      .join('');
+
     this.shadowRoot.innerHTML = `
       <style>
         :host { display: block; font-family: sans-serif; font-size: 12px; }
@@ -217,9 +255,9 @@ export class DropdownSelect extends HTMLElement {
         select { flex: 1; padding: 4px; border: 1px solid #ccc; border-radius: 4px; }
       </style>
       <div class="container">
-        <span class="label">${this._label}</span>
+        <span class="label">${escapeHtml(this._label)}</span>
         <select>
-          ${this._options.map(o => `<option value="${o.value}"${o.value === this._value ? ' selected' : ''}>${o.label}</option>`).join('')}
+          ${optionsHtml}
         </select>
       </div>
     `;
@@ -241,6 +279,7 @@ export class DropdownSelect extends HTMLElement {
 export class PlotCanvas extends HTMLElement {
   private _canvas: HTMLCanvasElement | null = null;
   private _ctx: CanvasRenderingContext2D | null = null;
+  private _observer: ResizeObserver | null = null;
 
   constructor() {
     super();
@@ -249,6 +288,13 @@ export class PlotCanvas extends HTMLElement {
 
   connectedCallback() {
     this.render();
+  }
+
+  disconnectedCallback() {
+    if (this._observer) {
+      this._observer.disconnect();
+      this._observer = null;
+    }
   }
 
   /** Get canvas element */
@@ -275,24 +321,22 @@ export class PlotCanvas extends HTMLElement {
     this._canvas = this.shadowRoot.querySelector('canvas')!;
     this._ctx = this._canvas.getContext('2d')!;
 
-    // Resize observer
-    const observer = new ResizeObserver(() => {
+    // Resize observer (stored for cleanup)
+    this._observer = new ResizeObserver(() => {
       if (this._canvas) {
         this._canvas.width = this.clientWidth;
         this._canvas.height = this.clientHeight;
       }
     });
-    observer.observe(this);
+    this._observer.observe(this);
   }
 }
 
-// Register components
-if (typeof customElements !== 'undefined') {
-  customElements.define('cigvis-range-slider', RangeSlider);
-  customElements.define('cigvis-button', CigvisButton);
-  customElements.define('cigvis-dropdown-select', DropdownSelect);
-  customElements.define('cigvis-plot-canvas', PlotCanvas);
-}
+// Register components (safe against double-registration)
+safeDefine('cigvis-range-slider', RangeSlider);
+safeDefine('cigvis-button', CigvisButton);
+safeDefine('cigvis-dropdown-select', DropdownSelect);
+safeDefine('cigvis-plot-canvas', PlotCanvas);
 
 // ============================================================================
 // Agent interface
