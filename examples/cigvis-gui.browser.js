@@ -138,7 +138,7 @@
       super();
       this._width = 250;
       this._position = 'right';
-      this._backgroundColor = '#16213e';
+      this._backgroundColor = '#0f1117';
       this._sections = [];
       this.attachShadow({ mode: 'open' });
     }
@@ -165,11 +165,11 @@
       style.textContent = `
         :host { display: block; font-family: sans-serif; font-size: 12px; }
         .sidebar { width: ${this._width}px; background: ${this._backgroundColor}; overflow-y: auto; height: 100%; }
-        .section { border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .section { border-bottom: 1px solid rgba(255,255,255,0.06); }
         .section-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; cursor: pointer; user-select: none; }
-        .section-header:hover { background: rgba(255,255,255,0.05); }
-        .section-title { font-weight: 600; color: #e94560; font-size: 13px; }
-        .section-toggle { font-size: 10px; color: #666; transition: transform 0.2s; }
+        .section-header:hover { background: rgba(255,255,255,0.03); }
+        .section-title { font-weight: 600; color: #8b8fa3; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
+        .section-toggle { font-size: 10px; color: #5c6078; transition: transform 0.2s; }
         .section-toggle.collapsed { transform: rotate(-90deg); }
         .section-content { padding: 8px 14px; }
         .section-content.collapsed { display: none; }
@@ -309,9 +309,9 @@
         <style>
           :host { display: block; font-family: sans-serif; font-size: 12px; }
           .container { display: flex; align-items: center; gap: 8px; }
-          .label { min-width: 80px; color: #a0a0b0; }
-          input[type="range"] { flex: 1; accent-color: #e94560; }
-          .value { min-width: 40px; text-align: right; color: #e0e0e0; font-family: monospace; }
+          .label { min-width: 80px; color: #8b8fa3; }
+          input[type="range"] { flex: 1; accent-color: #00d4aa; }
+          .value { min-width: 40px; text-align: right; color: #e8eaed; font-family: monospace; }
         </style>
         <div class="container">
           <span class="label">${escapeHtml(this._label)}</span>
@@ -361,9 +361,9 @@
     render() {
       if (!this.shadowRoot) return;
       const colors = {
-        primary: { bg: '#e94560', text: '#ffffff', hover: '#c73e54' },
-        secondary: { bg: '#533483', text: '#e0e0e0', hover: '#6b44a8' },
-        ghost: { bg: 'transparent', text: '#e0e0e0', hover: 'rgba(255,255,255,0.1)' },
+        primary: { bg: '#00d4aa', text: '#0a0c10', hover: '#00eabb' },
+        secondary: { bg: '#232736', text: '#e8eaed', hover: '#2a2e3e' },
+        ghost: { bg: 'transparent', text: '#e8eaed', hover: 'rgba(255,255,255,0.06)' },
       };
       const c = colors[this._variant];
 
@@ -371,9 +371,9 @@
         <style>
           :host { display: inline-block; font-family: sans-serif; font-size: 12px; }
           button {
-            padding: 6px 16px; border: 1px solid ${this._variant === 'ghost' ? 'rgba(255,255,255,0.2)' : c.bg};
-            border-radius: 4px; background: ${c.bg}; color: ${c.text}; cursor: pointer;
-            font-size: 12px; transition: background 0.2s;
+            padding: 6px 16px; border: 1px solid ${this._variant === 'ghost' ? 'rgba(255,255,255,0.10)' : c.bg};
+            border-radius: 6px; background: ${c.bg}; color: ${c.text}; cursor: pointer;
+            font-size: 12px; font-weight: 500; transition: all 0.15s ease;
           }
           button:hover { background: ${c.hover}; }
         </style>
@@ -428,10 +428,10 @@
         <style>
           :host { display: block; font-family: sans-serif; font-size: 12px; }
           .container { display: flex; align-items: center; gap: 8px; }
-          .label { min-width: 80px; color: #a0a0b0; }
-          select { flex: 1; padding: 4px 8px; border: 1px solid #533483; border-radius: 4px;
-            background: #0f3460; color: #e0e0e0; font-size: 12px; }
-          option { background: #16213e; }
+          .label { min-width: 80px; color: #8b8fa3; }
+          select { flex: 1; padding: 6px 8px; border: 1px solid rgba(255,255,255,0.10); border-radius: 6px;
+            background: #161922; color: #e8eaed; font-size: 12px; }
+          option { background: #1c1f2b; }
         </style>
         <div class="container">
           <span class="label">${escapeHtml(this._label)}</span>

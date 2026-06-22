@@ -3,243 +3,692 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CIGVis GUI Components Test</title>
+  <title>CIGVis — Geophysical Visualization</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #1a1a2e;
-      color: #e0e0e0;
-      min-height: 100vh;
+    /* ====================================================================
+       TOKENS
+       ==================================================================== */
+    :root {
+      /* Neutrals — cool slate, not warm */
+      --bg-void: #0a0c10;
+      --bg-base: #0f1117;
+      --bg-raised: #161922;
+      --bg-surface: #1c1f2b;
+      --bg-overlay: #232736;
+
+      /* Borders */
+      --border-subtle: rgba(255, 255, 255, 0.06);
+      --border-default: rgba(255, 255, 255, 0.10);
+      --border-strong: rgba(255, 255, 255, 0.16);
+
+      /* Text */
+      --text-primary: #e8eaed;
+      --text-secondary: #8b8fa3;
+      --text-tertiary: #5c6078;
+      --text-inverse: #0a0c10;
+
+      /* Accent — electric teal (not AI-purple) */
+      --accent: #00d4aa;
+      --accent-dim: #00d4aa20;
+      --accent-hover: #00eabb;
+      --accent-text: #0a0c10;
+
+      /* Semantic */
+      --danger: #f43f5e;
+      --warning: #f59e0b;
+      --success: #10b981;
+
+      /* Typography */
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+
+      /* Spacing scale */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+
+      /* Radius — consistent soft */
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+
+      /* Shadows — tinted to bg */
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
     }
-    .header {
-      background: linear-gradient(135deg, #16213e, #0f3460);
-      padding: 20px 32px;
-      border-bottom: 2px solid #533483;
-    }
-    .header h1 {
-      font-size: 24px;
-      font-weight: 600;
-      color: #e94560;
-    }
-    .header p {
+
+    /* ====================================================================
+       RESET & BASE
+       ==================================================================== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html {
       font-size: 14px;
-      color: #a0a0b0;
-      margin-top: 4px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
-    .layout {
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-void);
+      color: var(--text-primary);
+      min-height: 100dvh;
+      overflow: hidden;
+    }
+
+    /* ====================================================================
+       LAYOUT — App Shell
+       ==================================================================== */
+    .app {
       display: grid;
-      grid-template-columns: 1fr 300px;
-      min-height: calc(100vh - 80px);
+      grid-template-rows: 48px 1fr 28px;
+      grid-template-columns: 1fr 280px;
+      height: 100dvh;
     }
+
+    /* ====================================================================
+       TOPBAR
+       ==================================================================== */
+    .topbar {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-4);
+      background: var(--bg-base);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .logo-mark {
+      width: 20px;
+      height: 20px;
+      background: var(--accent);
+      border-radius: 4px;
+      position: relative;
+    }
+
+    .logo-mark::after {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      background: var(--bg-void);
+      border-radius: 2px;
+    }
+
+    .logo-text {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .logo-version {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-tertiary);
+      padding: 2px 6px;
+      background: var(--bg-raised);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .topbar-center {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+    }
+
+    .topbar-tab {
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      background: none;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .topbar-tab:hover {
+      color: var(--text-primary);
+      background: var(--bg-raised);
+    }
+
+    .topbar-tab.active {
+      color: var(--text-primary);
+      background: var(--bg-surface);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .topbar-status {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-tertiary);
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+
+    /* ====================================================================
+       MAIN CONTENT
+       ==================================================================== */
     .main {
-      padding: 24px;
+      overflow-y: auto;
+      padding: var(--space-6);
       display: flex;
       flex-direction: column;
-      gap: 24px;
+      gap: var(--space-6);
     }
-    .card {
-      background: #16213e;
-      border: 1px solid #533483;
-      border-radius: 8px;
-      padding: 20px;
+
+    /* Section card */
+    .section {
+      background: var(--bg-base);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
     }
-    .card h2 {
-      font-size: 16px;
-      color: #e94560;
-      margin-bottom: 16px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid #533483;
-    }
-    .row {
+
+    .section-header {
       display: flex;
-      gap: 16px;
       align-items: center;
-      margin-bottom: 12px;
+      justify-content: space-between;
+      padding: var(--space-3) var(--space-4);
+      border-bottom: 1px solid var(--border-subtle);
     }
-    .label {
-      min-width: 120px;
-      font-size: 13px;
-      color: #a0a0b0;
+
+    .section-title {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-secondary);
     }
-    .value {
-      font-size: 13px;
-      color: #e0e0e0;
-      font-family: monospace;
+
+    .section-badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--accent);
+      padding: 2px 8px;
+      background: var(--accent-dim);
+      border-radius: 999px;
     }
-    .plot-area {
-      background: #0f0f23;
-      border: 1px solid #533483;
-      border-radius: 4px;
-      height: 300px;
+
+    .section-body {
+      padding: var(--space-4);
+    }
+
+    /* ====================================================================
+       FORM ROWS
+       ==================================================================== */
+    .form-row {
+      display: grid;
+      grid-template-columns: 140px 1fr auto;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-2) 0;
+    }
+
+    .form-row + .form-row {
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .form-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .form-value {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-tertiary);
+      text-align: right;
+      min-width: 48px;
+    }
+
+    /* ====================================================================
+       BUTTONS (inline overrides for cigvis-button)
+       ==================================================================== */
+    .button-row {
+      display: flex;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+    }
+
+    /* ====================================================================
+       PLOT CANVAS AREA
+       ==================================================================== */
+    .plot-frame {
+      background: var(--bg-void);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      height: 240px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .plot-frame::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px),
+        linear-gradient(0deg, var(--border-subtle) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .plot-frame cigvis-plot-canvas {
+      position: absolute;
+      inset: 0;
+    }
+
+    /* ====================================================================
+       SIDEBAR (right panel)
+       ==================================================================== */
+    .sidebar-panel {
+      background: var(--bg-base);
+      border-left: 1px solid var(--border-subtle);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-panel .section {
+      border-radius: 0;
+      border-left: none;
+      border-right: none;
+      border-top: none;
+    }
+
+    .sidebar-panel .section:last-child {
+      border-bottom: none;
+    }
+
+    /* ====================================================================
+       STATUSBAR
+       ==================================================================== */
+    .statusbar {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-4);
+      background: var(--bg-base);
+      border-top: 1px solid var(--border-subtle);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-tertiary);
+    }
+
+    .statusbar-left,
+    .statusbar-right {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+    }
+
+    .status-ok { color: var(--success); }
+    .status-warn { color: var(--warning); }
+    .status-error { color: var(--danger); }
+
+    /* ====================================================================
+       OVERRIDES for cigvis Web Components (dark theme)
+       ==================================================================== */
+    cigvis-range-slider {
+      display: block;
+      width: 100%;
+    }
+
+    cigvis-button::part(button),
+    cigvis-button button {
+      font-family: var(--font-sans) !important;
+      font-size: 12px !important;
+      font-weight: 500 !important;
+      border-radius: var(--radius-sm) !important;
+      transition: all 0.15s ease !important;
+    }
+
+    cigvis-button button:active {
+      transform: translateY(1px);
+    }
+
+    cigvis-sidebar {
+      display: contents;
+    }
+
+    /* Colormap picker dark overrides */
+    cigvis-colormap-picker .item:hover {
+      background: rgba(255, 255, 255, 0.06) !important;
+    }
+
+    cigvis-colormap-picker .item.selected {
+      background: var(--accent-dim) !important;
+      border-color: var(--accent) !important;
+    }
+
+    cigvis-colormap-picker .label {
+      color: var(--text-secondary) !important;
+    }
+
+    /* ====================================================================
+       EMPTY STATE
+       ==================================================================== */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-8);
+      color: var(--text-tertiary);
+      text-align: center;
+    }
+
+    .empty-state-icon {
+      width: 48px;
+      height: 48px;
+      border: 2px dashed var(--border-default);
+      border-radius: var(--radius-md);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #666;
+      margin-bottom: var(--space-3);
+      font-size: 20px;
     }
-    /* Sidebar styles */
-    cigvis-sidebar {
-      border-left: 1px solid #533483;
+
+    .empty-state-text {
+      font-size: 13px;
+      max-width: 240px;
     }
-    /* Override sidebar colors for dark theme */
-    cigvis-sidebar::part(sidebar) {
-      background: #16213e;
-    }
-    /* Button variants */
-    .button-row {
+
+    /* ====================================================================
+       EVENT LOG
+       ==================================================================== */
+    .event-log {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-tertiary);
+      padding: var(--space-2) var(--space-3);
+      background: var(--bg-void);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+      min-height: 32px;
       display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
+      align-items: center;
     }
-    /* Status bar */
-    .status-bar {
-      background: #0f3460;
-      padding: 8px 24px;
-      font-size: 12px;
-      color: #a0a0b0;
-      border-top: 1px solid #533483;
-      display: flex;
-      justify-content: space-between;
+
+    .event-log .time {
+      color: var(--text-tertiary);
+      margin-right: var(--space-2);
     }
-    .status-ok { color: #4ade80; }
-    .status-warn { color: #fbbf24; }
-    .status-error { color: #ef4444; }
+
+    .event-log .event-type {
+      color: var(--accent);
+      margin-right: var(--space-2);
+    }
+
+    .event-log .event-data {
+      color: var(--text-secondary);
+    }
   </style>
 </head>
 <body>
-  <div class="header">
-    <h1>CIGVis GUI Components Test</h1>
-    <p>Testing Web Components: RangeSlider, Button, DropdownSelect, PlotCanvas, ColormapPicker, Sidebar</p>
-  </div>
+  <div class="app">
 
-  <div class="layout">
-    <div class="main">
-      <!-- RangeSlider Tests -->
-      <div class="card">
-        <h2>RangeSlider</h2>
-        <div class="row">
-          <span class="label">Default:</span>
-          <cigvis-range-slider label="Volume Opacity" value="75" min="0" max="100"></cigvis-range-slider>
+    <!-- ================================================================
+         TOPBAR
+         ================================================================ -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="logo">
+          <div class="logo-mark"></div>
+          <span class="logo-text">cigvis</span>
         </div>
-        <div class="row">
-          <span class="label">Zero value:</span>
-          <cigvis-range-slider label="Min Value" value="0" min="0" max="50"></cigvis-range-slider>
+        <span class="logo-version">v0.1.0</span>
+      </div>
+
+      <nav class="topbar-center">
+        <button class="topbar-tab active">Components</button>
+        <button class="topbar-tab">Renderer</button>
+        <button class="topbar-tab">IO</button>
+        <button class="topbar-tab">Colormaps</button>
+      </nav>
+
+      <div class="topbar-right">
+        <div class="topbar-status">
+          <span class="status-dot"></span>
+          <span>Ready</span>
         </div>
-        <div class="row">
-          <span class="label">Custom step:</span>
-          <cigvis-range-slider label="Step Size" value="50" min="0" max="100" step="10"></cigvis-range-slider>
+      </div>
+    </header>
+
+    <!-- ================================================================
+         MAIN CONTENT
+         ================================================================ -->
+    <main class="main">
+
+      <!-- RangeSlider Section -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-title">Range Slider</span>
+          <span class="section-badge">3 instances</span>
         </div>
-        <div class="row">
-          <span class="label">Event output:</span>
-          <span class="value" id="slider-output">--</span>
+        <div class="section-body">
+          <div class="form-row">
+            <span class="form-label">Volume Opacity</span>
+            <cigvis-range-slider label="" value="75" min="0" max="100"></cigvis-range-slider>
+            <span class="form-value" data-slider="opacity">75</span>
+          </div>
+          <div class="form-row">
+            <span class="form-label">Zero Value Test</span>
+            <cigvis-range-slider label="" value="0" min="0" max="50"></cigvis-range-slider>
+            <span class="form-value" data-slider="zero">0</span>
+          </div>
+          <div class="form-row">
+            <span class="form-label">Step Size</span>
+            <cigvis-range-slider label="" value="50" min="0" max="100" step="10"></cigvis-range-slider>
+            <span class="form-value" data-slider="step">50</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Button Section -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-title">Buttons</span>
+          <span class="section-badge">4 variants</span>
+        </div>
+        <div class="section-body">
+          <div class="button-row">
+            <cigvis-button label="Primary" variant="primary"></cigvis-button>
+            <cigvis-button label="Secondary" variant="secondary"></cigvis-button>
+            <cigvis-button label="Ghost" variant="ghost"></cigvis-button>
+            <cigvis-button label="XSS: <script>alert(1)</script>" variant="primary"></cigvis-button>
+          </div>
+          <div style="margin-top: var(--space-3);">
+            <div class="event-log" id="button-log">
+              <span class="event-type">ready</span>
+              <span class="event-data">awaiting interaction</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Dropdown Section -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-title">Dropdown Select</span>
+          <span class="section-badge">2 instances</span>
+        </div>
+        <div class="section-body">
+          <div class="form-row">
+            <span class="form-label">Colormap</span>
+            <cigvis-dropdown-select label="" value="petrel"></cigvis-dropdown-select>
+            <span class="form-value" data-dropdown="cmap">petrel</span>
+          </div>
+          <div class="form-row">
+            <span class="form-label">Interpolation</span>
+            <cigvis-dropdown-select label="" value="linear"></cigvis-dropdown-select>
+            <span class="form-value" data-dropdown="interp">linear</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Plot Canvas Section -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-title">Plot Canvas</span>
+          <span class="section-badge">live</span>
+        </div>
+        <div class="section-body">
+          <div class="plot-frame">
+            <cigvis-plot-canvas id="test-canvas"></cigvis-plot-canvas>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ================================================================
+         SIDEBAR
+         ================================================================ -->
+    <aside class="sidebar-panel">
+
+      <div class="section">
+        <div class="section-header">
+          <span class="section-title">Colormap</span>
+        </div>
+        <div class="section-body" style="padding: var(--space-2);">
+          <cigvis-colormap-picker selected="petrel"></cigvis-colormap-picker>
         </div>
       </div>
 
-      <!-- Button Tests -->
-      <div class="card">
-        <h2>Button</h2>
-        <div class="button-row">
-          <cigvis-button label="Primary Action" variant="primary"></cigvis-button>
-          <cigvis-button label="Secondary" variant="secondary"></cigvis-button>
-          <cigvis-button label="Ghost Button" variant="ghost"></cigvis-button>
-          <cigvis-button label="XSS Test: <script>alert(1)</script>" variant="primary"></cigvis-button>
+      <div class="section">
+        <div class="section-header">
+          <span class="section-title">Slice Position</span>
         </div>
-        <div class="row" style="margin-top: 12px;">
-          <span class="label">Click output:</span>
-          <span class="value" id="button-output">--</span>
+        <div class="section-body">
+          <div class="form-row" style="grid-template-columns: 24px 1fr auto;">
+            <span class="form-label" style="font-family: var(--font-mono); font-weight: 600; color: var(--accent);">X</span>
+            <cigvis-range-slider label="" value="96" min="0" max="192"></cigvis-range-slider>
+            <span class="form-value">96</span>
+          </div>
+          <div class="form-row" style="grid-template-columns: 24px 1fr auto;">
+            <span class="form-label" style="font-family: var(--font-mono); font-weight: 600; color: var(--accent);">Y</span>
+            <cigvis-range-slider label="" value="100" min="0" max="200"></cigvis-range-slider>
+            <span class="form-value">100</span>
+          </div>
+          <div class="form-row" style="grid-template-columns: 24px 1fr auto;">
+            <span class="form-label" style="font-family: var(--font-mono); font-weight: 600; color: var(--accent);">Z</span>
+            <cigvis-range-slider label="" value="120" min="0" max="240"></cigvis-range-slider>
+            <span class="form-value">120</span>
+          </div>
         </div>
       </div>
 
-      <!-- DropdownSelect Tests -->
-      <div class="card">
-        <h2>DropdownSelect</h2>
-        <div class="row">
-          <span class="label">Colormap:</span>
-          <cigvis-dropdown-select label="Select Colormap" value="petrel"></cigvis-dropdown-select>
+      <div class="section">
+        <div class="section-header">
+          <span class="section-title">Display</span>
         </div>
-        <div class="row">
-          <span class="label">Interpolation:</span>
-          <cigvis-dropdown-select label="Method" value="linear"></cigvis-dropdown-select>
-        </div>
-        <div class="row">
-          <span class="label">Event output:</span>
-          <span class="value" id="dropdown-output">--</span>
-        </div>
-      </div>
-
-      <!-- PlotCanvas Test -->
-      <div class="card">
-        <h2>PlotCanvas</h2>
-        <div class="plot-area">
-          <cigvis-plot-canvas id="test-canvas" style="width: 100%; height: 100%;"></cigvis-plot-canvas>
-        </div>
-      </div>
-    </div>
-
-    <!-- Sidebar -->
-    <cigvis-sidebar position="right" width="300">
-      <cigvis-sidebar-section title="Colormap Picker">
-        <cigvis-colormap-picker selected="petrel"></cigvis-colormap-picker>
-      </cigvis-sidebar-section>
-
-      <cigvis-sidebar-section title="Volume Settings">
-        <div style="padding: 8px 0;">
-          <div class="row">
-            <span class="label" style="min-width: 80px;">Opacity:</span>
-            <cigvis-range-slider value="80" min="0" max="100" style="flex: 1;"></cigvis-range-slider>
+        <div class="section-body">
+          <div class="form-row" style="grid-template-columns: 1fr;">
+            <cigvis-dropdown-select label="" value="three.js"></cigvis-dropdown-select>
           </div>
-          <div class="row">
-            <span class="label" style="min-width: 80px;">Slice X:</span>
-            <cigvis-range-slider value="96" min="0" max="192" style="flex: 1;"></cigvis-range-slider>
-          </div>
-          <div class="row">
-            <span class="label" style="min-width: 80px;">Slice Y:</span>
-            <cigvis-range-slider value="100" min="0" max="200" style="flex: 1;"></cigvis-range-slider>
-          </div>
-          <div class="row">
-            <span class="label" style="min-width: 80px;">Slice Z:</span>
-            <cigvis-range-slider value="120" min="0" max="240" style="flex: 1;"></cigvis-range-slider>
-          </div>
-        </div>
-      </cigvis-sidebar-section>
-
-      <cigvis-sidebar-section title="Display Options">
-        <div style="padding: 8px 0;">
-          <div class="row">
-            <span class="label" style="min-width: 80px;">Render:</span>
-            <cigvis-dropdown-select value="three.js" style="flex: 1;"></cigvis-dropdown-select>
-          </div>
-          <div style="margin-top: 8px;">
+          <div style="margin-top: var(--space-3); display: flex; flex-direction: column; gap: var(--space-2);">
             <cigvis-button label="Reset View" variant="secondary" style="width: 100%;"></cigvis-button>
-          </div>
-          <div style="margin-top: 8px;">
-            <cigvis-button label="Export Screenshot" variant="primary" style="width: 100%;"></cigvis-button>
+            <cigvis-button label="Export PNG" variant="primary" style="width: 100%;"></cigvis-button>
           </div>
         </div>
-      </cigvis-sidebar-section>
+      </div>
 
-      <cigvis-sidebar-section title="Info" collapsed>
-        <div style="padding: 8px 0; font-size: 12px; color: #a0a0b0;">
-          <p>CIGVis.js v0.1.0</p>
-          <p style="margin-top: 4px;">Ported from Python cigvis</p>
-          <p style="margin-top: 4px;">github.com/Iamtianyuyang/cigvis-js</p>
+      <div class="section" style="flex: 1;">
+        <div class="section-header">
+          <span class="section-title">Info</span>
         </div>
-      </cigvis-sidebar-section>
-    </cigvis-sidebar>
-  </div>
+        <div class="section-body">
+          <div class="empty-state">
+            <div class="empty-state-icon">?</div>
+            <p class="empty-state-text">Load a volume file to begin visualization</p>
+          </div>
+        </div>
+      </div>
 
-  <div class="status-bar">
-    <span>Components: <span class="status-ok" id="component-count">loading...</span></span>
-    <span>Errors: <span class="status-ok" id="error-count">0</span></span>
-    <span>Warnings: <span class="status-ok" id="warn-count">0</span></span>
+    </aside>
+
+    <!-- ================================================================
+         STATUSBAR
+         ================================================================ -->
+    <footer class="statusbar">
+      <div class="statusbar-left">
+        <span class="status-item">
+          Components: <span class="status-ok" id="component-count">—</span>
+        </span>
+        <span class="status-item">
+          Errors: <span class="status-ok" id="error-count">0</span>
+        </span>
+        <span class="status-item">
+          Warnings: <span class="status-ok" id="warn-count">0</span>
+        </span>
+      </div>
+      <div class="statusbar-right">
+        <span class="status-item">WebGL: <span id="webgl-status">checking</span></span>
+        <span class="status-item">Three.js: <span id="three-status">—</span></span>
+      </div>
+    </footer>
+
   </div>
 
   <!-- Load cigvis GUI components -->
   <script src="./cigvis-gui.browser.js"></script>
-  <script type="module">
+  <script>
+    // ====================================================================
+    // INITIALIZATION
+    // ====================================================================
 
     // Count registered components
-    const components = [
+    const COMPONENTS = [
       'cigvis-range-slider',
       'cigvis-button',
       'cigvis-dropdown-select',
@@ -250,142 +699,209 @@
     ];
 
     let registered = 0;
-    for (const name of components) {
-      if (customElements.get(name)) {
-        registered++;
-      }
+    for (const name of COMPONENTS) {
+      if (customElements.get(name)) registered++;
+    }
+    document.getElementById('component-count').textContent = `${registered}/${COMPONENTS.length}`;
+
+    // Check WebGL
+    try {
+      const canvas = document.createElement('canvas');
+      const gl = canvas.getContext('webgl') || canvas.getContext('webgl2');
+      document.getElementById('webgl-status').textContent = gl ? 'ok' : 'unavailable';
+      document.getElementById('webgl-status').className = gl ? 'status-ok' : 'status-warn';
+    } catch (e) {
+      document.getElementById('webgl-status').textContent = 'error';
+      document.getElementById('webgl-status').className = 'status-error';
     }
 
-    document.getElementById('component-count').textContent = `${registered}/${components.length} registered`;
+    // ====================================================================
+    // WIRE UP DROPDOWNS
+    // ====================================================================
 
-    // Wire up dropdown options
-    const colormapSelect = document.querySelector('cigvis-dropdown-select[label="Select Colormap"]');
-    if (colormapSelect) {
-      colormapSelect.setOptions([
+    const cmapSelect = document.querySelector('.main cigvis-dropdown-select[value="petrel"]');
+    if (cmapSelect) {
+      cmapSelect.setOptions([
         { value: 'petrel', label: 'Petrel' },
         { value: 'gray', label: 'Gray' },
         { value: 'jet', label: 'Jet' },
         { value: 'viridis', label: 'Viridis' },
         { value: 'hot', label: 'Hot' },
+        { value: 'seismic', label: 'Seismic' },
       ]);
     }
 
-    const methodSelect = document.querySelector('cigvis-dropdown-select[label="Method"]');
-    if (methodSelect) {
-      methodSelect.setOptions([
+    const interpSelect = document.querySelector('.main cigvis-dropdown-select[value="linear"]');
+    if (interpSelect) {
+      interpSelect.setOptions([
         { value: 'nearest', label: 'Nearest' },
         { value: 'linear', label: 'Linear' },
         { value: 'cubic', label: 'Cubic' },
       ]);
     }
 
-    // Wire up event listeners
+    const displaySelect = document.querySelector('.sidebar-panel cigvis-dropdown-select');
+    if (displaySelect) {
+      displaySelect.setOptions([
+        { value: 'three.js', label: 'Three.js' },
+        { value: 'plotly', label: 'Plotly.js' },
+        { value: 'canvas2d', label: 'Canvas 2D' },
+      ]);
+    }
+
+    // ====================================================================
+    // EVENT LISTENERS
+    // ====================================================================
+
+    // Sliders — update value displays
     document.querySelectorAll('cigvis-range-slider').forEach(slider => {
       slider.addEventListener('change', (e) => {
-        const output = document.getElementById('slider-output');
-        if (output) {
-          output.textContent = `value: ${e.detail.value}`;
+        // Update adjacent form-value
+        const row = slider.closest('.form-row');
+        if (row) {
+          const valueEl = row.querySelector('.form-value');
+          if (valueEl) valueEl.textContent = e.detail.value;
         }
       });
     });
 
+    // Buttons — log clicks
     document.querySelectorAll('cigvis-button').forEach(btn => {
       btn.addEventListener('click', () => {
-        const output = document.getElementById('button-output');
-        if (output) {
-          output.textContent = `clicked: "${btn.label}" at ${new Date().toLocaleTimeString()}`;
+        const log = document.getElementById('button-log');
+        if (log) {
+          const time = new Date().toLocaleTimeString('en-US', { hour12: false });
+          log.innerHTML = `<span class="time">${time}</span><span class="event-type">click</span><span class="event-data">"${btn.label}"</span>`;
         }
       });
     });
 
+    // Dropdowns — update value displays
     document.querySelectorAll('cigvis-dropdown-select').forEach(select => {
       select.addEventListener('change', (e) => {
-        const output = document.getElementById('dropdown-output');
-        if (output) {
-          output.textContent = `selected: "${e.detail.value}"`;
+        const row = select.closest('.form-row');
+        if (row) {
+          const valueEl = row.querySelector('.form-value');
+          if (valueEl) valueEl.textContent = e.detail.value;
         }
       });
     });
 
-    // Draw test pattern on PlotCanvas
+    // ====================================================================
+    // DRAW TEST PATTERN ON CANVAS
+    // ====================================================================
+
     const plotCanvas = document.getElementById('test-canvas');
-    if (plotCanvas && plotCanvas.canvas) {
-      const canvas = plotCanvas.canvas;
-      const ctx = plotCanvas.ctx;
-      if (ctx) {
-        // Wait for canvas to be sized
+    if (plotCanvas) {
+      // Wait for canvas to initialize
+      const drawWhenReady = () => {
+        const canvas = plotCanvas.canvas;
+        const ctx = plotCanvas.ctx;
+        if (!canvas || !ctx) {
+          requestAnimationFrame(drawWhenReady);
+          return;
+        }
+
         requestAnimationFrame(() => {
           const w = canvas.width;
           const h = canvas.height;
+          if (w === 0 || h === 0) return;
 
           // Background
-          ctx.fillStyle = '#0f0f23';
+          ctx.fillStyle = 'var(--bg-void)';
           ctx.fillRect(0, 0, w, h);
 
-          // Grid
-          ctx.strokeStyle = '#1a1a3e';
+          // Axes
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
           ctx.lineWidth = 1;
-          for (let x = 0; x < w; x += 40) {
+          ctx.beginPath();
+          ctx.moveTo(40, 20);
+          ctx.lineTo(40, h - 20);
+          ctx.lineTo(w - 20, h - 20);
+          ctx.stroke();
+
+          // Y-axis ticks
+          ctx.fillStyle = '#5c6078';
+          ctx.font = '10px JetBrains Mono';
+          ctx.textAlign = 'right';
+          for (let i = 0; i <= 4; i++) {
+            const y = 20 + (h - 40) * (1 - i / 4);
+            const val = (i * 0.5 - 1).toFixed(1);
+            ctx.fillText(val, 36, y + 3);
             ctx.beginPath();
-            ctx.moveTo(x, 0);
-            ctx.lineTo(x, h);
-            ctx.stroke();
-          }
-          for (let y = 0; y < h; y += 40) {
-            ctx.beginPath();
-            ctx.moveTo(0, y);
-            ctx.lineTo(w, y);
+            ctx.moveTo(38, y);
+            ctx.lineTo(42, y);
             ctx.stroke();
           }
 
-          // Draw a seismic-like waveform
-          ctx.strokeStyle = '#e94560';
-          ctx.lineWidth = 2;
+          // X-axis ticks
+          ctx.textAlign = 'center';
+          for (let i = 0; i <= 6; i++) {
+            const x = 40 + (w - 60) * i / 6;
+            ctx.fillText((i * 40).toString(), x, h - 6);
+          }
+
+          // Seismic waveform
+          ctx.strokeStyle = '#00d4aa';
+          ctx.lineWidth = 1.5;
           ctx.beginPath();
-          for (let x = 0; x < w; x++) {
-            const t = x / w * Math.PI * 8;
-            const y = h / 2 + Math.sin(t) * 50 * Math.exp(-t / 12) + Math.random() * 10;
-            if (x === 0) ctx.moveTo(x, y);
+          const midY = h / 2;
+          for (let x = 40; x < w - 20; x++) {
+            const t = (x - 40) / (w - 60);
+            const envelope = Math.exp(-t * 3) * Math.sin(t * Math.PI);
+            const noise = (Math.random() - 0.5) * 0.15;
+            const y = midY - (envelope + noise) * (h * 0.35);
+            if (x === 40) ctx.moveTo(x, y);
             else ctx.lineTo(x, y);
           }
           ctx.stroke();
 
-          // Draw axis labels
-          ctx.fillStyle = '#a0a0b0';
-          ctx.font = '12px sans-serif';
-          ctx.fillText('Time (ms)', w / 2 - 30, h - 10);
+          // Fill under curve
+          ctx.lineTo(w - 20, midY);
+          ctx.lineTo(40, midY);
+          ctx.closePath();
+          ctx.fillStyle = 'rgba(0, 212, 170, 0.08)';
+          ctx.fill();
+
+          // Labels
+          ctx.fillStyle = '#8b8fa3';
+          ctx.font = '11px Inter';
+          ctx.textAlign = 'center';
+          ctx.fillText('Time (ms)', w / 2, h - 0);
+
           ctx.save();
-          ctx.translate(15, h / 2 + 20);
+          ctx.translate(10, h / 2);
           ctx.rotate(-Math.PI / 2);
           ctx.fillText('Amplitude', 0, 0);
           ctx.restore();
-
-          // Title
-          ctx.fillStyle = '#e94560';
-          ctx.font = '14px sans-serif';
-          ctx.fillText('Seismic Trace Preview', w / 2 - 70, 20);
         });
-      }
+      };
+      drawWhenReady();
     }
 
-    // Monitor console for errors
+    // ====================================================================
+    // CONSOLE MONITOR
+    // ====================================================================
+
     let errorCount = 0;
     let warnCount = 0;
-    const originalError = console.error;
-    const originalWarn = console.warn;
+    const _origError = console.error;
+    const _origWarn = console.warn;
 
     console.error = (...args) => {
       errorCount++;
-      document.getElementById('error-count').textContent = errorCount;
-      document.getElementById('error-count').className = 'status-error';
-      originalError.apply(console, args);
+      const el = document.getElementById('error-count');
+      el.textContent = errorCount;
+      el.className = 'status-error';
+      _origError.apply(console, args);
     };
 
     console.warn = (...args) => {
       warnCount++;
-      document.getElementById('warn-count').textContent = warnCount;
-      document.getElementById('warn-count').className = 'status-warn';
-      originalWarn.apply(console, args);
+      const el = document.getElementById('warn-count');
+      el.textContent = warnCount;
+      el.className = 'status-warn';
+      _origWarn.apply(console, args);
     };
   </script>
 </body>
