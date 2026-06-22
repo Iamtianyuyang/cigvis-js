@@ -215,16 +215,18 @@ export function preprocSurfacePos(
  * @param volume - 3D volume data [ni, nx, nt]
  * @param surface - Surface height map [ni, nx] where each value is the z/t position
  * @param lineFirst - Whether the volume is in line-first order
+ * @param shape - Optional volume shape [ni, nx, nt] (avoids guessing)
  * @returns Interpolated values at surface positions
  */
 export function interpolateSurface(
   volume: Float32Array,
   surface: SurfaceHeightMap,
-  lineFirst: boolean = true
+  lineFirst: boolean = true,
+  shape?: [number, number, number]
 ): Float32Array {
   const [ni, nx, nt] = lineFirst
-    ? getVolumeShape(volume, surface)
-    : getVolumeShapeTimeFirst(volume, surface);
+    ? getVolumeShape(volume, surface, shape)
+    : getVolumeShapeTimeFirst(volume, surface, shape);
 
   const result = new Float32Array(ni * nx);
 
@@ -256,24 +258,31 @@ export function interpolateSurface(
 }
 
 /**
- * Infer volume shape from volume and surface arrays.
+ * Get volume shape from volume and surface arrays.
+ * Requires explicit shape parameter to avoid guessing errors.
  */
 function getVolumeShape(
   volume: Float32Array,
-  surface: SurfaceHeightMap
+  surface: SurfaceHeightMap,
+  shape?: [number, number, number]
 ): [number, number, number] {
-  // Assume line-first: volume is [ni, nx, nt]
-  // surface is [ni, nx]
+  if (shape) {
+    return shape;
+  }
+
+  // Fallback: try to infer (may fail for non-square surfaces)
   const surfSize = surface.length;
   const volSize = volume.length;
 
-  // Try common shapes
   const sqrtSurf = Math.sqrt(surfSize);
   const ni = Math.round(sqrtSurf);
   const nx = Math.round(surfSize / ni);
 
   if (ni * nx !== surfSize) {
-    throw new Error('Cannot infer volume shape from surface');
+    throw new Error(
+      `Cannot infer volume shape from surface (size=${surfSize}). ` +
+      `Please provide explicit shape parameter.`
+    );
   }
 
   const nt = Math.round(volSize / (ni * nx));
@@ -281,12 +290,17 @@ function getVolumeShape(
 }
 
 /**
- * Infer volume shape for time-first layout.
+ * Get volume shape for time-first layout.
  */
 function getVolumeShapeTimeFirst(
   volume: Float32Array,
-  surface: SurfaceHeightMap
+  surface: SurfaceHeightMap,
+  shape?: [number, number, number]
 ): [number, number, number] {
+  if (shape) {
+    return [shape[2], shape[1], shape[0]]; // Reverse for time-first
+  }
+
   const surfSize = surface.length;
   const volSize = volume.length;
 

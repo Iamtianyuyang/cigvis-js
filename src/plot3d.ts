@@ -78,19 +78,25 @@ export function plot3D(options: Plot3DOptions): VolumeRenderer {
   }
 
   // Determine volume shape from nodes
+  // volumeShape should be provided for correct 3D visualization
   let shape: [number, number, number] = volumeShape || [100, 100, 100];
 
-  // Try to infer from slice nodes
+  // Try to infer from slice nodes if volumeShape not provided
+  // Note: This is a best-effort heuristic and may not be accurate
   if (!volumeShape) {
     for (const node of nodes) {
       if (node.type === 'slice') {
         const slice = node as SliceNode;
-        if (slice.axis === 'x') {
-          shape = [slice.pos + 1, slice.shape[0], slice.shape[1]];
+        // Use slice shape as a hint, but we can't know the full extent
+        // from just one slice position
+        if (slice.axis === 'z') {
+          // For z-slice, shape[0] and shape[1] are ni and nx
+          // We don't know nt, so use a reasonable default
+          shape = [slice.shape[0], slice.shape[1], Math.max(slice.pos + 1, 100)];
+        } else if (slice.axis === 'x') {
+          shape = [Math.max(slice.pos + 1, 100), slice.shape[0], slice.shape[1]];
         } else if (slice.axis === 'y') {
-          shape = [slice.shape[0], slice.pos + 1, slice.shape[1]];
-        } else {
-          shape = [slice.shape[0], slice.shape[1], slice.pos + 1];
+          shape = [slice.shape[0], Math.max(slice.pos + 1, 100), slice.shape[1]];
         }
         break;
       }

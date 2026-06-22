@@ -271,10 +271,14 @@ export function plot2D(options: Plot2DOptions): HTMLCanvasElement {
   const offsetY = margin.top + (plotHeight - drawHeight) / 2;
 
   // Apply colormap to background image
-  const finalClim: [number, number] = clim || [
-    Math.min(...image),
-    Math.max(...image),
-  ];
+  const finalClim: [number, number] = clim || (() => {
+    let min = Infinity, max = -Infinity;
+    for (let i = 0; i < image.length; i++) {
+      if (image[i] < min) min = image[i];
+      if (image[i] > max) max = image[i];
+    }
+    return [min, max] as [number, number];
+  })();
 
   const imageData = applyColormapToData(image, width, height, cmap, finalClim);
 

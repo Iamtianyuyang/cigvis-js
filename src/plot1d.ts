@@ -542,9 +542,18 @@ export function plotWithFill(options: PlotWithFillOptions): HTMLCanvasElement {
   // Calculate y2 boundary
   let y2Data: Float32Array;
   if (typeof y2 === 'string') {
-    const val = y2 === 'min'
-      ? Math.min(...y)
-      : Math.max(...y);
+    let val: number;
+    if (y2 === 'min') {
+      val = Infinity;
+      for (let i = 0; i < y.length; i++) {
+        if (y[i] < val) val = y[i];
+      }
+    } else {
+      val = -Infinity;
+      for (let i = 0; i < y.length; i++) {
+        if (y[i] > val) val = y[i];
+      }
+    }
     y2Data = new Float32Array(y.length).fill(val);
   } else if (typeof y2 === 'number') {
     y2Data = new Float32Array(y.length).fill(y2);

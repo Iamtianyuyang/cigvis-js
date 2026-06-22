@@ -130,7 +130,9 @@ export class VDSReader {
 
       // For simplified implementation, read entire volume into memory
       // Full implementation would use chunked/bricked reading
-      this._data = new Float32Array(buffer, this._header.brickSize);
+      // Data starts after the header (32 bytes)
+      const headerSize = 32;
+      this._data = new Float32Array(buffer, headerSize);
     } catch (error) {
       throw new Error(`Failed to initialize VDS reader: ${error}`);
     }

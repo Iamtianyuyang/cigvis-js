@@ -211,10 +211,14 @@ export function createPlotlySlice(options: {
       }
 
       // Create heatmap trace
-      const clim = options.clim || [
-        Math.min(...sliceData),
-        Math.max(...sliceData),
-      ];
+      const clim = options.clim || (() => {
+        let min = Infinity, max = -Infinity;
+        for (let i = 0; i < sliceData.length; i++) {
+          if (sliceData[i] < min) min = sliceData[i];
+          if (sliceData[i] > max) max = sliceData[i];
+        }
+        return [min, max] as [number, number];
+      })();
 
       return [{
         type: 'heatmap',

@@ -268,7 +268,9 @@ function drawBackground(
 function extractDataAlongPath(
   data: Float32Array,
   shape: [number, number, number],
-  coords: Point[]
+  coords: Point[],
+  canvasWidth: number = 800,
+  canvasHeight: number = 600
 ): ArbitraryLineResult {
   const [ni, nx, nt] = shape;
 
@@ -316,8 +318,8 @@ function extractDataAlongPath(
     const [px, py] = path[p];
 
     // Map canvas coordinates to volume coordinates
-    const vi = Math.round((px / 800) * ni);
-    const vj = Math.round((py / 600) * nx);
+    const vi = Math.round((px / canvasWidth) * ni);
+    const vj = Math.round((py / canvasHeight) * nx);
 
     for (let t = 0; t < nt; t++) {
       if (vi >= 0 && vi < ni && vj >= 0 && vj < nx) {
