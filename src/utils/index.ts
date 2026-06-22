@@ -16,6 +16,19 @@ export {
   statistics,
   linspace,
   meshgrid,
+  nmin,
+  nmax,
+  autoClim,
+  isTypedArray,
+  getShape,
+  checkMmap,
+  deprecated,
+  sampledMinMax,
+  inverseLerp,
+  remap,
+  inRange,
+  smoothStep,
+  range,
 } from './math';
 
 // Coordinate transforms
