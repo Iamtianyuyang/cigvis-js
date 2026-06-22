@@ -7,56 +7,32 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --bg: #0c0c14;
-      --bg-card: #12121c;
-      --border: rgba(255,255,255,0.06);
-      --text: #e8eaed;
-      --text-2: #8b8fa3;
-      --text-3: #5c6078;
-      --accent: #00d4aa;
-      --sans: 'Inter', sans-serif;
-      --mono: 'JetBrains Mono', monospace;
-    }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: var(--sans); background: var(--bg); color: var(--text); }
-
-    .topbar {
-      display: flex; align-items: center; gap: 12px;
-      padding: 0 24px; height: 48px;
-      background: var(--bg-card);
-      border-bottom: 1px solid var(--border);
+    body {
+      font-family: 'Times New Roman', Georgia, serif;
+      background: #ffffff;
+      color: #000000;
     }
-    .back { color: var(--accent); text-decoration: none; font-size: 12px; font-family: var(--mono); }
-    .topbar-title { font-size: 14px; font-weight: 600; }
-
+    .header {
+      padding: 16px 24px;
+      border-bottom: 1px solid #000;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .header h1 { font-size: 18px; font-weight: bold; }
+    .back { color: #000; text-decoration: none; font-size: 13px; }
     .container { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
-
-    .figure { margin-bottom: 32px; }
-    .figure-title {
-      font-family: var(--mono); font-size: 11px; font-weight: 600;
-      text-transform: uppercase; letter-spacing: 0.08em;
-      color: var(--text-2); margin-bottom: 12px;
-    }
-    .figure-caption {
-      font-size: 12px; color: var(--text-3); margin-top: 8px;
-    }
-
-    .plot-row { display: flex; gap: 16px; flex-wrap: wrap; }
+    .figure { margin-bottom: 36px; }
+    .figure-title { font-size: 14px; font-weight: bold; margin-bottom: 10px; }
+    .figure-caption { font-size: 12px; color: #333; margin-top: 8px; font-style: italic; }
+    .plot-row { display: flex; gap: 20px; flex-wrap: wrap; }
     .plot-item { flex: 1; min-width: 200px; }
-
-    canvas {
-      display: block;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-    }
+    canvas { display: block; border: 0.5pt solid #000; }
   </style>
 </head>
 <body>
-  <div class="topbar">
-    <a class="back" href="../index.html">← back</a>
-    <span class="topbar-title">1D Trace</span>
+  <div class="header">
+    <a class="back" href="../index.html">← Examples</a>
+    <h1>1D Trace Examples</h1>
   </div>
 
   <div class="container">
@@ -187,7 +163,7 @@
       const m = {l:45, r:15, t:15, b:35};
       const pw = w-m.l-m.r, ph = h-m.t-m.b;
 
-      ctx.fillStyle = '#0c0c14'; ctx.fillRect(0,0,w,h);
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,w,h);
       drawAxes(ctx, m, pw, ph);
 
       let mn=Infinity, mx=-Infinity;
@@ -223,7 +199,7 @@
       const m = {l:45, r:15, t:15, b:35};
       const pw = w-m.l-m.r, ph = h-m.t-m.b;
 
-      ctx.fillStyle = '#0c0c14'; ctx.fillRect(0,0,w,h);
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,w,h);
       drawAxes(ctx, m, pw, ph);
       drawLabels(ctx, m, pw, ph, 'Trace', 'Time (s)');
 
@@ -244,7 +220,7 @@
           ctx.lineTo(cx+v*amp, y);
         }
         ctx.lineTo(cx, m.t+ph); ctx.closePath();
-        ctx.fillStyle='rgba(0,212,170,0.15)'; ctx.fill();
+        ctx.fillStyle='rgba(0,0,0,0.1)'; ctx.fill();
 
         // Line
         ctx.beginPath();
@@ -252,11 +228,11 @@
           const y=m.t+(i/ns)*ph; const v=(d[i]-mn)/r-0.5;
           if(i===0)ctx.moveTo(cx+v*amp,y); else ctx.lineTo(cx+v*amp,y);
         }
-        ctx.strokeStyle='#00d4aa'; ctx.lineWidth=0.5; ctx.stroke();
+        ctx.strokeStyle='#000000'; ctx.lineWidth=0.5; ctx.stroke();
       }
 
       // X ticks
-      ctx.fillStyle='#5c6078'; ctx.font='10px JetBrains Mono'; ctx.textAlign='center';
+      ctx.fillStyle='#333333'; ctx.font='10px JetBrains Mono'; ctx.textAlign='center';
       for(let t=0;t<n;t+=5) ctx.fillText(t.toString(), m.l+t*tw+tw/2, m.t+ph+14);
     }
 
@@ -268,13 +244,13 @@
       const pw = w-m.l-m.r, ph = h-m.t-m.b;
       const mid = m.l+pw/2;
 
-      ctx.fillStyle = '#0c0c14'; ctx.fillRect(0,0,w,h);
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,w,h);
 
       let mn=Infinity, mx=-Infinity;
       for(let i=0;i<data.length;i++){if(data[i]<mn)mn=data[i];if(data[i]>mx)mx=data[i];}
 
       // Zero line
-      ctx.strokeStyle='rgba(255,255,255,0.08)'; ctx.lineWidth=0.5;
+      ctx.strokeStyle='rgba(0,0,0,0.1)'; ctx.lineWidth=0.5;
       ctx.setLineDash([3,3]);
       ctx.beginPath(); ctx.moveTo(mid,m.t); ctx.lineTo(mid,m.t+ph); ctx.stroke();
       ctx.setLineDash([]);
@@ -288,7 +264,7 @@
           if(v>0)ctx.lineTo(mid+v*pw,y); else ctx.lineTo(mid,y);
         }
         ctx.lineTo(mid,m.t+ph); ctx.closePath();
-        ctx.fillStyle='rgba(0,212,170,0.2)'; ctx.fill();
+        ctx.fillStyle='rgba(0,0,0,0.15)'; ctx.fill();
       }
       if(type==='neg'||type==='both'){
         ctx.beginPath(); ctx.moveTo(mid,m.t);
@@ -298,7 +274,7 @@
           if(v<0)ctx.lineTo(mid+v*pw,y); else ctx.lineTo(mid,y);
         }
         ctx.lineTo(mid,m.t+ph); ctx.closePath();
-        ctx.fillStyle='rgba(244,63,94,0.2)'; ctx.fill();
+        ctx.fillStyle='rgba(128,128,128,0.2)'; ctx.fill();
       }
 
       // Line
@@ -308,7 +284,7 @@
         const y=m.t+(i/data.length)*ph;
         if(i===0)ctx.moveTo(x,y); else ctx.lineTo(x,y);
       }
-      ctx.strokeStyle='#00d4aa'; ctx.lineWidth=1; ctx.stroke();
+      ctx.strokeStyle='#000000'; ctx.lineWidth=1; ctx.stroke();
     }
 
     function plotWavelet(id, freq) {
@@ -323,13 +299,13 @@
       ctx.fillStyle='#0c0c14'; ctx.fillRect(0,0,w,h);
 
       // Zero line
-      ctx.strokeStyle='rgba(255,255,255,0.08)'; ctx.lineWidth=0.5;
+      ctx.strokeStyle='rgba(0,0,0,0.1)'; ctx.lineWidth=0.5;
       ctx.setLineDash([3,3]);
       ctx.beginPath(); ctx.moveTo(m.l,mid); ctx.lineTo(m.l+pw,mid); ctx.stroke();
       ctx.setLineDash([]);
 
       // Wavelet
-      ctx.strokeStyle='#00d4aa'; ctx.lineWidth=1.5;
+      ctx.strokeStyle='#000000'; ctx.lineWidth=1.5;
       ctx.beginPath();
       for(let i=0;i<d.length;i++){
         const x=m.l+(i/d.length)*pw;
@@ -338,7 +314,7 @@
       }
       ctx.stroke();
 
-      ctx.fillStyle='#5c6078'; ctx.font='10px JetBrains Mono'; ctx.textAlign='center';
+      ctx.fillStyle='#333333'; ctx.font='10px JetBrains Mono'; ctx.textAlign='center';
       ctx.fillText(`${freq} Hz`, w/2, h-5);
     }
 

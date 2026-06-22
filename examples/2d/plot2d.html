@@ -4,87 +4,74 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CIGVis — 2D Plot</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --bg: #0c0c14; --bg-card: #12121c; --border: rgba(255,255,255,0.06);
-      --text: #e8eaed; --text-2: #8b8fa3; --text-3: #5c6078;
-      --accent: #00d4aa; --sans: 'Inter', sans-serif; --mono: 'JetBrains Mono', monospace;
-    }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: var(--sans); background: var(--bg); color: var(--text); }
-
-    .topbar { display:flex; align-items:center; gap:12px; padding:0 24px; height:48px; background:var(--bg-card); border-bottom:1px solid var(--border); }
-    .back { color:var(--accent); text-decoration:none; font-size:12px; font-family:var(--mono); }
-    .topbar-title { font-size:14px; font-weight:600; }
-
-    .container { max-width:1200px; margin:0 auto; padding:32px 24px; }
-
-    .figure { margin-bottom: 40px; }
-    .figure-title { font-family:var(--mono); font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-2); margin-bottom:12px; }
-    .figure-caption { font-size:12px; color:var(--text-3); margin-top:10px; }
-
-    .canvas-wrap {
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      overflow: hidden;
-      background: var(--bg);
-      display: inline-block;
+    body {
+      font-family: 'Times New Roman', Georgia, serif;
+      background: #ffffff;
+      color: #000000;
     }
-
-    .plot-row { display: flex; gap: 16px; flex-wrap: wrap; }
-    .plot-item { min-width: 250px; }
+    .header {
+      padding: 16px 24px;
+      border-bottom: 1px solid #000;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .header h1 { font-size: 18px; font-weight: bold; }
+    .back { color: #000; text-decoration: none; font-size: 13px; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+    .figure { margin-bottom: 36px; }
+    .figure-title { font-size: 14px; font-weight: bold; margin-bottom: 10px; }
+    .figure-caption { font-size: 12px; color: #333; margin-top: 8px; font-style: italic; }
+    canvas { display: block; border: 0.5pt solid #000; }
+    .plot-row { display: flex; gap: 20px; flex-wrap: wrap; }
+    .plot-item { flex: 1; min-width: 240px; }
   </style>
 </head>
 <body>
-  <div class="topbar">
-    <a class="back" href="../index.html">← back</a>
-    <span class="topbar-title">2D Plot</span>
+  <div class="header">
+    <a class="back" href="../index.html">← Examples</a>
+    <h1>2D Plot Examples</h1>
   </div>
 
   <div class="container">
     <div class="figure">
-      <div class="figure-title">Figure 1 — Gray Colormap</div>
-      <div class="canvas-wrap"><canvas id="fig1"></canvas></div>
+      <div class="figure-title">Figure 1.</div>
+      <canvas id="fig1"></canvas>
       <div class="figure-caption">Seismic slice displayed with gray colormap.</div>
     </div>
 
     <div class="figure">
-      <div class="figure-title">Figure 2 — Petrel Colormap</div>
-      <div class="canvas-wrap"><canvas id="fig2"></canvas></div>
-      <div class="figure-caption">Petrel colormap — commonly used in geophysical interpretation.</div>
+      <div class="figure-title">Figure 2.</div>
+      <canvas id="fig2"></canvas>
+      <div class="figure-caption">Same slice with Petrel colormap, commonly used in geophysical interpretation.</div>
     </div>
 
     <div class="figure">
-      <div class="figure-title">Figure 3 — Fault Overlay</div>
-      <div class="canvas-wrap"><canvas id="fig3"></canvas></div>
-      <div class="figure-caption">Fault interpretation overlay (red line).</div>
+      <div class="figure-title">Figure 3.</div>
+      <canvas id="fig3"></canvas>
+      <div class="figure-caption">Seismic slice with fault interpretation overlay.</div>
     </div>
 
     <div class="figure">
-      <div class="figure-title">Figure 4 — Subplots</div>
+      <div class="figure-title">Figure 4.</div>
       <div class="plot-row">
-        <div class="plot-item"><div class="canvas-wrap"><canvas id="fig4a"></canvas></div><div class="figure-caption">Inline = 30</div></div>
-        <div class="plot-item"><div class="canvas-wrap"><canvas id="fig4b"></canvas></div><div class="figure-caption">Inline = 60</div></div>
-        <div class="plot-item"><div class="canvas-wrap"><canvas id="fig4c"></canvas></div><div class="figure-caption">Inline = 90</div></div>
-        <div class="plot-item"><div class="canvas-wrap"><canvas id="fig4d"></canvas></div><div class="figure-caption">Inline = 120</div></div>
+        <div class="plot-item"><canvas id="fig4a"></canvas><div class="figure-caption">(a) Inline = 30</div></div>
+        <div class="plot-item"><canvas id="fig4b"></canvas><div class="figure-caption">(b) Inline = 60</div></div>
+        <div class="plot-item"><canvas id="fig4c"></canvas><div class="figure-caption">(c) Inline = 90</div></div>
+        <div class="plot-item"><canvas id="fig4d"></canvas><div class="figure-caption">(d) Inline = 120</div></div>
       </div>
     </div>
 
     <div class="figure">
-      <div class="figure-title">Figure 5 — Well Markers</div>
-      <div class="canvas-wrap"><canvas id="fig5"></canvas></div>
-      <div class="figure-caption">Well locations with labels.</div>
+      <div class="figure-title">Figure 5.</div>
+      <canvas id="fig5"></canvas>
+      <div class="figure-caption">Seismic slice with well locations.</div>
     </div>
   </div>
 
   <script>
     const DPR = window.devicePixelRatio || 1;
 
-    // ============================================================
-    // Colormaps — return [r,g,b] in 0-255
-    // ============================================================
     const gray = t => { const v = Math.round(t * 255); return [v, v, v]; };
     const petrel = t => {
       const r = Math.min(1, Math.max(0, t * 2 - 0.5));
@@ -93,9 +80,6 @@
       return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
     };
 
-    // ============================================================
-    // Generate seismic data
-    // ============================================================
     function genSeismic(w, h, ph = 0) {
       const d = new Float32Array(w * h);
       for (let y = 0; y < h; y++) {
@@ -109,22 +93,17 @@
       return d;
     }
 
-    // ============================================================
-    // Main draw function — image + axes + colorbar on ONE canvas
-    // ============================================================
     function draw2D(canvasId, data, dataW, dataH, opts = {}) {
       const { cmap = gray, clim: userClim } = opts;
 
-      // Layout constants (logical pixels)
-      const margin = { left: 45, right: 80, top: 20, bottom: 40 };
+      const m = { l: 50, r: 80, t: 20, b: 40 };
       const plotW = 500;
       const plotH = Math.round(plotW * (dataH / dataW));
       const cbarW = 16;
-      const cbarGap = 30; // space between plot and colorbar
-      const cbarLabelGap = 20; // space for tick labels
+      const cbarGap = 30;
 
-      const totalW = margin.left + plotW + margin.right;
-      const totalH = margin.top + plotH + margin.bottom;
+      const totalW = m.l + plotW + m.r;
+      const totalH = m.t + plotH + m.b;
 
       const canvas = document.getElementById(canvasId);
       canvas.width = totalW * DPR;
@@ -134,15 +113,14 @@
       const ctx = canvas.getContext('2d');
       ctx.scale(DPR, DPR);
 
-      // Background
-      ctx.fillStyle = '#0c0c14';
+      // White background
+      ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, totalW, totalH);
 
-      // Compute clim from data
+      // Clim
       let vmin, vmax;
-      if (userClim) {
-        [vmin, vmax] = userClim;
-      } else {
+      if (userClim) { [vmin, vmax] = userClim; }
+      else {
         vmin = Infinity; vmax = -Infinity;
         for (let i = 0; i < data.length; i++) {
           if (data[i] < vmin) vmin = data[i];
@@ -151,7 +129,7 @@
       }
       const range = vmax - vmin || 1;
 
-      // ---- Draw image ----
+      // Image
       const imgData = ctx.createImageData(dataW, dataH);
       for (let i = 0; i < dataW * dataH; i++) {
         let t = (data[i] - vmin) / range;
@@ -162,112 +140,97 @@
         imgData.data[i * 4 + 2] = b;
         imgData.data[i * 4 + 3] = 255;
       }
-
       const tmp = document.createElement('canvas');
-      tmp.width = dataW;
-      tmp.height = dataH;
+      tmp.width = dataW; tmp.height = dataH;
       tmp.getContext('2d').putImageData(imgData, 0, 0);
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
-      ctx.drawImage(tmp, margin.left, margin.top, plotW, plotH);
+      ctx.drawImage(tmp, m.l, m.t, plotW, plotH);
 
-      // ---- Axes ----
-      ctx.strokeStyle = 'rgba(255,255,255,0.15)';
-      ctx.lineWidth = 1;
+      // Axes
+      ctx.strokeStyle = '#000000';
+      ctx.lineWidth = 0.5;
       ctx.beginPath();
-      ctx.moveTo(margin.left, margin.top);
-      ctx.lineTo(margin.left, margin.top + plotH);
-      ctx.lineTo(margin.left + plotW, margin.top + plotH);
+      ctx.moveTo(m.l, m.t);
+      ctx.lineTo(m.l, m.t + plotH);
+      ctx.lineTo(m.l + plotW, m.t + plotH);
       ctx.stroke();
 
       // X ticks
-      ctx.fillStyle = '#5c6078';
-      ctx.font = '10px JetBrains Mono';
+      ctx.fillStyle = '#000000';
+      ctx.font = '10px Times New Roman';
       ctx.textAlign = 'center';
       for (let i = 0; i <= 5; i++) {
-        const x = margin.left + (i / 5) * plotW;
-        ctx.fillText(Math.round(i / 5 * dataW).toString(), x, margin.top + plotH + 14);
+        const x = m.l + (i / 5) * plotW;
+        ctx.fillText(Math.round(i / 5 * dataW).toString(), x, m.t + plotH + 14);
         ctx.beginPath();
-        ctx.moveTo(x, margin.top + plotH);
-        ctx.lineTo(x, margin.top + plotH + 4);
+        ctx.moveTo(x, m.t + plotH);
+        ctx.lineTo(x, m.t + plotH + 4);
         ctx.stroke();
       }
 
       // Y ticks
       ctx.textAlign = 'right';
       for (let i = 0; i <= 5; i++) {
-        const y = margin.top + (i / 5) * plotH;
-        ctx.fillText(Math.round(i / 5 * dataH).toString(), margin.left - 8, y + 3);
+        const y = m.t + (i / 5) * plotH;
+        ctx.fillText(Math.round(i / 5 * dataH).toString(), m.l - 6, y + 3);
         ctx.beginPath();
-        ctx.moveTo(margin.left - 4, y);
-        ctx.lineTo(margin.left, y);
+        ctx.moveTo(m.l - 4, y);
+        ctx.lineTo(m.l, y);
         ctx.stroke();
       }
 
-      // Axis labels
-      ctx.fillStyle = '#8b8fa3';
-      ctx.font = '11px Inter';
+      // Labels
+      ctx.fillStyle = '#000000';
+      ctx.font = '12px Times New Roman';
       ctx.textAlign = 'center';
-      ctx.fillText('Crossline', margin.left + plotW / 2, margin.top + plotH + 30);
+      ctx.fillText('Crossline', m.l + plotW / 2, m.t + plotH + 30);
       ctx.save();
-      ctx.translate(14, margin.top + plotH / 2);
+      ctx.translate(14, m.t + plotH / 2);
       ctx.rotate(-Math.PI / 2);
       ctx.fillText('Time (ms)', 0, 0);
       ctx.restore();
 
-      // ---- Colorbar (drawn on same canvas) ----
-      const cbarX = margin.left + plotW + cbarGap;
-      const cbarY = margin.top;
+      // Colorbar
+      const cbarX = m.l + plotW + cbarGap;
+      const cbarY = m.t;
       const cbarH = plotH;
 
-      // Draw colorbar gradient
       for (let y = 0; y < cbarH; y++) {
-        const t = 1 - y / (cbarH - 1); // top=1, bottom=0
+        const t = 1 - y / (cbarH - 1);
         const [r, g, b] = cmap(t);
         ctx.fillStyle = `rgb(${r},${g},${b})`;
         ctx.fillRect(cbarX, cbarY + y, cbarW, 1);
       }
 
-      // Colorbar border
-      ctx.strokeStyle = 'rgba(255,255,255,0.15)';
-      ctx.lineWidth = 1;
+      ctx.strokeStyle = '#000000';
+      ctx.lineWidth = 0.5;
       ctx.strokeRect(cbarX, cbarY, cbarW, cbarH);
 
-      // Colorbar ticks and labels
-      ctx.fillStyle = '#5c6078';
-      ctx.font = '10px JetBrains Mono';
+      ctx.fillStyle = '#000000';
+      ctx.font = '10px Times New Roman';
       ctx.textAlign = 'left';
-
-      const numTicks = 5;
-      for (let i = 0; i <= numTicks; i++) {
-        const t = i / numTicks;
+      for (let i = 0; i <= 5; i++) {
+        const t = i / 5;
         const y = cbarY + t * cbarH;
         const value = (vmin + t * range).toFixed(2);
-
-        // Tick line
         ctx.beginPath();
         ctx.moveTo(cbarX + cbarW, y);
         ctx.lineTo(cbarX + cbarW + 4, y);
         ctx.stroke();
-
-        // Value label
         ctx.fillText(value, cbarX + cbarW + 8, y + 3);
       }
 
-      // Colorbar title
       ctx.save();
-      ctx.translate(cbarX + cbarW + 55, cbarY + cbarH / 2);
+      ctx.translate(cbarX + cbarW + 58, cbarY + cbarH / 2);
       ctx.rotate(-Math.PI / 2);
-      ctx.fillStyle = '#8b8fa3';
-      ctx.font = '11px Inter';
+      ctx.font = '12px Times New Roman';
       ctx.textAlign = 'center';
       ctx.fillText('Amplitude', 0, 0);
       ctx.restore();
     }
 
-    // ============================================================
-    // Fault overlay
-    // ============================================================
+    // Fault overlay — clamped to plot area
     function drawFault(canvasId, data, w, h) {
       draw2D(canvasId, data, w, h, { cmap: gray });
       const canvas = document.getElementById(canvasId);
@@ -275,17 +238,23 @@
       ctx.save();
       ctx.scale(DPR, DPR);
 
-      const margin = { left: 45, right: 80, top: 20, bottom: 40 };
+      const m = { l: 50, r: 80, t: 20, b: 40 };
       const plotW = 500;
       const plotH = Math.round(plotW * (h / w));
 
-      ctx.strokeStyle = '#f43f5e';
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#ff0000';
+      ctx.lineWidth = 1.5;
+
+      // Clip to plot area
+      ctx.beginPath();
+      ctx.rect(m.l, m.t, plotW, plotH);
+      ctx.clip();
+
       ctx.beginPath();
       for (let y = 0; y < h; y++) {
-        const x = Math.round(w * 0.4 + y * 0.2);
-        const px = margin.left + (x / w) * plotW;
-        const py = margin.top + (y / h) * plotH;
+        const x = Math.round(w * 0.3 + y * 0.15);
+        const px = m.l + (x / w) * plotW;
+        const py = m.t + (y / h) * plotH;
         if (y === 0) ctx.moveTo(px, py);
         else ctx.lineTo(px, py);
       }
@@ -293,9 +262,7 @@
       ctx.restore();
     }
 
-    // ============================================================
     // Well markers
-    // ============================================================
     function drawWells(canvasId, data, w, h, wells) {
       draw2D(canvasId, data, w, h, { cmap: gray });
       const canvas = document.getElementById(canvasId);
@@ -303,36 +270,34 @@
       ctx.save();
       ctx.scale(DPR, DPR);
 
-      const margin = { left: 45, right: 80, top: 20, bottom: 40 };
+      const m = { l: 50, r: 80, t: 20, b: 40 };
       const plotW = 500;
       const plotH = Math.round(plotW * (h / w));
 
       for (const well of wells) {
-        const x = margin.left + (well.x / w) * plotW;
-        const y = margin.top + (well.y / h) * plotH;
+        const x = m.l + (well.x / w) * plotW;
+        const y = m.t + (well.y / h) * plotH;
 
         ctx.beginPath();
-        ctx.arc(x, y, 6, 0, Math.PI * 2);
-        ctx.strokeStyle = '#e8eaed';
+        ctx.arc(x, y, 5, 0, Math.PI * 2);
+        ctx.strokeStyle = '#000000';
         ctx.lineWidth = 1.5;
         ctx.stroke();
 
         ctx.beginPath();
-        ctx.arc(x, y, 2.5, 0, Math.PI * 2);
-        ctx.fillStyle = '#00d4aa';
+        ctx.arc(x, y, 2, 0, Math.PI * 2);
+        ctx.fillStyle = '#000000';
         ctx.fill();
 
-        ctx.fillStyle = '#e8eaed';
-        ctx.font = '10px JetBrains Mono';
+        ctx.fillStyle = '#000000';
+        ctx.font = '10px Times New Roman';
         ctx.textAlign = 'left';
-        ctx.fillText(well.name, x + 10, y + 4);
+        ctx.fillText(well.name, x + 8, y + 3);
       }
       ctx.restore();
     }
 
-    // ============================================================
     // Render
-    // ============================================================
     const W = 200, H = 150;
     const img = genSeismic(W, H);
     const wells = [
