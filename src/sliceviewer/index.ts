@@ -419,6 +419,329 @@ export function createMultiAxisViewer(options: Omit<SliceViewerOptions, 'axis'> 
 }
 
 // ============================================================================
+// Annotation functions (ported from sliceviewer Python module)
+// ============================================================================
+
+/** Horizon annotation */
+export interface HorizonAnnotation {
+  type: 'horizon';
+  x: Float32Array;
+  y: Float32Array;
+  name: string;
+  color: string;
+  width: number;
+  axes?: [number, number];
+}
+
+/** Fault annotation */
+export interface FaultAnnotation {
+  type: 'fault';
+  x: Float32Array;
+  y: Float32Array;
+  name: string;
+  color: string;
+  width: number;
+  axes?: [number, number];
+}
+
+/** Well annotation */
+export interface WellAnnotation {
+  type: 'well';
+  x: Float32Array;
+  y: Float32Array;
+  name: string;
+  color: string;
+  size: number;
+  axes?: [number, number];
+}
+
+/** Scatter annotation */
+export interface ScatterAnnotation {
+  type: 'scatter';
+  x: Float32Array;
+  y: Float32Array;
+  name: string;
+  mode: string;
+  color: string;
+  size: number;
+  axes?: [number, number];
+}
+
+/** Any annotation */
+export type Annotation = HorizonAnnotation | FaultAnnotation | WellAnnotation | ScatterAnnotation;
+
+/**
+ * Add a horizon line annotation.
+ * Ported from cigvis Python: add_horizon
+ *
+ * @param x - X coordinates
+ * @param y - Y coordinates
+ * @param options - Optional parameters
+ * @returns HorizonAnnotation
+ *
+ * @example
+ * ```ts
+ * const horizon = addHorizon(xData, yData, {
+ *   name: 'Top Reservoir',
+ *   color: 'yellow',
+ * });
+ * ```
+ */
+export function addHorizon(
+  x: Float32Array,
+  y: Float32Array,
+  options: {
+    name?: string;
+    color?: string;
+    width?: number;
+    axes?: [number, number];
+  } = {}
+): HorizonAnnotation {
+  const {
+    name = 'horizon',
+    color = 'yellow',
+    width = 1.5,
+    axes,
+  } = options;
+
+  return {
+    type: 'horizon',
+    x,
+    y,
+    name,
+    color,
+    width,
+    axes,
+  };
+}
+
+/**
+ * Add a fault line annotation.
+ * Ported from cigvis Python: add_fault
+ *
+ * @param x - X coordinates
+ * @param y - Y coordinates
+ * @param options - Optional parameters
+ * @returns FaultAnnotation
+ *
+ * @example
+ * ```ts
+ * const fault = addFault(xData, yData, {
+ *   name: 'Fault F1',
+ *   color: 'red',
+ * });
+ * ```
+ */
+export function addFault(
+  x: Float32Array,
+  y: Float32Array,
+  options: {
+    name?: string;
+    color?: string;
+    width?: number;
+    axes?: [number, number];
+  } = {}
+): FaultAnnotation {
+  const {
+    name = 'fault',
+    color = 'red',
+    width = 1.5,
+    axes,
+  } = options;
+
+  return {
+    type: 'fault',
+    x,
+    y,
+    name,
+    color,
+    width,
+    axes,
+  };
+}
+
+/**
+ * Add well positions as scatter points.
+ * Ported from cigvis Python: add_well
+ *
+ * @param x - X coordinates
+ * @param y - Y coordinates
+ * @param options - Optional parameters
+ * @returns WellAnnotation
+ *
+ * @example
+ * ```ts
+ * const well = addWell(xData, yData, {
+ *   name: 'Well A-1',
+ *   color: 'white',
+ *   size: 6,
+ * });
+ * ```
+ */
+export function addWell(
+  x: Float32Array,
+  y: Float32Array,
+  options: {
+    name?: string;
+    color?: string;
+    size?: number;
+    axes?: [number, number];
+  } = {}
+): WellAnnotation {
+  const {
+    name = 'well',
+    color = 'white',
+    size = 6,
+    axes,
+  } = options;
+
+  return {
+    type: 'well',
+    x,
+    y,
+    name,
+    color,
+    size,
+    axes,
+  };
+}
+
+/**
+ * Add a generic scatter or line annotation.
+ * Ported from cigvis Python: add_scatter
+ *
+ * @param x - X coordinates
+ * @param y - Y coordinates
+ * @param options - Optional parameters
+ * @returns ScatterAnnotation
+ *
+ * @example
+ * ```ts
+ * const scatter = addScatter(xData, yData, {
+ *   name: 'Picks',
+ *   mode: 'markers',
+ *   color: 'cyan',
+ * });
+ * ```
+ */
+export function addScatter(
+  x: Float32Array,
+  y: Float32Array,
+  options: {
+    name?: string;
+    mode?: string;
+    color?: string;
+    size?: number;
+    axes?: [number, number];
+  } = {}
+): ScatterAnnotation {
+  const {
+    name = 'scatter',
+    mode = 'markers',
+    color = 'cyan',
+    size = 6,
+    axes,
+  } = options;
+
+  return {
+    type: 'scatter',
+    x,
+    y,
+    name,
+    mode,
+    color,
+    size,
+    axes,
+  };
+}
+
+/**
+ * Draw annotation on canvas.
+ *
+ * @param ctx - Canvas 2D context
+ * @param annotation - Annotation to draw
+ * @param scaleX - X scale factor
+ * @param scaleY - Y scale factor
+ * @param offsetX - X offset
+ * @param offsetY - Y offset
+ */
+export function drawAnnotation(
+  ctx: CanvasRenderingContext2D,
+  annotation: Annotation,
+  scaleX: number,
+  scaleY: number,
+  offsetX: number = 0,
+  offsetY: number = 0
+): void {
+  ctx.save();
+
+  switch (annotation.type) {
+    case 'horizon':
+    case 'fault':
+      // Draw line
+      ctx.strokeStyle = annotation.color;
+      ctx.lineWidth = annotation.width;
+      ctx.beginPath();
+      for (let i = 0; i < annotation.x.length; i++) {
+        const x = offsetX + annotation.x[i] * scaleX;
+        const y = offsetY + annotation.y[i] * scaleY;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      break;
+
+    case 'well':
+      // Draw marker
+      ctx.fillStyle = annotation.color;
+      for (let i = 0; i < annotation.x.length; i++) {
+        const x = offsetX + annotation.x[i] * scaleX;
+        const y = offsetY + annotation.y[i] * scaleY;
+        ctx.beginPath();
+        ctx.arc(x, y, annotation.size / 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Draw label
+      ctx.font = '10px sans-serif';
+      ctx.textAlign = 'left';
+      for (let i = 0; i < annotation.x.length; i++) {
+        const x = offsetX + annotation.x[i] * scaleX + annotation.size;
+        const y = offsetY + annotation.y[i] * scaleY;
+        ctx.fillText(annotation.name, x, y);
+      }
+      break;
+
+    case 'scatter':
+      if (annotation.mode.includes('markers')) {
+        ctx.fillStyle = annotation.color;
+        for (let i = 0; i < annotation.x.length; i++) {
+          const x = offsetX + annotation.x[i] * scaleX;
+          const y = offsetY + annotation.y[i] * scaleY;
+          ctx.beginPath();
+          ctx.arc(x, y, annotation.size / 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+      if (annotation.mode.includes('lines')) {
+        ctx.strokeStyle = annotation.color;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        for (let i = 0; i < annotation.x.length; i++) {
+          const x = offsetX + annotation.x[i] * scaleX;
+          const y = offsetY + annotation.y[i] * scaleY;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+      break;
+  }
+
+  ctx.restore();
+}
+
+// ============================================================================
 // Agent interface
 // ============================================================================
 
@@ -429,5 +752,10 @@ export function createSliceViewerAgent() {
   return {
     createSliceViewer,
     createMultiAxisViewer,
+    addHorizon,
+    addFault,
+    addWell,
+    addScatter,
+    drawAnnotation,
   };
 }
