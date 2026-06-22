@@ -4,125 +4,129 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CIGVis — Colormaps</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --bg-void: #0a0c10;
-      --bg-base: #0f1117;
-      --bg-raised: #161922;
-      --border-subtle: rgba(255,255,255,0.06);
-      --text-primary: #e8eaed;
-      --text-secondary: #8b8fa3;
-      --text-tertiary: #5c6078;
-      --accent: #00d4aa;
-      --accent-dim: rgba(0,212,170,0.12);
-      --font-sans: 'Inter', sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
-      --radius-md: 8px;
-      --radius-lg: 12px;
-    }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: var(--font-sans); background: var(--bg-void); color: var(--text-primary); min-height: 100dvh; padding: 24px; }
-    .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
-    .header h1 { font-size: 20px; font-weight: 600; }
-    .breadcrumb { font-family: var(--font-mono); font-size: 12px; color: var(--text-tertiary); }
-    .breadcrumb a { color: var(--accent); text-decoration: none; }
-    .section { margin-bottom: 32px; }
-    .section-title { font-family: var(--font-mono); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border-subtle); }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
-    .cmap-card { background: var(--bg-base); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 12px; cursor: pointer; transition: border-color 0.15s; }
-    .cmap-card:hover { border-color: var(--accent); }
-    .cmap-card.selected { border-color: var(--accent); background: var(--accent-dim); }
-    .cmap-name { font-family: var(--font-mono); font-size: 12px; font-weight: 500; color: var(--text-primary); margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
-    .cmap-name .badge { font-size: 10px; color: var(--text-tertiary); }
-    .cmap-bar { height: 24px; border-radius: 4px; border: 1px solid var(--border-subtle); }
-    .cmap-info { margin-top: 8px; font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); display: flex; justify-content: space-between; }
-    .preview { margin-top: 32px; background: var(--bg-base); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); overflow: hidden; }
-    .preview-header { padding: 12px 16px; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; }
-    .preview-title { font-family: var(--font-mono); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); }
-    .preview-body { padding: 16px; }
-    .preview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .preview-canvas { width: 100%; height: 200px; background: var(--bg-void); border-radius: var(--radius-md); border: 1px solid var(--border-subtle); }
-    .preview-label { font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); margin-top: 8px; text-align: center; }
-    .code-block { background: var(--bg-raised); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 12px 16px; font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); overflow-x: auto; margin-top: 12px; }
+    body {
+      font-family: 'Times New Roman', Georgia, serif;
+      background: #ffffff;
+      color: #000000;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 { font-size: 20px; margin-bottom: 20px; }
+    .back { font-size: 12px; margin-bottom: 16px; display: block; }
+    .back a { color: #000; }
+
+    .figure { margin: 24px 0; }
+    .figure-title { font-size: 14px; font-weight: bold; margin-bottom: 8px; }
+    .figure-caption { font-size: 12px; color: #333; margin-top: 8px; font-style: italic; }
+
+    .cmap-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .cmap-item {
+      border: 1px solid #000;
+      padding: 8px;
+      cursor: pointer;
+    }
+    .cmap-item:hover { background: #f5f5f5; }
+    .cmap-item.selected { background: #e8e8e8; }
+    .cmap-name {
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+    .cmap-desc {
+      font-size: 10px;
+      color: #555;
+      margin-bottom: 6px;
+    }
+    .cmap-bar {
+      height: 16px;
+      border: 1px solid #000;
+    }
+    .cmap-range {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      margin-top: 2px;
+    }
+
+    .preview {
+      margin-top: 32px;
+      border: 1px solid #000;
+      padding: 16px;
+    }
+    .preview-title { font-size: 14px; font-weight: bold; margin-bottom: 12px; }
+    .preview-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .preview-canvas {
+      border: 1px solid #000;
+      display: block;
+    }
+    .preview-label {
+      font-size: 10px;
+      text-align: center;
+      margin-top: 4px;
+    }
   </style>
 </head>
 <body>
-  <div class="header">
-    <h1>Colormaps</h1>
-    <span class="breadcrumb"><a href="../index.html">examples</a> / colormap</span>
-  </div>
+  <span class="back"><a href="../index.html">← Examples</a></span>
+  <h1>Colormaps</h1>
 
-  <div class="section">
-    <div class="section-title">Built-in Colormaps</div>
-    <div class="grid" id="cmap-grid"></div>
+  <div class="figure">
+    <div class="figure-title">Built-in Colormaps for Geophysical Data</div>
+    <div class="cmap-grid" id="cmap-grid"></div>
   </div>
 
   <div class="preview">
-    <div class="preview-header">
-      <span class="preview-title">Preview</span>
-      <span class="cmap-name" id="selected-name" style="margin:0">petrel</span>
-    </div>
-    <div class="preview-body">
-      <div class="preview-grid">
-        <div>
-          <canvas class="preview-canvas" id="preview-seismic"></canvas>
-          <div class="preview-label">Seismic Data</div>
-        </div>
-        <div>
-          <canvas class="preview-canvas" id="preview-gradient"></canvas>
-          <div class="preview-label">Gradient</div>
-        </div>
+    <div class="preview-title">Preview: <span id="selected-name">petrel</span></div>
+    <div class="preview-grid">
+      <div>
+        <canvas class="preview-canvas" id="preview-seismic" width="400" height="200"></canvas>
+        <div class="preview-label">Seismic Data</div>
       </div>
-      <div class="code-block">
-<span class="comment">// Use in cigvis-js</span>
-<span class="keyword">const</span> nodes = cigvis.<span class="keyword">createSlices</span>({
-  data: volume,
-  shape: [<span class="number">192</span>, <span class="number">200</span>, <span class="number">240</span>],
-  cmap: <span class="string">'<span id="code-cmap">petrel</span>'</span>,
-  clim: [<span class="number">-1</span>, <span class="number">1</span>],
-});
+      <div>
+        <canvas class="preview-canvas" id="preview-gradient" width="400" height="40"></canvas>
+        <div class="preview-label">Gradient</div>
       </div>
     </div>
   </div>
 
   <script>
-    // ================================================================
-    // Colormaps
-    // ================================================================
     const colormaps = {
-      gray: { colors: [[0,0,0],[255,255,255]], desc: 'Grayscale' },
-      gray_r: { colors: [[255,255,255],[0,0,0]], desc: 'Reversed gray' },
+      gray: { colors: [[0,0,0],[255,255,255]], desc: 'Standard grayscale' },
+      gray_r: { colors: [[255,255,255],[0,0,0]], desc: 'Reversed grayscale' },
       petrel: { colors: [[0,0,255],[0,255,255],[0,255,0],[255,255,0],[255,0,0]], desc: 'Geophysical standard' },
-      seismic: { colors: [[0,0,178],[0,0,255],[0,128,255],[128,255,255],[255,255,255],[255,255,128],[255,128,0],[255,0,0],[178,0,0]], desc: 'Blue-white-red' },
+      seismic: { colors: [[0,0,178],[128,255,255],[255,255,255],[255,255,128],[178,0,0]], desc: 'Blue-white-red' },
       jet: { colors: [[0,0,128],[0,0,255],[0,255,255],[0,255,0],[255,255,0],[255,0,0],[128,0,0]], desc: 'Rainbow (jet)' },
-      hot: { colors: [[0,0,0],[255,0,0],[255,255,0],[255,255,255]], desc: 'Black to white through red' },
+      hot: { colors: [[0,0,0],[255,0,0],[255,255,0],[255,255,255]], desc: 'Black to white' },
       cool: { colors: [[0,255,255],[255,0,255]], desc: 'Cyan to magenta' },
       viridis: { colors: [[68,1,84],[59,82,139],[33,145,140],[94,201,98],[253,231,37]], desc: 'Perceptually uniform' },
       spring: { colors: [[255,0,255],[255,255,0]], desc: 'Magenta to yellow' },
       summer: { colors: [[0,128,102],[255,255,102]], desc: 'Green to yellow' },
       autumn: { colors: [[255,0,0],[255,255,0]], desc: 'Red to yellow' },
       winter: { colors: [[0,0,255],[0,255,128]], desc: 'Blue to green' },
-      bone: { colors: [[0,0,0],[128,128,192],[255,255,255]], desc: 'Bone-like grayscale' },
-      copper: { colors: [[0,0,0],[255,199,127],[255,127,0]], desc: 'Copper tones' },
+      bone: { colors: [[0,0,0],[128,128,192],[255,255,255]], desc: 'Bone-like' },
+      copper: { colors: [[0,0,0],[255,199,127]], desc: 'Copper tones' },
       rainbow: { colors: [[255,0,0],[255,255,0],[0,255,0],[0,255,255],[0,0,255],[255,0,255]], desc: 'Full rainbow' },
       terrain: { colors: [[0,0,128],[0,128,0],[255,255,0],[128,0,0],[255,255,255]], desc: 'Terrain colors' },
     };
 
     let selectedCmap = 'petrel';
 
-    // ================================================================
-    // Create gradient string
-    // ================================================================
     function gradientCSS(colors) {
       const stops = colors.map((c, i) => `rgb(${c.join(',')}) ${(i / (colors.length - 1) * 100).toFixed(1)}%`);
       return `linear-gradient(to right, ${stops.join(', ')})`;
     }
 
-    // ================================================================
-    // Interpolate colormap
-    // ================================================================
     function interpolateCmap(colors, t) {
       t = Math.max(0, Math.min(1, t));
       const idx = t * (colors.length - 1);
@@ -136,21 +140,15 @@
       ];
     }
 
-    // ================================================================
-    // Render preview
-    // ================================================================
     function renderPreview(cmapName) {
       const colors = colormaps[cmapName].colors;
 
-      // Seismic data preview
-      const seismicCanvas = document.getElementById('preview-seismic');
-      const sCtx = seismicCanvas.getContext('2d');
-      seismicCanvas.width = seismicCanvas.clientWidth;
-      seismicCanvas.height = seismicCanvas.clientHeight;
-
-      for (let y = 0; y < seismicCanvas.height; y++) {
-        for (let x = 0; x < seismicCanvas.width; x++) {
-          const t = x / seismicCanvas.width;
+      // Seismic data
+      const sCanvas = document.getElementById('preview-seismic');
+      const sCtx = sCanvas.getContext('2d');
+      for (let y = 0; y < sCanvas.height; y++) {
+        for (let x = 0; x < sCanvas.width; x++) {
+          const t = x / sCanvas.width;
           const val = Math.sin(t * Math.PI * 8 + y * 0.05) * Math.exp(-t * 3);
           const norm = (val + 1) / 2;
           const [r, g, b] = interpolateCmap(colors, norm);
@@ -159,59 +157,37 @@
         }
       }
 
-      // Gradient preview
-      const gradCanvas = document.getElementById('preview-gradient');
-      const gCtx = gradCanvas.getContext('2d');
-      gradCanvas.width = gradCanvas.clientWidth;
-      gradCanvas.height = gradCanvas.clientHeight;
-
-      for (let x = 0; x < gradCanvas.width; x++) {
-        const t = x / gradCanvas.width;
+      // Gradient
+      const gCanvas = document.getElementById('preview-gradient');
+      const gCtx = gCanvas.getContext('2d');
+      for (let x = 0; x < gCanvas.width; x++) {
+        const t = x / gCanvas.width;
         const [r, g, b] = interpolateCmap(colors, t);
         gCtx.fillStyle = `rgb(${r},${g},${b})`;
-        gCtx.fillRect(x, 0, 1, gradCanvas.height);
+        gCtx.fillRect(x, 0, 1, gCanvas.height);
       }
     }
 
-    // ================================================================
     // Build grid
-    // ================================================================
     const grid = document.getElementById('cmap-grid');
-
     for (const [name, cmap] of Object.entries(colormaps)) {
-      const card = document.createElement('div');
-      card.className = `cmap-card${name === selectedCmap ? ' selected' : ''}`;
-      card.dataset.name = name;
-
-      card.innerHTML = `
-        <div class="cmap-name">
-          ${name}
-          <span class="badge">${cmap.desc}</span>
-        </div>
+      const item = document.createElement('div');
+      item.className = `cmap-item${name === selectedCmap ? ' selected' : ''}`;
+      item.innerHTML = `
+        <div class="cmap-name">${name}</div>
+        <div class="cmap-desc">${cmap.desc}</div>
         <div class="cmap-bar" style="background: ${gradientCSS(cmap.colors)};"></div>
-        <div class="cmap-info">
-          <span>${cmap.colors.length} stops</span>
-          <span>${name === selectedCmap ? '● selected' : ''}</span>
-        </div>
       `;
-
-      card.addEventListener('click', () => {
-        document.querySelectorAll('.cmap-card').forEach(c => c.classList.remove('selected'));
-        card.classList.add('selected');
+      item.addEventListener('click', () => {
+        document.querySelectorAll('.cmap-item').forEach(i => i.classList.remove('selected'));
+        item.classList.add('selected');
         selectedCmap = name;
         document.getElementById('selected-name').textContent = name;
-        document.getElementById('code-cmap').textContent = name;
         renderPreview(name);
-
-        // Update selection badges
-        document.querySelectorAll('.cmap-info span:last-child').forEach(s => s.textContent = '');
-        card.querySelector('.cmap-info span:last-child').textContent = '● selected';
       });
-
-      grid.appendChild(card);
+      grid.appendChild(item);
     }
 
-    // Initial render
     renderPreview(selectedCmap);
   </script>
 </body>
