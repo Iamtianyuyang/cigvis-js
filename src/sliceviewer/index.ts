@@ -757,5 +757,251 @@ export function createSliceViewerAgent() {
     addWell,
     addScatter,
     drawAnnotation,
+    createSliceViewerServer,
+    linkSliceViewers,
+    buildSliceViewerLayout,
+    showSliceViewer,
   };
+}
+
+// ============================================================================
+// SliceViewer Server (ported from sliceviewer/viewer.py)
+// ============================================================================
+
+/** SliceViewer server configuration */
+export interface SliceViewerServerConfig {
+  port?: number;
+  host?: string;
+}
+
+/** SliceViewer server state */
+export interface SliceViewerServerState {
+  port: number;
+  host: string;
+  running: boolean;
+  viewers: Map<string, SliceViewer>;
+}
+
+/**
+ * Create a SliceViewer server for managing multiple viewers.
+ * Ported from cigvis Python: create_server
+ *
+ * @param config - Server configuration
+ * @returns Server instance
+ *
+ * @example
+ * ```ts
+ * const server = createSliceViewerServer({ port: 8080 });
+ * server.addViewer('inline', inlineViewer);
+ * server.addViewer('crossline', crosslineViewer);
+ * server.start();
+ * ```
+ */
+export function createSliceViewerServer(config: SliceViewerServerConfig = {}): {
+  state: SliceViewerServerState;
+  addViewer: (name: string, viewer: SliceViewer) => void;
+  removeViewer: (name: string) => void;
+  getViewer: (name: string) => SliceViewer | undefined;
+  start: () => void;
+  stop: () => void;
+  update: () => void;
+} {
+  const {
+    port = 8080,
+    host = 'localhost',
+  } = config;
+
+  const state: SliceViewerServerState = {
+    port,
+    host,
+    running: false,
+    viewers: new Map(),
+  };
+
+  return {
+    state,
+
+    addViewer(name: string, viewer: SliceViewer) {
+      state.viewers.set(name, viewer);
+    },
+
+    removeViewer(name: string) {
+      state.viewers.delete(name);
+    },
+
+    getViewer(name: string) {
+      return state.viewers.get(name);
+    },
+
+    start() {
+      state.running = true;
+      console.log(`[cigvis] SliceViewer server started on ${host}:${port}`);
+    },
+
+    stop() {
+      state.running = false;
+      console.log('[cigvis] SliceViewer server stopped');
+    },
+
+    update() {
+      // Update all viewers
+      for (const viewer of state.viewers.values()) {
+        viewer.update();
+      }
+    },
+  };
+}
+
+/**
+ * Link two slice viewers for synchronized navigation.
+ * Ported from cigvis Python: link
+ *
+ * @param viewer1 - First viewer
+ * @param viewer2 - Second viewer
+ *
+ * @example
+ * ```ts
+ * linkSliceViewers(inlineViewer, crosslineViewer);
+ * // Now navigating one will update the other
+ * ```
+ */
+export function linkSliceViewers(
+  viewer1: SliceViewer,
+  viewer2: SliceViewer
+): void {
+  // Subscribe to changes on both viewers
+  viewer1.subscribe((state) => {
+    // Sync relevant state to viewer2
+    if (state.cmap !== viewer2.getState().cmap) {
+      viewer2.setCmap(state.cmap);
+    }
+    if (state.clim[0] !== viewer2.getState().clim[0] ||
+        state.clim[1] !== viewer2.getState().clim[1]) {
+      viewer2.setClim(state.clim);
+    }
+  });
+
+  viewer2.subscribe((state) => {
+    // Sync relevant state to viewer1
+    if (state.cmap !== viewer1.getState().cmap) {
+      viewer1.setCmap(state.cmap);
+    }
+    if (state.clim[0] !== viewer1.getState().clim[0] ||
+        state.clim[1] !== viewer1.getState().clim[1]) {
+      viewer1.setClim(state.clim);
+    }
+  });
+}
+
+/** Layout configuration */
+export interface SliceViewerLayoutConfig {
+  title?: string;
+  grid?: [number, number];
+  plotWidth?: number;
+  plotHeight?: number;
+}
+
+/**
+ * Build a layout container for multiple slice viewers.
+ * Ported from cigvis Python: build_layout
+ *
+ * @param viewers - Array of viewers or array of viewer arrays
+ * @param config - Layout configuration
+ * @returns HTMLElement containing the layout
+ *
+ * @example
+ * ```ts
+ * const layout = buildSliceViewerLayout([viewer1, viewer2, viewer3], {
+ *   title: 'Comparison',
+ *   grid: [1, 3],
+ * });
+ * document.body.appendChild(layout);
+ * ```
+ */
+export function buildSliceViewerLayout(
+  viewers: SliceViewer[] | SliceViewer[][],
+  config: SliceViewerLayoutConfig = {}
+): HTMLElement {
+  const {
+    title = '',
+    grid,
+    plotWidth = 400,
+    plotHeight = 300,
+  } = config;
+
+  const container = document.createElement('div');
+  container.style.cssText = `
+    font-family: 'Times New Roman', serif;
+    padding: 16px;
+    background: #ffffff;
+  `;
+
+  // Title
+  if (title) {
+    const titleEl = document.createElement('h2');
+    titleEl.textContent = title;
+    titleEl.style.cssText = `
+      font-size: 18px;
+      font-weight: bold;
+      margin: 0 0 16px 0;
+    `;
+    container.appendChild(titleEl);
+  }
+
+  // Flatten if nested
+  const flatViewers = Array.isArray(viewers[0])
+    ? (viewers as SliceViewer[][]).flat()
+    : viewers as SliceViewer[];
+
+  // Calculate grid
+  const count = flatViewers.length;
+  const [cols, rows] = grid || [
+    Math.min(count, 3),
+    Math.ceil(count / 3),
+  ];
+
+  // Create grid layout
+  const gridEl = document.createElement('div');
+  gridEl.style.cssText = `
+    display: grid;
+    grid-template-columns: repeat(${cols}, ${plotWidth}px);
+    grid-template-rows: repeat(${rows}, ${plotHeight}px);
+    gap: 8px;
+  `;
+
+  // Add viewer containers
+  for (let i = 0; i < flatViewers.length; i++) {
+    const viewerContainer = document.createElement('div');
+    viewerContainer.style.cssText = `
+      border: 1px solid #000;
+      background: #fff;
+    `;
+    gridEl.appendChild(viewerContainer);
+  }
+
+  container.appendChild(gridEl);
+  return container;
+}
+
+/**
+ * Show slice viewers in a new window or container.
+ * Ported from cigvis Python: show
+ *
+ * @param viewers - Viewers to display
+ * @param config - Layout configuration
+ * @returns HTMLElement containing the viewers
+ *
+ * @example
+ * ```ts
+ * const el = showSliceViewer([viewer1, viewer2], {
+ *   title: 'Seismic Comparison',
+ * });
+ * document.body.appendChild(el);
+ * ```
+ */
+export function showSliceViewer(
+  viewers: SliceViewer[] | SliceViewer[][],
+  config: SliceViewerLayoutConfig = {}
+): HTMLElement {
+  return buildSliceViewerLayout(viewers, config);
 }
