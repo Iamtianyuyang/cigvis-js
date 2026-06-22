@@ -17,3 +17,20 @@ export type { CreateBodyOptions } from './body-node';
 
 export { createPointCloud, createPoints, createRandomPointCloud } from './point-node';
 export type { CreatePointOptions, PointNode } from './point-node';
+
+export {
+  createColorbar,
+  createColorbarFromNodes,
+  createAxis,
+  createLineLogs,
+  createFaultSkin,
+  createArbitraryLine,
+  setSurfaceColorBySliceNodes,
+} from './extra-nodes';
+export type {
+  ColorbarNode,
+  AxisNode,
+  LineLogNode,
+  FaultSkinNode,
+  ArbitraryLineNode,
+} from './extra-nodes';
