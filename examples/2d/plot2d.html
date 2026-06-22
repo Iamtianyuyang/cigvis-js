@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CIGVis — 2D Image Plot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-void: #0a0c10;
+      --bg-base: #0f1117;
+      --bg-raised: #161922;
+      --border-subtle: rgba(255,255,255,0.06);
+      --text-primary: #e8eaed;
+      --text-secondary: #8b8fa3;
+      --text-tertiary: #5c6078;
+      --accent: #00d4aa;
+      --accent-dim: rgba(0,212,170,0.12);
+      --font-sans: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: var(--font-sans); background: var(--bg-void); color: var(--text-primary); min-height: 100dvh; padding: 24px; }
+    .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+    .header h1 { font-size: 20px; font-weight: 600; }
+    .breadcrumb { font-family: var(--font-mono); font-size: 12px; color: var(--text-tertiary); }
+    .breadcrumb a { color: var(--accent); text-decoration: none; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .card { background: var(--bg-base); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); overflow: hidden; }
+    .card-header { padding: 12px 16px; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; }
+    .card-title { font-family: var(--font-mono); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); }
+    .card-badge { font-family: var(--font-mono); font-size: 10px; color: var(--accent); padding: 2px 8px; background: var(--accent-dim); border-radius: 999px; }
+    .card-body { padding: 16px; }
+    canvas { display: block; width: 100%; background: var(--bg-void); border-radius: var(--radius-md); border: 1px solid var(--border-subtle); }
+    .info { margin-top: 12px; font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); display: flex; gap: 16px; }
+    .info span { color: var(--text-secondary); }
+    .full-width { grid-column: 1 / -1; }
+    .colorbar-container { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
+    .colorbar { flex: 1; height: 12px; border-radius: 6px; }
+    .colorbar-label { font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); min-width: 40px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>2D Image Plot</h1>
+    <span class="breadcrumb"><a href="../index.html">examples</a> / 2d / plot2d</span>
+  </div>
+
+  <div class="grid">
+    <!-- Gray colormap -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Gray Colormap</span>
+        <span class="card-badge">gray</span>
+      </div>
+      <div class="card-body">
+        <canvas id="img-gray" width="512" height="384"></canvas>
+        <div class="colorbar-container">
+          <span class="colorbar-label">-1.0</span>
+          <div class="colorbar" style="background: linear-gradient(to right, #000000, #ffffff);"></div>
+          <span class="colorbar-label">1.0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Petrel colormap -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Petrel Colormap</span>
+        <span class="card-badge">petrel</span>
+      </div>
+      <div class="card-body">
+        <canvas id="img-petrel" width="512" height="384"></canvas>
+        <div class="colorbar-container">
+          <span class="colorbar-label">-1.0</span>
+          <div class="colorbar" style="background: linear-gradient(to right, #0000ff, #00ffff, #00ff00, #ffff00, #ff0000);"></div>
+          <span class="colorbar-label">1.0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- With overlay -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">With Fault Overlay</span>
+        <span class="card-badge">overlay</span>
+      </div>
+      <div class="card-body">
+        <canvas id="img-overlay" width="512" height="384"></canvas>
+        <div class="info">
+          <div>Base: <span>gray</span></div>
+          <div>Overlay: <span>jet (fault)</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- With markers -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">With Well Markers</span>
+        <span class="card-badge">markers</span>
+      </div>
+      <div class="card-body">
+        <canvas id="img-markers" width="512" height="384"></canvas>
+        <div class="info">
+          <div>Wells: <span>5 markers</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../shared/test-data.js"></script>
+  <script>
+    // ================================================================
+    // Colormaps
+    // ================================================================
+    const colormaps = {
+      gray: (t) => [t, t, t],
+      petrel: (t) => {
+        const r = Math.min(1, Math.max(0, t * 2 - 0.5));
+        const g = Math.min(1, Math.max(0, 1 - Math.abs(t - 0.5) * 2));
+        const b = Math.min(1, Math.max(0, 0.5 - t * 2 + 1));
+        return [r, g, b];
+      },
+      jet: (t) => {
+        const r = Math.min(1, Math.max(0, 1.5 - Math.abs(4 * t - 3)));
+        const g = Math.min(1, Math.max(0, 1.5 - Math.abs(4 * t - 2)));
+        const b = Math.min(1, Math.max(0, 1.5 - Math.abs(4 * t - 1)));
+        return [r, g, b];
+      },
+      seismic: (t) => {
+        const r = Math.min(1, Math.max(0, t * 2));
+        const g = Math.min(1, Math.max(0, 1 - Math.abs(t - 0.5) * 2));
+        const b = Math.min(1, Math.max(0, 1 - t * 2));
+        return [r, g, b];
+      },
+    };
+
+    // ================================================================
+    // Plot 2D image
+    // ================================================================
+    function plot2D(canvasId, data, width, height, options = {}) {
+      const canvas = document.getElementById(canvasId);
+      const ctx = canvas.getContext('2d');
+      const { cmap = 'gray', clim = [-1, 1] } = options;
+
+      const imageData = ctx.createImageData(width, height);
+      const cmapFn = colormaps[cmap] || colormaps.gray;
+      const [vmin, vmax] = clim;
+      const range = vmax - vmin || 1;
+
+      for (let i = 0; i < width * height; i++) {
+        let t = (data[i] - vmin) / range;
+        t = Math.max(0, Math.min(1, t));
+        const [r, g, b] = cmapFn(t);
+        imageData.data[i * 4] = Math.round(r * 255);
+        imageData.data[i * 4 + 1] = Math.round(g * 255);
+        imageData.data[i * 4 + 2] = Math.round(b * 255);
+        imageData.data[i * 4 + 3] = 255;
+      }
+
+      // Scale to canvas size
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = width;
+      tempCanvas.height = height;
+      tempCanvas.getContext('2d').putImageData(imageData, 0, 0);
+
+      ctx.imageSmoothingEnabled = true;
+      ctx.drawImage(tempCanvas, 0, 0, canvas.width, canvas.height);
+    }
+
+    // ================================================================
+    // Draw overlay
+    // ================================================================
+    function drawOverlay(canvasId, baseData, overlayData, width, height) {
+      const canvas = document.getElementById(canvasId);
+      const ctx = canvas.getContext('2d');
+
+      // Draw base
+      plot2D(canvasId, baseData, width, height, { cmap: 'gray', clim: [-1, 1] });
+
+      // Draw overlay (fault) with transparency
+      const overlayImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const scaleX = canvas.width / width;
+      const scaleY = canvas.height / height;
+
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          if (overlayData[y * width + x] > 0.3) {
+            // Draw red fault pixels
+            const px = Math.floor(x * scaleX);
+            const py = Math.floor(y * scaleY);
+            const idx = (py * canvas.width + px) * 4;
+            overlayImageData.data[idx] = 255;
+            overlayImageData.data[idx + 1] = 50;
+            overlayImageData.data[idx + 2] = 50;
+          }
+        }
+      }
+
+      ctx.putImageData(overlayImageData, 0, 0);
+    }
+
+    // ================================================================
+    // Draw markers
+    // ================================================================
+    function drawMarkers(canvasId, data, width, height, markers) {
+      plot2D(canvasId, data, width, height, { cmap: 'petrel' });
+
+      const canvas = document.getElementById(canvasId);
+      const ctx = canvas.getContext('2d');
+      const scaleX = canvas.width / width;
+      const scaleY = canvas.height / height;
+
+      for (const marker of markers) {
+        const x = marker.x * scaleX;
+        const y = marker.y * scaleY;
+
+        // Marker circle
+        ctx.beginPath();
+        ctx.arc(x, y, 8, 0, Math.PI * 2);
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Inner dot
+        ctx.beginPath();
+        ctx.arc(x, y, 3, 0, Math.PI * 2);
+        ctx.fillStyle = '#00d4aa';
+        ctx.fill();
+
+        // Label
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '10px JetBrains Mono';
+        ctx.textAlign = 'left';
+        ctx.fillText(marker.name, x + 12, y + 4);
+      }
+    }
+
+    // ================================================================
+    // Generate data
+    // ================================================================
+    const { data: imgData, width: imgW, height: imgH } = TestData.generate2DSlice(256, 192);
+
+    // Generate fault overlay
+    const faultData = new Float32Array(imgW * imgH);
+    for (let y = 0; y < imgH; y++) {
+      for (let x = 0; x < imgW; x++) {
+        // Diagonal fault
+        const dist = Math.abs(x * 0.7 + y * 0.3 - 120);
+        faultData[y * imgW + x] = dist < 3 ? 1 : 0;
+      }
+    }
+
+    // Well markers
+    const wells = [
+      { x: 64, y: 48, name: 'A-1' },
+      { x: 128, y: 96, name: 'B-2' },
+      { x: 192, y: 64, name: 'C-3' },
+      { x: 96, y: 144, name: 'D-4' },
+      { x: 160, y: 160, name: 'E-5' },
+    ];
+
+    // ================================================================
+    // Render all plots
+    // ================================================================
+    plot2D('img-gray', imgData, imgW, imgH, { cmap: 'gray' });
+    plot2D('img-petrel', imgData, imgW, imgH, { cmap: 'petrel' });
+    drawOverlay('img-overlay', imgData, faultData, imgW, imgH);
+    drawMarkers('img-markers', imgData, imgW, imgH, wells);
+  </script>
+</body>
+</html>

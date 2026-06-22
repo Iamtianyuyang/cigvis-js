@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CIGVis — Examples</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-void: #0a0c10;
+      --bg-base: #0f1117;
+      --bg-raised: #161922;
+      --border-subtle: rgba(255,255,255,0.06);
+      --border-default: rgba(255,255,255,0.10);
+      --text-primary: #e8eaed;
+      --text-secondary: #8b8fa3;
+      --text-tertiary: #5c6078;
+      --accent: #00d4aa;
+      --accent-dim: rgba(0,212,170,0.12);
+      --font-sans: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: var(--font-sans); background: var(--bg-void); color: var(--text-primary); min-height: 100dvh; padding: 48px 24px; }
+
+    .hero { text-align: center; margin-bottom: 48px; }
+    .hero h1 { font-size: 32px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 8px; }
+    .hero h1 span { color: var(--accent); }
+    .hero p { font-size: 14px; color: var(--text-secondary); max-width: 480px; margin: 0 auto; }
+    .hero .version { display: inline-block; margin-top: 12px; font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); padding: 4px 12px; background: var(--bg-raised); border: 1px solid var(--border-subtle); border-radius: 999px; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; max-width: 1200px; margin: 0 auto; }
+
+    .card { background: var(--bg-base); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); overflow: hidden; transition: border-color 0.15s, transform 0.15s; }
+    .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .card a { text-decoration: none; color: inherit; display: block; }
+
+    .card-header { padding: 16px; border-bottom: 1px solid var(--border-subtle); }
+    .card-category { font-family: var(--font-mono); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 8px; }
+    .card-title { font-size: 16px; font-weight: 600; }
+
+    .card-body { padding: 16px; }
+    .card-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+    .card-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+    .tag { font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); padding: 2px 8px; background: var(--bg-raised); border: 1px solid var(--border-subtle); border-radius: 999px; }
+
+    .card-footer { padding: 12px 16px; border-top: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; }
+    .card-footer span { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); }
+    .card-footer .arrow { color: var(--accent); font-size: 14px; }
+
+    .section-divider { grid-column: 1 / -1; padding: 24px 0 8px; }
+    .section-divider h2 { font-family: var(--font-mono); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); border-bottom: 1px solid var(--border-subtle); padding-bottom: 8px; }
+
+    .footer { text-align: center; margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border-subtle); max-width: 1200px; margin-left: auto; margin-right: auto; }
+    .footer p { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); }
+    .footer a { color: var(--accent); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <h1><span>cigvis</span> examples</h1>
+    <p>Interactive demonstrations of geophysical data visualization in the browser</p>
+    <span class="version">v0.1.0</span>
+  </div>
+
+  <div class="grid">
+
+    <!-- 1D Section -->
+    <div class="section-divider"><h2>1D Plotting</h2></div>
+
+    <div class="card">
+      <a href="1d/trace.html">
+        <div class="card-header">
+          <div class="card-category">1D</div>
+          <div class="card-title">Trace Plot</div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">Single trace, multi-trace, and filled area visualization</div>
+          <div class="card-tags">
+            <span class="tag">plot1d</span>
+            <span class="tag">plotMultiTraces</span>
+            <span class="tag">plotWithFill</span>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span>3 examples</span>
+          <span class="arrow">→</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- 2D Section -->
+    <div class="section-divider"><h2>2D Plotting</h2></div>
+
+    <div class="card">
+      <a href="2d/plot2d.html">
+        <div class="card-header">
+          <div class="card-category">2D</div>
+          <div class="card-title">Image Plot</div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">Colormaps, overlays, markers, and annotations</div>
+          <div class="card-tags">
+            <span class="tag">plot2d</span>
+            <span class="tag">overlay</span>
+            <span class="tag">markers</span>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span>4 examples</span>
+          <span class="arrow">→</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- 3D Section -->
+    <div class="section-divider"><h2>3D Visualization</h2></div>
+
+    <div class="card">
+      <a href="3d/volume.html">
+        <div class="card-header">
+          <div class="card-category">3D</div>
+          <div class="card-title">Volume Slices</div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">Interactive 3D volume with orthogonal slices, surfaces, and well logs</div>
+          <div class="card-tags">
+            <span class="tag">createSlices</span>
+            <span class="tag">createSurfaces</span>
+            <span class="tag">createWellLog</span>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span>3 visualizations</span>
+          <span class="arrow">→</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Colormap Section -->
+    <div class="section-divider"><h2>Colormaps</h2></div>
+
+    <div class="card">
+      <a href="colormap/colormaps.html">
+        <div class="card-header">
+          <div class="card-category">Color</div>
+          <div class="card-title">Colormap Gallery</div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">Browse and compare built-in colormaps with live preview</div>
+          <div class="card-tags">
+            <span class="tag">petrel</span>
+            <span class="tag">seismic</span>
+            <span class="tag">viridis</span>
+            <span class="tag">jet</span>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span>16 colormaps</span>
+          <span class="arrow">→</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- GUI Section -->
+    <div class="section-divider"><h2>GUI Components</h2></div>
+
+    <div class="card">
+      <a href="gui-test.html">
+        <div class="card-header">
+          <div class="card-category">UI</div>
+          <div class="card-title">Web Components</div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">Interactive GUI components: sliders, buttons, dropdowns, sidebar</div>
+          <div class="card-tags">
+            <span class="tag">RangeSlider</span>
+            <span class="tag">Button</span>
+            <span class="tag">Sidebar</span>
+            <span class="tag">ColormapPicker</span>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span>7 components</span>
+          <span class="arrow">→</span>
+        </div>
+      </a>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <p>
+      <a href="https://github.com/Iamtianyuyang/cigvis-js">GitHub</a>
+      · Ported from <a href="https://github.com/JintaoLee-Roger/cigvis">Python cigvis</a>
+      · MIT License
+    </p>
+  </div>
+</body>
+</html>
