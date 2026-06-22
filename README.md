@@ -7,6 +7,8 @@
 
 **CIGVis.js** 是 Python [cigvis](https://github.com/JintaoLee-Roger/cigvis) 库的 JavaScript 移植版，由[中国科学技术大学计算解释组 (CIG)](https://cig.ustc.edu.cn/main.htm)开发。
 
+🔗 **在线示例**: https://iamtianyuyang.github.io/cigvis-js/examples/index.html
+
 ## ✨ 特性
 
 - **3D 体积可视化** - 使用 Three.js/WebGL 进行交互式 3D 渲染
@@ -21,15 +23,15 @@
 ## 📦 安装
 
 ```bash
-npm install cigvis
+npm install cigvis-js
 ```
 
 ```bash
-yarn add cigvis
+yarn add cigvis-js
 ```
 
 ```bash
-pnpm add cigvis
+pnpm add cigvis-js
 ```
 
 ## 🚀 快速开始
@@ -37,7 +39,7 @@ pnpm add cigvis
 ### 基本用法
 
 ```typescript
-import * as cigvis from 'cigvis';
+import * as cigvis from 'cigvis-js';
 
 // 1. 读取体积数据
 const response = await fetch('seismic.bin');
@@ -65,7 +67,7 @@ cigvis.plot3D({
 ### 使用 IO 工具读取数据
 
 ```typescript
-import { io } from 'cigvis';
+import { io } from 'cigvis-js';
 
 // 读取二进制体积数据
 const { data, shape } = await io.readVolume('seismic.bin', [192, 200, 240]);
@@ -83,7 +85,7 @@ const horizon = await io.readHorizFromURL('horizon.txt', {
 ### 创建多种可视化节点
 
 ```typescript
-import * as cigvis from 'cigvis';
+import * as cigvis from 'cigvis-js';
 
 // 切片
 const slices = cigvis.createSlices({
@@ -139,7 +141,7 @@ cigvis.plot3D({
 ### 使用色表
 
 ```typescript
-import { colormap } from 'cigvis';
+import { colormap } from 'cigvis-js';
 
 // 列出可用色表
 const cmaps = colormap.listColormaps();
@@ -163,7 +165,7 @@ const transparent = colormap.setAlpha('petrel', 0.5);
 ### 2D 绘图
 
 ```typescript
-import { plot2d } from 'cigvis';
+import { plot2d } from 'cigvis-js';
 
 // 绘制 2D 图像
 const canvas = plot2d.plot2D({
@@ -183,7 +185,7 @@ document.body.appendChild(canvas);
 ### 1D 绘图
 
 ```typescript
-import { plot1d } from 'cigvis';
+import { plot1d } from 'cigvis-js';
 
 // 绘制单道
 const canvas = plot1d.plot1D({
@@ -206,7 +208,7 @@ const multiCanvas = plot1d.plotMultiTraces({
 ### 切片查看器
 
 ```typescript
-import { sliceviewer } from 'cigvis';
+import { sliceviewer } from 'cigvis-js';
 
 // 创建切片查看器
 const viewer = sliceviewer.createSliceViewer({
@@ -239,7 +241,7 @@ const well = sliceviewer.addWell(wellX, wellY, {
 ### 网格生成
 
 ```typescript
-import { meshs } from 'cigvis';
+import { meshs } from 'cigvis-js';
 
 // 曲面转网格
 const { vertices, faces } = meshs.surface2mesh(heightMap, [64, 64]);
@@ -257,7 +259,7 @@ const merged = meshs.mergeMeshs([mesh1, mesh2, mesh3]);
 ### 工具函数
 
 ```typescript
-import { utils } from 'cigvis';
+import { utils } from 'cigvis-js';
 
 // 计算统计信息
 const stats = utils.statistics(data);
@@ -277,7 +279,7 @@ const value3d = utils.trilinearInterpolate(data, nx, ny, nz, x, y, z);
 ### 交互式工具
 
 ```typescript
-import { tools } from 'cigvis';
+import { tools } from 'cigvis-js';
 
 // 交互式提取任意线
 const result = await tools.extractArbitraryLine({
@@ -386,7 +388,9 @@ npm test
 
 ## 📖 示例
 
-查看 [examples/](examples/) 目录获取完整示例：
+在线预览（GitHub Pages）: https://iamtianyuyang.github.io/cigvis-js/examples/index.html
+
+也可查看 [examples/](examples/) 目录获取完整源码：
 
 - [1D 绘图示例](examples/1d/)
 - [2D 绘图示例](examples/2d/)
@@ -396,7 +400,7 @@ npm test
 
 ## 🤝 贡献
 
-欢迎贡献！请阅读 [CONTRIBUTING.md](CONTRIBUTING.md) 了解详情。
+欢迎通过 [Issues](https://github.com/Iamtianyuyang/cigvis-js/issues) 或 Pull Request 贡献代码与建议。
 
 ## 📄 许可证
 
