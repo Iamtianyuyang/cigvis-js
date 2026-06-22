@@ -25,6 +25,7 @@ export {
   createLineLogs,
   createFaultSkin,
   createArbitraryLine,
+  createSplats,
   setSurfaceColorBySliceNodes,
 } from './extra-nodes';
 export type {
@@ -33,4 +34,6 @@ export type {
   LineLogNode,
   FaultSkinNode,
   ArbitraryLineNode,
+  SplatNode,
+  SplatOptions,
 } from './extra-nodes';

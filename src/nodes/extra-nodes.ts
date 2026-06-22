@@ -428,6 +428,190 @@ export function createArbitraryLine(
 }
 
 // ============================================================================
+// Create splats
+// ============================================================================
+
+/** Splat preset (without positions) */
+interface SplatPreset {
+  scaling?: 'fixed' | 'visual';
+  size?: number;
+  alpha?: number;
+  sigmaRel?: number;
+  cutoff?: number;
+  depthMask?: boolean | null;
+}
+
+/** Splat mode presets */
+const SPLAT_MODE_PRESETS: Record<string, SplatPreset> = {
+  point: {
+    scaling: 'fixed',
+    size: 10.0,
+    alpha: 0.95,
+    sigmaRel: 0.42,
+    cutoff: 5e-3,
+    depthMask: true,
+  },
+  surface: {
+    scaling: 'visual',
+    size: 4.0,
+    alpha: 0.8,
+    sigmaRel: 0.50,
+    cutoff: 2e-3,
+    depthMask: true,
+  },
+  volume: {
+    scaling: 'visual',
+    size: 3.0,
+    alpha: 0.45,
+    sigmaRel: 0.58,
+    cutoff: 1e-3,
+    depthMask: false,
+  },
+};
+
+/** Splat options */
+export interface SplatOptions {
+  type?: 'splat';
+  positions: Float32Array;
+  values?: Float32Array | null;
+  colors?: Float32Array | null;
+  cmap?: string;
+  clim?: Clim;
+  color?: string;
+  size?: number;
+  mode?: 'point' | 'surface' | 'volume';
+  scaling?: 'fixed' | 'visual';
+  alpha?: number;
+  sigmaRel?: number;
+  cutoff?: number;
+  antialias?: number;
+  maxPoints?: number | null;
+  seed?: number;
+  premultiply?: boolean;
+  depthTest?: boolean;
+  depthMask?: boolean | null;
+  visible?: boolean;
+}
+
+/** Splat node */
+export interface SplatNode extends SplatOptions {
+  type: 'splat';
+}
+
+/**
+ * Create a Gaussian splat node from point positions.
+ * Ported from cigvis Python: create_splats
+ *
+ * @param pos - Point positions [N, 2] or [N, 3]
+ * @param options - Optional parameters
+ * @returns SplatNode
+ *
+ * @example
+ * ```ts
+ * const splat = createSplats(positions, {
+ *   values: intensityData,
+ *   cmap: 'viridis',
+ *   mode: 'surface',
+ * });
+ * ```
+ */
+export function createSplats(
+  pos: Float32Array,
+  options: Omit<SplatOptions, 'positions' | 'type'> = {}
+): SplatNode {
+  const {
+    mode = 'surface',
+    scaling,
+    size,
+    alpha,
+    sigmaRel,
+    cutoff,
+    depthMask,
+    ...rest
+  } = options;
+
+  // Get preset for mode
+  const preset = { ...SPLAT_MODE_PRESETS[mode] };
+
+  // Override preset with user options
+  if (scaling !== undefined) preset.scaling = scaling;
+  if (size !== undefined) preset.size = size;
+  if (alpha !== undefined) preset.alpha = alpha;
+  if (sigmaRel !== undefined) preset.sigmaRel = sigmaRel;
+  if (cutoff !== undefined) preset.cutoff = cutoff;
+  if (depthMask !== undefined) preset.depthMask = depthMask;
+
+  // Validate positions
+  if (pos.length === 0) {
+    return {
+      type: 'splat',
+      positions: new Float32Array(0),
+      ...rest,
+      ...preset,
+      visible: false,
+    };
+  }
+
+  return {
+    type: 'splat',
+    positions: pos,
+    ...rest,
+    ...preset,
+    visible: true,
+  };
+}
+
+/**
+ * Sample splat inputs for efficient rendering.
+ */
+export function sampleSplatInputs(
+  pos: Float32Array,
+  values: Float32Array | null,
+  colors: Float32Array | null,
+  maxPoints: number | null,
+  seed: number
+): { pos: Float32Array; values: Float32Array | null; colors: Float32Array | null } {
+  if (maxPoints === null || pos.length / 3 <= maxPoints) {
+    return { pos, values, colors };
+  }
+
+  // Simple random sampling
+  const n = pos.length / 3;
+  const indices = new Set<number>();
+  let s = seed;
+
+  while (indices.size < maxPoints) {
+    s = (s * 16807) % 2147483647;
+    indices.add(s % n);
+  }
+
+  const sampledPos = new Float32Array(maxPoints * 3);
+  const sampledValues = values ? new Float32Array(maxPoints) : null;
+  const sampledColors = colors ? new Float32Array(maxPoints * 4) : null;
+
+  let idx = 0;
+  for (const i of indices) {
+    sampledPos[idx * 3] = pos[i * 3];
+    sampledPos[idx * 3 + 1] = pos[i * 3 + 1];
+    sampledPos[idx * 3 + 2] = pos[i * 3 + 2];
+
+    if (values && sampledValues) {
+      sampledValues[idx] = values[i];
+    }
+    if (colors && sampledColors) {
+      sampledColors[idx * 4] = colors[i * 4];
+      sampledColors[idx * 4 + 1] = colors[i * 4 + 1];
+      sampledColors[idx * 4 + 2] = colors[i * 4 + 2];
+      sampledColors[idx * 4 + 3] = colors[i * 4 + 3];
+    }
+
+    idx++;
+  }
+
+  return { pos: sampledPos, values: sampledValues, colors: sampledColors };
+}
+
+// ============================================================================
 // Update surface colors from slice nodes
 // ============================================================================
 
