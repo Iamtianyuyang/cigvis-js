@@ -42,24 +42,36 @@
     canvas {
       border: 0.5pt solid #000;
     }
-    .colorbar-row {
+    /* Vertical colorbar layout */
+    .plot-with-colorbar {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 8px;
-      margin-top: 4px;
     }
-    .colorbar-label {
+    .colorbar-vertical {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 300px;
+    }
+    .colorbar-title-v {
       font-size: 10px;
-      min-width: 40px;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      margin-right: 4px;
     }
-    .colorbar-bar {
+    .colorbar-bar-v {
+      width: 12px;
       flex: 1;
-      height: 8px;
       border: 0.5pt solid #000;
     }
-    .colorbar-title {
-      font-size: 10px;
-      margin-left: 8px;
+    .colorbar-ticks-v {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+      font-size: 9px;
+      margin-left: 4px;
     }
     .subplot-grid {
       display: grid;
@@ -78,12 +90,19 @@
     <!-- Figure 1: Gray colormap -->
     <div class="figure">
       <div class="figure-title">Figure 1.</div>
-      <canvas id="fig1" width="400" height="300"></canvas>
-      <div class="colorbar-row">
-        <span class="colorbar-label">-1.0</span>
-        <div class="colorbar-bar" style="background: linear-gradient(to right, #000000, #ffffff);"></div>
-        <span class="colorbar-label" style="text-align: right;">1.0</span>
-        <span class="colorbar-title">Amplitude</span>
+      <div class="plot-with-colorbar">
+        <canvas id="fig1" width="400" height="300"></canvas>
+        <div class="colorbar-vertical">
+          <span class="colorbar-title-v">Amplitude</span>
+          <div class="colorbar-bar-v" style="background: linear-gradient(to bottom, #ffffff, #000000);"></div>
+          <div class="colorbar-ticks-v">
+            <span>1.0</span>
+            <span>0.5</span>
+            <span>0.0</span>
+            <span>-0.5</span>
+            <span>-1.0</span>
+          </div>
+        </div>
       </div>
       <div class="figure-caption">Seismic slice displayed with gray colormap.</div>
     </div>
@@ -91,12 +110,19 @@
     <!-- Figure 2: Petrel colormap -->
     <div class="figure">
       <div class="figure-title">Figure 2.</div>
-      <canvas id="fig2" width="400" height="300"></canvas>
-      <div class="colorbar-row">
-        <span class="colorbar-label">-1.0</span>
-        <div class="colorbar-bar" style="background: linear-gradient(to right, #0000ff, #00ffff, #00ff00, #ffff00, #ff0000);"></div>
-        <span class="colorbar-label" style="text-align: right;">1.0</span>
-        <span class="colorbar-title">Amplitude</span>
+      <div class="plot-with-colorbar">
+        <canvas id="fig2" width="400" height="300"></canvas>
+        <div class="colorbar-vertical">
+          <span class="colorbar-title-v">Amplitude</span>
+          <div class="colorbar-bar-v" style="background: linear-gradient(to bottom, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff);"></div>
+          <div class="colorbar-ticks-v">
+            <span>1.0</span>
+            <span>0.5</span>
+            <span>0.0</span>
+            <span>-0.5</span>
+            <span>-1.0</span>
+          </div>
+        </div>
       </div>
       <div class="figure-caption">Same slice displayed with Petrel colormap, commonly used in geophysical interpretation.</div>
     </div>
@@ -104,12 +130,19 @@
     <!-- Figure 3: With fault overlay -->
     <div class="figure">
       <div class="figure-title">Figure 3.</div>
-      <canvas id="fig3" width="400" height="300"></canvas>
-      <div class="colorbar-row">
-        <span class="colorbar-label">-1.0</span>
-        <div class="colorbar-bar" style="background: linear-gradient(to right, #000000, #ffffff);"></div>
-        <span class="colorbar-label" style="text-align: right;">1.0</span>
-        <span class="colorbar-title">Amplitude</span>
+      <div class="plot-with-colorbar">
+        <canvas id="fig3" width="400" height="300"></canvas>
+        <div class="colorbar-vertical">
+          <span class="colorbar-title-v">Amplitude</span>
+          <div class="colorbar-bar-v" style="background: linear-gradient(to bottom, #ffffff, #000000);"></div>
+          <div class="colorbar-ticks-v">
+            <span>1.0</span>
+            <span>0.5</span>
+            <span>0.0</span>
+            <span>-0.5</span>
+            <span>-1.0</span>
+          </div>
+        </div>
       </div>
       <div class="figure-caption">Seismic slice with fault interpretation overlay (red line).</div>
     </div>
@@ -140,12 +173,19 @@
     <!-- Figure 5: With well markers -->
     <div class="figure">
       <div class="figure-title">Figure 5.</div>
-      <canvas id="fig5" width="400" height="300"></canvas>
-      <div class="colorbar-row">
-        <span class="colorbar-label">-1.0</span>
-        <div class="colorbar-bar" style="background: linear-gradient(to right, #000000, #ffffff);"></div>
-        <span class="colorbar-label" style="text-align: right;">1.0</span>
-        <span class="colorbar-title">Amplitude</span>
+      <div class="plot-with-colorbar">
+        <canvas id="fig5" width="400" height="300"></canvas>
+        <div class="colorbar-vertical">
+          <span class="colorbar-title-v">Amplitude</span>
+          <div class="colorbar-bar-v" style="background: linear-gradient(to bottom, #ffffff, #000000);"></div>
+          <div class="colorbar-ticks-v">
+            <span>1.0</span>
+            <span>0.5</span>
+            <span>0.0</span>
+            <span>-0.5</span>
+            <span>-1.0</span>
+          </div>
+        </div>
       </div>
       <div class="figure-caption">Seismic slice with well locations marked (circles).</div>
     </div>
