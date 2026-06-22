@@ -3,906 +3,487 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CIGVis — Geophysical Visualization</title>
+  <title>CIGVis — GUI Components</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    /* ====================================================================
-       TOKENS
-       ==================================================================== */
     :root {
-      /* Neutrals — cool slate, not warm */
-      --bg-void: #0a0c10;
-      --bg-base: #0f1117;
-      --bg-raised: #161922;
-      --bg-surface: #1c1f2b;
-      --bg-overlay: #232736;
-
-      /* Borders */
-      --border-subtle: rgba(255, 255, 255, 0.06);
-      --border-default: rgba(255, 255, 255, 0.10);
-      --border-strong: rgba(255, 255, 255, 0.16);
-
-      /* Text */
-      --text-primary: #e8eaed;
-      --text-secondary: #8b8fa3;
-      --text-tertiary: #5c6078;
-      --text-inverse: #0a0c10;
-
-      /* Accent — electric teal (not AI-purple) */
+      --bg: #0c0c14;
+      --bg-raised: #12121c;
+      --bg-surface: #1a1a28;
+      --border: rgba(255,255,255,0.06);
+      --border-hover: rgba(0,212,170,0.2);
+      --text: #e8eaed;
+      --text-2: #8b8fa3;
+      --text-3: #5c6078;
       --accent: #00d4aa;
-      --accent-dim: #00d4aa20;
-      --accent-hover: #00eabb;
-      --accent-text: #0a0c10;
-
-      /* Semantic */
-      --danger: #f43f5e;
-      --warning: #f59e0b;
-      --success: #10b981;
-
-      /* Typography */
-      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
-
-      /* Spacing scale */
-      --space-1: 4px;
-      --space-2: 8px;
-      --space-3: 12px;
-      --space-4: 16px;
-      --space-5: 20px;
-      --space-6: 24px;
-      --space-8: 32px;
-
-      /* Radius — consistent soft */
-      --radius-sm: 6px;
-      --radius-md: 8px;
-      --radius-lg: 12px;
-
-      /* Shadows — tinted to bg */
-      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-      --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+      --accent-dim: rgba(0,212,170,0.08);
+      --sans: 'Inter', sans-serif;
+      --mono: 'JetBrains Mono', monospace;
+      --r-md: 10px;
+      --r-lg: 16px;
     }
-
-    /* ====================================================================
-       RESET & BASE
-       ==================================================================== */
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-    html {
-      font-size: 14px;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: var(--font-sans);
-      background: var(--bg-void);
-      color: var(--text-primary);
-      min-height: 100dvh;
-      overflow: hidden;
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
     }
 
-    /* ====================================================================
-       LAYOUT — App Shell
-       ==================================================================== */
-    .app {
-      display: grid;
-      grid-template-rows: 48px 1fr 28px;
-      grid-template-columns: 1fr 280px;
-      height: 100dvh;
-    }
-
-    /* ====================================================================
-       TOPBAR
-       ==================================================================== */
+    /* Topbar */
     .topbar {
-      grid-column: 1 / -1;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 var(--space-4);
-      background: var(--bg-base);
-      border-bottom: 1px solid var(--border-subtle);
+      padding: 0 24px;
+      height: 48px;
+      background: var(--bg-raised);
+      border-bottom: 1px solid var(--border);
     }
-
-    .topbar-left {
-      display: flex;
-      align-items: center;
-      gap: var(--space-3);
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-    }
-
+    .topbar-left { display: flex; align-items: center; gap: 12px; }
+    .logo { display: flex; align-items: center; gap: 6px; }
     .logo-mark {
-      width: 20px;
-      height: 20px;
+      width: 18px; height: 18px;
       background: var(--accent);
       border-radius: 4px;
       position: relative;
     }
-
     .logo-mark::after {
       content: '';
       position: absolute;
       inset: 4px;
-      background: var(--bg-void);
+      background: var(--bg);
       border-radius: 2px;
     }
-
-    .logo-text {
-      font-family: var(--font-mono);
-      font-weight: 600;
-      font-size: 13px;
-      letter-spacing: -0.02em;
-      color: var(--text-primary);
-    }
-
-    .logo-version {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      color: var(--text-tertiary);
-      padding: 2px 6px;
-      background: var(--bg-raised);
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border-subtle);
-    }
-
-    .topbar-center {
-      display: flex;
-      align-items: center;
-      gap: var(--space-1);
-    }
-
-    .topbar-tab {
-      padding: 6px 12px;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--text-secondary);
-      background: none;
-      border: none;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      transition: color 0.15s, background 0.15s;
-    }
-
-    .topbar-tab:hover {
-      color: var(--text-primary);
-      background: var(--bg-raised);
-    }
-
-    .topbar-tab.active {
-      color: var(--text-primary);
-      background: var(--bg-surface);
-    }
-
-    .topbar-right {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-    }
-
+    .logo-text { font-family: var(--mono); font-weight: 600; font-size: 13px; }
     .topbar-status {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-3);
       display: flex;
       align-items: center;
-      gap: var(--space-2);
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--text-tertiary);
+      gap: 6px;
     }
+    .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
 
-    .status-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--success);
-    }
+    /* Layout */
+    .layout { display: grid; grid-template-columns: 1fr 280px; height: calc(100vh - 48px); }
 
-    /* ====================================================================
-       MAIN CONTENT
-       ==================================================================== */
+    /* Main */
     .main {
       overflow-y: auto;
-      padding: var(--space-6);
+      padding: 24px;
       display: flex;
       flex-direction: column;
-      gap: var(--space-6);
+      gap: 20px;
     }
 
-    /* Section card */
+    /* Section */
     .section {
-      background: var(--bg-base);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
+      background: var(--bg-raised);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
       overflow: hidden;
     }
-
-    .section-header {
+    .section-head {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: var(--space-3) var(--space-4);
-      border-bottom: 1px solid var(--border-subtle);
     }
-
     .section-title {
-      font-family: var(--font-mono);
+      font-family: var(--mono);
       font-size: 11px;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      color: var(--text-secondary);
+      color: var(--text-2);
     }
-
     .section-badge {
-      font-family: var(--font-mono);
+      font-family: var(--mono);
       font-size: 10px;
       color: var(--accent);
       padding: 2px 8px;
       background: var(--accent-dim);
       border-radius: 999px;
     }
+    .section-body { padding: 16px; }
 
-    .section-body {
-      padding: var(--space-4);
-    }
-
-    /* ====================================================================
-       FORM ROWS
-       ==================================================================== */
+    /* Form row */
     .form-row {
       display: grid;
-      grid-template-columns: 140px 1fr auto;
+      grid-template-columns: 120px 1fr auto;
       align-items: center;
-      gap: var(--space-3);
-      padding: var(--space-2) 0;
+      gap: 12px;
+      padding: 6px 0;
     }
-
-    .form-row + .form-row {
-      border-top: 1px solid var(--border-subtle);
-    }
-
-    .form-label {
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--text-secondary);
-    }
-
+    .form-row + .form-row { border-top: 1px solid var(--border); }
+    .form-label { font-size: 12px; color: var(--text-2); }
     .form-value {
-      font-family: var(--font-mono);
+      font-family: var(--mono);
       font-size: 12px;
-      color: var(--text-tertiary);
+      color: var(--text-3);
       text-align: right;
-      min-width: 48px;
+      min-width: 40px;
     }
 
-    /* ====================================================================
-       BUTTONS (inline overrides for cigvis-button)
-       ==================================================================== */
-    .button-row {
+    /* Button row */
+    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    /* Event log */
+    .event-log {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-3);
+      padding: 8px 12px;
+      background: var(--bg);
+      border-radius: var(--r-md);
+      border: 1px solid var(--border);
+      min-height: 32px;
       display: flex;
-      gap: var(--space-2);
-      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
     }
+    .event-time { color: var(--text-3); }
+    .event-type { color: var(--accent); }
+    .event-data { color: var(--text-2); }
 
-    /* ====================================================================
-       PLOT CANVAS AREA
-       ==================================================================== */
+    /* Plot area */
     .plot-frame {
-      background: var(--bg-void);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
       height: 240px;
       position: relative;
       overflow: hidden;
     }
-
     .plot-frame::before {
       content: '';
       position: absolute;
       inset: 0;
       background:
-        linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px),
-        linear-gradient(0deg, var(--border-subtle) 1px, transparent 1px);
+        linear-gradient(90deg, var(--border) 1px, transparent 1px),
+        linear-gradient(0deg, var(--border) 1px, transparent 1px);
       background-size: 40px 40px;
-      opacity: 0.5;
+      opacity: 0.4;
       pointer-events: none;
     }
 
-    .plot-frame cigvis-plot-canvas {
-      position: absolute;
-      inset: 0;
-    }
-
-    /* ====================================================================
-       SIDEBAR (right panel)
-       ==================================================================== */
-    .sidebar-panel {
-      background: var(--bg-base);
-      border-left: 1px solid var(--border-subtle);
+    /* Sidebar */
+    .sidebar {
+      background: var(--bg-raised);
+      border-left: 1px solid var(--border);
       overflow-y: auto;
       display: flex;
       flex-direction: column;
     }
 
-    .sidebar-panel .section {
-      border-radius: 0;
-      border-left: none;
-      border-right: none;
-      border-top: none;
-    }
-
-    .sidebar-panel .section:last-child {
-      border-bottom: none;
-    }
-
-    /* ====================================================================
-       STATUSBAR
-       ==================================================================== */
+    /* Statusbar */
     .statusbar {
       grid-column: 1 / -1;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 var(--space-4);
-      background: var(--bg-base);
-      border-top: 1px solid var(--border-subtle);
-      font-family: var(--font-mono);
+      padding: 0 24px;
+      height: 28px;
+      background: var(--bg-raised);
+      border-top: 1px solid var(--border);
+      font-family: var(--mono);
       font-size: 11px;
-      color: var(--text-tertiary);
+      color: var(--text-3);
     }
-
-    .statusbar-left,
-    .statusbar-right {
-      display: flex;
-      align-items: center;
-      gap: var(--space-4);
-    }
-
-    .status-item {
-      display: flex;
-      align-items: center;
-      gap: var(--space-1);
-    }
-
-    .status-ok { color: var(--success); }
-    .status-warn { color: var(--warning); }
-    .status-error { color: var(--danger); }
-
-    /* ====================================================================
-       OVERRIDES for cigvis Web Components (dark theme)
-       ==================================================================== */
-    cigvis-range-slider {
-      display: block;
-      width: 100%;
-    }
-
-    cigvis-button::part(button),
-    cigvis-button button {
-      font-family: var(--font-sans) !important;
-      font-size: 12px !important;
-      font-weight: 500 !important;
-      border-radius: var(--radius-sm) !important;
-      transition: all 0.15s ease !important;
-    }
-
-    cigvis-button button:active {
-      transform: translateY(1px);
-    }
-
-    cigvis-sidebar {
-      display: contents;
-    }
-
-    /* Colormap picker dark overrides */
-    cigvis-colormap-picker .item:hover {
-      background: rgba(255, 255, 255, 0.06) !important;
-    }
-
-    cigvis-colormap-picker .item.selected {
-      background: var(--accent-dim) !important;
-      border-color: var(--accent) !important;
-    }
-
-    cigvis-colormap-picker .label {
-      color: var(--text-secondary) !important;
-    }
-
-    /* ====================================================================
-       EMPTY STATE
-       ==================================================================== */
-    .empty-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: var(--space-8);
-      color: var(--text-tertiary);
-      text-align: center;
-    }
-
-    .empty-state-icon {
-      width: 48px;
-      height: 48px;
-      border: 2px dashed var(--border-default);
-      border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: var(--space-3);
-      font-size: 20px;
-    }
-
-    .empty-state-text {
-      font-size: 13px;
-      max-width: 240px;
-    }
-
-    /* ====================================================================
-       EVENT LOG
-       ==================================================================== */
-    .event-log {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--text-tertiary);
-      padding: var(--space-2) var(--space-3);
-      background: var(--bg-void);
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border-subtle);
-      min-height: 32px;
-      display: flex;
-      align-items: center;
-    }
-
-    .event-log .time {
-      color: var(--text-tertiary);
-      margin-right: var(--space-2);
-    }
-
-    .event-log .event-type {
-      color: var(--accent);
-      margin-right: var(--space-2);
-    }
-
-    .event-log .event-data {
-      color: var(--text-secondary);
-    }
+    .statusbar-group { display: flex; gap: 16px; }
+    .status-ok { color: var(--accent); }
+    .status-warn { color: #f59e0b; }
+    .status-err { color: #f43f5e; }
   </style>
 </head>
 <body>
-  <div class="app">
-
-    <!-- ================================================================
-         TOPBAR
-         ================================================================ -->
-    <header class="topbar">
-      <div class="topbar-left">
-        <div class="logo">
-          <div class="logo-mark"></div>
-          <span class="logo-text">cigvis</span>
-        </div>
-        <span class="logo-version">v0.1.0</span>
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="logo">
+        <div class="logo-mark"></div>
+        <span class="logo-text">cigvis</span>
       </div>
+    </div>
+    <div class="topbar-status">
+      <span class="dot"></span>
+      <span>Components</span>
+    </div>
+  </div>
 
-      <nav class="topbar-center">
-        <button class="topbar-tab active">Components</button>
-        <button class="topbar-tab">Renderer</button>
-        <button class="topbar-tab">IO</button>
-        <button class="topbar-tab">Colormaps</button>
-      </nav>
-
-      <div class="topbar-right">
-        <div class="topbar-status">
-          <span class="status-dot"></span>
-          <span>Ready</span>
-        </div>
-      </div>
-    </header>
-
-    <!-- ================================================================
-         MAIN CONTENT
-         ================================================================ -->
-    <main class="main">
-
-      <!-- RangeSlider Section -->
-      <section class="section">
-        <div class="section-header">
+  <div class="layout">
+    <div class="main">
+      <!-- RangeSlider -->
+      <div class="section">
+        <div class="section-head">
           <span class="section-title">Range Slider</span>
-          <span class="section-badge">3 instances</span>
+          <span class="section-badge">3</span>
         </div>
         <div class="section-body">
           <div class="form-row">
-            <span class="form-label">Volume Opacity</span>
+            <span class="form-label">Opacity</span>
             <cigvis-range-slider label="" value="75" min="0" max="100"></cigvis-range-slider>
             <span class="form-value" data-slider="opacity">75</span>
           </div>
           <div class="form-row">
-            <span class="form-label">Zero Value Test</span>
+            <span class="form-label">Zero test</span>
             <cigvis-range-slider label="" value="0" min="0" max="50"></cigvis-range-slider>
             <span class="form-value" data-slider="zero">0</span>
           </div>
           <div class="form-row">
-            <span class="form-label">Step Size</span>
+            <span class="form-label">Step size</span>
             <cigvis-range-slider label="" value="50" min="0" max="100" step="10"></cigvis-range-slider>
             <span class="form-value" data-slider="step">50</span>
           </div>
         </div>
-      </section>
+      </div>
 
-      <!-- Button Section -->
-      <section class="section">
-        <div class="section-header">
+      <!-- Buttons -->
+      <div class="section">
+        <div class="section-head">
           <span class="section-title">Buttons</span>
-          <span class="section-badge">4 variants</span>
+          <span class="section-badge">3 variants</span>
         </div>
         <div class="section-body">
-          <div class="button-row">
+          <div class="btn-row">
             <cigvis-button label="Primary" variant="primary"></cigvis-button>
             <cigvis-button label="Secondary" variant="secondary"></cigvis-button>
             <cigvis-button label="Ghost" variant="ghost"></cigvis-button>
-            <cigvis-button label="XSS: <script>alert(1)</script>" variant="primary"></cigvis-button>
           </div>
-          <div style="margin-top: var(--space-3);">
-            <div class="event-log" id="button-log">
+          <div style="margin-top: 12px;">
+            <div class="event-log" id="btn-log">
               <span class="event-type">ready</span>
               <span class="event-data">awaiting interaction</span>
             </div>
           </div>
         </div>
-      </section>
+      </div>
 
-      <!-- Dropdown Section -->
-      <section class="section">
-        <div class="section-header">
-          <span class="section-title">Dropdown Select</span>
-          <span class="section-badge">2 instances</span>
+      <!-- Dropdown -->
+      <div class="section">
+        <div class="section-head">
+          <span class="section-title">Dropdown</span>
+          <span class="section-badge">2</span>
         </div>
         <div class="section-body">
           <div class="form-row">
             <span class="form-label">Colormap</span>
             <cigvis-dropdown-select label="" value="petrel"></cigvis-dropdown-select>
-            <span class="form-value" data-dropdown="cmap">petrel</span>
+            <span class="form-value" data-dd="cmap">petrel</span>
           </div>
           <div class="form-row">
             <span class="form-label">Interpolation</span>
             <cigvis-dropdown-select label="" value="linear"></cigvis-dropdown-select>
-            <span class="form-value" data-dropdown="interp">linear</span>
+            <span class="form-value" data-dd="interp">linear</span>
           </div>
         </div>
-      </section>
+      </div>
 
-      <!-- Plot Canvas Section -->
-      <section class="section">
-        <div class="section-header">
+      <!-- Plot -->
+      <div class="section">
+        <div class="section-head">
           <span class="section-title">Plot Canvas</span>
           <span class="section-badge">live</span>
         </div>
         <div class="section-body">
           <div class="plot-frame">
-            <cigvis-plot-canvas id="test-canvas"></cigvis-plot-canvas>
+            <cigvis-plot-canvas id="canvas" style="position:absolute;inset:0;"></cigvis-plot-canvas>
           </div>
         </div>
-      </section>
+      </div>
+    </div>
 
-    </main>
-
-    <!-- ================================================================
-         SIDEBAR
-         ================================================================ -->
-    <aside class="sidebar-panel">
-
-      <div class="section">
-        <div class="section-header">
+    <div class="sidebar">
+      <div class="section" style="border-radius:0;border:none;border-bottom:1px solid var(--border);">
+        <div class="section-head">
           <span class="section-title">Colormap</span>
         </div>
-        <div class="section-body" style="padding: var(--space-2);">
+        <div class="section-body" style="padding: 8px;">
           <cigvis-colormap-picker selected="petrel"></cigvis-colormap-picker>
         </div>
       </div>
 
-      <div class="section">
-        <div class="section-header">
+      <div class="section" style="border-radius:0;border:none;border-bottom:1px solid var(--border);">
+        <div class="section-head">
           <span class="section-title">Slice Position</span>
         </div>
         <div class="section-body">
-          <div class="form-row" style="grid-template-columns: 24px 1fr auto;">
-            <span class="form-label" style="font-family: var(--font-mono); font-weight: 600; color: var(--accent);">X</span>
+          <div class="form-row" style="grid-template-columns: 20px 1fr auto;">
+            <span class="form-label" style="font-family:var(--mono);font-weight:600;color:var(--accent);">X</span>
             <cigvis-range-slider label="" value="96" min="0" max="192"></cigvis-range-slider>
             <span class="form-value">96</span>
           </div>
-          <div class="form-row" style="grid-template-columns: 24px 1fr auto;">
-            <span class="form-label" style="font-family: var(--font-mono); font-weight: 600; color: var(--accent);">Y</span>
+          <div class="form-row" style="grid-template-columns: 20px 1fr auto;">
+            <span class="form-label" style="font-family:var(--mono);font-weight:600;color:var(--accent);">Y</span>
             <cigvis-range-slider label="" value="100" min="0" max="200"></cigvis-range-slider>
             <span class="form-value">100</span>
           </div>
-          <div class="form-row" style="grid-template-columns: 24px 1fr auto;">
-            <span class="form-label" style="font-family: var(--font-mono); font-weight: 600; color: var(--accent);">Z</span>
+          <div class="form-row" style="grid-template-columns: 20px 1fr auto;">
+            <span class="form-label" style="font-family:var(--mono);font-weight:600;color:var(--accent);">Z</span>
             <cigvis-range-slider label="" value="120" min="0" max="240"></cigvis-range-slider>
             <span class="form-value">120</span>
           </div>
         </div>
       </div>
 
-      <div class="section">
-        <div class="section-header">
-          <span class="section-title">Display</span>
+      <div class="section" style="border-radius:0;border:none;border-bottom:1px solid var(--border);">
+        <div class="section-head">
+          <span class="section-title">Actions</span>
         </div>
-        <div class="section-body">
-          <div class="form-row" style="grid-template-columns: 1fr;">
-            <cigvis-dropdown-select label="" value="three.js"></cigvis-dropdown-select>
-          </div>
-          <div style="margin-top: var(--space-3); display: flex; flex-direction: column; gap: var(--space-2);">
-            <cigvis-button label="Reset View" variant="secondary" style="width: 100%;"></cigvis-button>
-            <cigvis-button label="Export PNG" variant="primary" style="width: 100%;"></cigvis-button>
-          </div>
+        <div class="section-body" style="display:flex;flex-direction:column;gap:8px;">
+          <cigvis-button label="Reset View" variant="secondary" style="width:100%;"></cigvis-button>
+          <cigvis-button label="Export PNG" variant="primary" style="width:100%;"></cigvis-button>
         </div>
       </div>
-
-      <div class="section" style="flex: 1;">
-        <div class="section-header">
-          <span class="section-title">Info</span>
-        </div>
-        <div class="section-body">
-          <div class="empty-state">
-            <div class="empty-state-icon">?</div>
-            <p class="empty-state-text">Load a volume file to begin visualization</p>
-          </div>
-        </div>
-      </div>
-
-    </aside>
-
-    <!-- ================================================================
-         STATUSBAR
-         ================================================================ -->
-    <footer class="statusbar">
-      <div class="statusbar-left">
-        <span class="status-item">
-          Components: <span class="status-ok" id="component-count">—</span>
-        </span>
-        <span class="status-item">
-          Errors: <span class="status-ok" id="error-count">0</span>
-        </span>
-        <span class="status-item">
-          Warnings: <span class="status-ok" id="warn-count">0</span>
-        </span>
-      </div>
-      <div class="statusbar-right">
-        <span class="status-item">WebGL: <span id="webgl-status">checking</span></span>
-        <span class="status-item">Three.js: <span id="three-status">—</span></span>
-      </div>
-    </footer>
-
+    </div>
   </div>
 
-  <!-- Load cigvis GUI components -->
-  <script src="./cigvis-gui.browser.js"></script>
+  <div class="statusbar">
+    <div class="statusbar-group">
+      <span>Components: <span class="status-ok" id="comp-count">—</span></span>
+      <span>Errors: <span class="status-ok" id="err-count">0</span></span>
+    </div>
+    <div class="statusbar-group">
+      <span>WebGL: <span id="webgl">—</span></span>
+    </div>
+  </div>
+
+  <script src="cigvis-gui.browser.js"></script>
   <script>
-    // ====================================================================
-    // INITIALIZATION
-    // ====================================================================
+    // Component count
+    const names = ['cigvis-range-slider','cigvis-button','cigvis-dropdown-select',
+                   'cigvis-plot-canvas','cigvis-colormap-picker','cigvis-sidebar','cigvis-sidebar-section'];
+    let ok = 0;
+    for (const n of names) if (customElements.get(n)) ok++;
+    document.getElementById('comp-count').textContent = `${ok}/${names.length}`;
 
-    // Count registered components
-    const COMPONENTS = [
-      'cigvis-range-slider',
-      'cigvis-button',
-      'cigvis-dropdown-select',
-      'cigvis-plot-canvas',
-      'cigvis-colormap-picker',
-      'cigvis-sidebar',
-      'cigvis-sidebar-section',
-    ];
-
-    let registered = 0;
-    for (const name of COMPONENTS) {
-      if (customElements.get(name)) registered++;
-    }
-    document.getElementById('component-count').textContent = `${registered}/${COMPONENTS.length}`;
-
-    // Check WebGL
+    // WebGL check
     try {
-      const canvas = document.createElement('canvas');
-      const gl = canvas.getContext('webgl') || canvas.getContext('webgl2');
-      document.getElementById('webgl-status').textContent = gl ? 'ok' : 'unavailable';
-      document.getElementById('webgl-status').className = gl ? 'status-ok' : 'status-warn';
-    } catch (e) {
-      document.getElementById('webgl-status').textContent = 'error';
-      document.getElementById('webgl-status').className = 'status-error';
-    }
+      const c = document.createElement('canvas');
+      const g = c.getContext('webgl') || c.getContext('webgl2');
+      const el = document.getElementById('webgl');
+      el.textContent = g ? 'ok' : 'n/a';
+      el.className = g ? 'status-ok' : 'status-warn';
+    } catch(e) {}
 
-    // ====================================================================
-    // WIRE UP DROPDOWNS
-    // ====================================================================
+    // Dropdown options
+    const cmapSel = document.querySelector('.main cigvis-dropdown-select[value="petrel"]');
+    if (cmapSel) cmapSel.setOptions([
+      {value:'petrel',label:'Petrel'},{value:'gray',label:'Gray'},
+      {value:'jet',label:'Jet'},{value:'viridis',label:'Viridis'},
+    ]);
+    const interpSel = document.querySelector('.main cigvis-dropdown-select[value="linear"]');
+    if (interpSel) interpSel.setOptions([
+      {value:'nearest',label:'Nearest'},{value:'linear',label:'Linear'},{value:'cubic',label:'Cubic'},
+    ]);
 
-    const cmapSelect = document.querySelector('.main cigvis-dropdown-select[value="petrel"]');
-    if (cmapSelect) {
-      cmapSelect.setOptions([
-        { value: 'petrel', label: 'Petrel' },
-        { value: 'gray', label: 'Gray' },
-        { value: 'jet', label: 'Jet' },
-        { value: 'viridis', label: 'Viridis' },
-        { value: 'hot', label: 'Hot' },
-        { value: 'seismic', label: 'Seismic' },
-      ]);
-    }
-
-    const interpSelect = document.querySelector('.main cigvis-dropdown-select[value="linear"]');
-    if (interpSelect) {
-      interpSelect.setOptions([
-        { value: 'nearest', label: 'Nearest' },
-        { value: 'linear', label: 'Linear' },
-        { value: 'cubic', label: 'Cubic' },
-      ]);
-    }
-
-    const displaySelect = document.querySelector('.sidebar-panel cigvis-dropdown-select');
-    if (displaySelect) {
-      displaySelect.setOptions([
-        { value: 'three.js', label: 'Three.js' },
-        { value: 'plotly', label: 'Plotly.js' },
-        { value: 'canvas2d', label: 'Canvas 2D' },
-      ]);
-    }
-
-    // ====================================================================
-    // EVENT LISTENERS
-    // ====================================================================
-
-    // Sliders — update value displays
-    document.querySelectorAll('cigvis-range-slider').forEach(slider => {
-      slider.addEventListener('change', (e) => {
-        // Update adjacent form-value
-        const row = slider.closest('.form-row');
-        if (row) {
-          const valueEl = row.querySelector('.form-value');
-          if (valueEl) valueEl.textContent = e.detail.value;
-        }
+    // Slider events
+    document.querySelectorAll('cigvis-range-slider').forEach(s => {
+      s.addEventListener('change', e => {
+        const row = s.closest('.form-row');
+        if (row) { const v = row.querySelector('.form-value'); if (v) v.textContent = e.detail.value; }
       });
     });
 
-    // Buttons — log clicks
-    document.querySelectorAll('cigvis-button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const log = document.getElementById('button-log');
+    // Button events
+    document.querySelectorAll('cigvis-button').forEach(b => {
+      b.addEventListener('click', () => {
+        const log = document.getElementById('btn-log');
         if (log) {
-          const time = new Date().toLocaleTimeString('en-US', { hour12: false });
-          log.innerHTML = `<span class="time">${time}</span><span class="event-type">click</span><span class="event-data">"${btn.label}"</span>`;
+          const t = new Date().toLocaleTimeString('en-US',{hour12:false});
+          log.innerHTML = `<span class="event-time">${t}</span><span class="event-type">click</span><span class="event-data">"${b.label}"</span>`;
         }
       });
     });
 
-    // Dropdowns — update value displays
-    document.querySelectorAll('cigvis-dropdown-select').forEach(select => {
-      select.addEventListener('change', (e) => {
-        const row = select.closest('.form-row');
-        if (row) {
-          const valueEl = row.querySelector('.form-value');
-          if (valueEl) valueEl.textContent = e.detail.value;
-        }
+    // Dropdown events
+    document.querySelectorAll('cigvis-dropdown-select').forEach(s => {
+      s.addEventListener('change', e => {
+        const row = s.closest('.form-row');
+        if (row) { const v = row.querySelector('.form-value'); if (v) v.textContent = e.detail.value; }
       });
     });
 
-    // ====================================================================
-    // DRAW TEST PATTERN ON CANVAS
-    // ====================================================================
-
-    const plotCanvas = document.getElementById('test-canvas');
-    if (plotCanvas) {
-      // Wait for canvas to initialize
-      const drawWhenReady = () => {
-        const canvas = plotCanvas.canvas;
-        const ctx = plotCanvas.ctx;
-        if (!canvas || !ctx) {
-          requestAnimationFrame(drawWhenReady);
-          return;
-        }
-
+    // Draw seismic trace on canvas
+    const pc = document.getElementById('canvas');
+    if (pc) {
+      const draw = () => {
+        const c = pc.canvas, x = pc.ctx;
+        if (!c || !x) { requestAnimationFrame(draw); return; }
         requestAnimationFrame(() => {
-          const w = canvas.width;
-          const h = canvas.height;
-          if (w === 0 || h === 0) return;
+          const w = c.width, h = c.height;
+          if (!w || !h) return;
 
-          // Background
-          ctx.fillStyle = 'var(--bg-void)';
-          ctx.fillRect(0, 0, w, h);
+          x.fillStyle = '#0c0c14';
+          x.fillRect(0, 0, w, h);
+
+          // Grid
+          x.strokeStyle = 'rgba(255,255,255,0.04)';
+          x.lineWidth = 1;
+          for (let i = 0; i < w; i += 40) { x.beginPath(); x.moveTo(i,0); x.lineTo(i,h); x.stroke(); }
+          for (let i = 0; i < h; i += 40) { x.beginPath(); x.moveTo(0,i); x.lineTo(w,i); x.stroke(); }
 
           // Axes
-          ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.moveTo(40, 20);
-          ctx.lineTo(40, h - 20);
-          ctx.lineTo(w - 20, h - 20);
-          ctx.stroke();
+          x.strokeStyle = 'rgba(255,255,255,0.15)';
+          x.lineWidth = 1;
+          x.beginPath(); x.moveTo(40,15); x.lineTo(40,h-20); x.lineTo(w-15,h-20); x.stroke();
 
-          // Y-axis ticks
-          ctx.fillStyle = '#5c6078';
-          ctx.font = '10px JetBrains Mono';
-          ctx.textAlign = 'right';
-          for (let i = 0; i <= 4; i++) {
-            const y = 20 + (h - 40) * (1 - i / 4);
-            const val = (i * 0.5 - 1).toFixed(1);
-            ctx.fillText(val, 36, y + 3);
-            ctx.beginPath();
-            ctx.moveTo(38, y);
-            ctx.lineTo(42, y);
-            ctx.stroke();
+          // Y ticks
+          x.fillStyle = '#5c6078';
+          x.font = '10px JetBrains Mono';
+          x.textAlign = 'right';
+          for (let i=0;i<=4;i++) {
+            const y = 15+(h-35)*(1-i/4);
+            const v = (i*0.5-1).toFixed(1);
+            x.fillText(v,36,y+3);
+            x.beginPath(); x.moveTo(38,y); x.lineTo(42,y); x.stroke();
           }
 
-          // X-axis ticks
-          ctx.textAlign = 'center';
-          for (let i = 0; i <= 6; i++) {
-            const x = 40 + (w - 60) * i / 6;
-            ctx.fillText((i * 40).toString(), x, h - 6);
+          // X ticks
+          x.textAlign = 'center';
+          for (let i=0;i<=6;i++) {
+            const px = 40+(w-55)*i/6;
+            x.fillText((i*40).toString(),px,h-6);
           }
 
-          // Seismic waveform
-          ctx.strokeStyle = '#00d4aa';
-          ctx.lineWidth = 1.5;
-          ctx.beginPath();
-          const midY = h / 2;
-          for (let x = 40; x < w - 20; x++) {
-            const t = (x - 40) / (w - 60);
-            const envelope = Math.exp(-t * 3) * Math.sin(t * Math.PI);
-            const noise = (Math.random() - 0.5) * 0.15;
-            const y = midY - (envelope + noise) * (h * 0.35);
-            if (x === 40) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
+          // Waveform
+          x.strokeStyle = '#00d4aa';
+          x.lineWidth = 1.5;
+          x.beginPath();
+          const mid = h/2;
+          for (let i=40;i<w-15;i++) {
+            const t = (i-40)/(w-55);
+            const env = Math.exp(-t*3)*Math.sin(t*Math.PI);
+            const noise = (Math.random()-0.5)*0.12;
+            const py = mid-(env+noise)*(h*0.35);
+            if (i===40) x.moveTo(i,py); else x.lineTo(i,py);
           }
-          ctx.stroke();
+          x.stroke();
 
-          // Fill under curve
-          ctx.lineTo(w - 20, midY);
-          ctx.lineTo(40, midY);
-          ctx.closePath();
-          ctx.fillStyle = 'rgba(0, 212, 170, 0.08)';
-          ctx.fill();
+          // Fill
+          x.lineTo(w-15,mid); x.lineTo(40,mid); x.closePath();
+          x.fillStyle = 'rgba(0,212,170,0.06)';
+          x.fill();
 
           // Labels
-          ctx.fillStyle = '#8b8fa3';
-          ctx.font = '11px Inter';
-          ctx.textAlign = 'center';
-          ctx.fillText('Time (ms)', w / 2, h - 0);
-
-          ctx.save();
-          ctx.translate(10, h / 2);
-          ctx.rotate(-Math.PI / 2);
-          ctx.fillText('Amplitude', 0, 0);
-          ctx.restore();
+          x.fillStyle = '#8b8fa3';
+          x.font = '11px Inter';
+          x.textAlign = 'center';
+          x.fillText('Time (ms)',w/2,h-0);
+          x.save(); x.translate(10,h/2); x.rotate(-Math.PI/2);
+          x.fillText('Amplitude',0,0); x.restore();
         });
       };
-      drawWhenReady();
+      draw();
     }
 
-    // ====================================================================
-    // CONSOLE MONITOR
-    // ====================================================================
-
-    let errorCount = 0;
-    let warnCount = 0;
-    const _origError = console.error;
-    const _origWarn = console.warn;
-
-    console.error = (...args) => {
-      errorCount++;
-      const el = document.getElementById('error-count');
-      el.textContent = errorCount;
-      el.className = 'status-error';
-      _origError.apply(console, args);
-    };
-
-    console.warn = (...args) => {
-      warnCount++;
-      const el = document.getElementById('warn-count');
-      el.textContent = warnCount;
-      el.className = 'status-warn';
-      _origWarn.apply(console, args);
-    };
+    // Console error counter
+    let errs=0;
+    const oe=console.error;
+    console.error=(...a)=>{errs++;document.getElementById('err-count').textContent=errs;
+    document.getElementById('err-count').className='status-err';oe.apply(console,a);};
   </script>
 </body>
 </html>
