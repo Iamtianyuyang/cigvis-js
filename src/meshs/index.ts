@@ -582,6 +582,223 @@ export function trajectoryMesh(
 }
 
 // ============================================================================
+// North pointer mesh
+// ============================================================================
+
+/** North pointer result */
+export interface NorthPointerMesh {
+  vertices: Float32Array;
+  faces: Uint32Array;
+  faceColors: Float32Array;
+  textPosition: [number, number, number];
+}
+
+/**
+ * Generate a north pointer mesh for orientation display.
+ * Ported from cigvis Python: north_pointer_mesh
+ *
+ * @param direction - North direction [x, y]
+ * @param scale - Scale factor
+ * @param style - Pointer style: 'default' or 'petrel'
+ * @returns NorthPointerMesh
+ *
+ * @example
+ * ```ts
+ * const pointer = northPointerMesh([0, 1], 2, 'default');
+ * ```
+ */
+export function northPointerMesh(
+  direction: [number, number],
+  scale: number = 2,
+  style: 'default' | 'petrel' = 'default'
+): NorthPointerMesh {
+  if (style === 'petrel') {
+    return petrelNorthPointer(direction, scale);
+  }
+  return defaultNorthPointer(direction, scale);
+}
+
+/**
+ * Default north pointer style.
+ */
+function defaultNorthPointer(
+  direction: [number, number],
+  scale: number
+): NorthPointerMesh {
+  // Diamond shape with center
+  const vertices = new Float32Array([
+    0, 3, 0,    // 0: top
+    2, 0, 0,    // 1: right
+    0, -3, 0,   // 2: bottom
+    -2, 0, 0,   // 3: left
+    0.5, 0.5, 0,  // 4: inner top-right
+    0.5, -0.5, 0, // 5: inner bottom-right
+    -0.5, -0.5, 0, // 6: inner bottom-left
+    -0.5, 0.5, 0,  // 7: inner top-left
+    0, 0, 0.5,   // 8: front
+    0, 0, -0.5,  // 9: back
+  ]);
+
+  const faces = new Uint32Array([
+    0, 7, 8,
+    0, 7, 9,
+    1, 4, 8,
+    2, 5, 8,
+    3, 6, 8,
+    1, 4, 9,
+    2, 5, 9,
+    3, 6, 9,
+    0, 8, 4,
+    1, 8, 5,
+    2, 8, 6,
+    3, 8, 7,
+    0, 9, 4,
+    1, 9, 5,
+    2, 9, 6,
+    3, 9, 7,
+  ]);
+
+  // Face colors: red top, gray sides, black bottom
+  const faceColors = new Float32Array(faces.length);
+  for (let i = 0; i < 2; i++) {
+    faceColors[i * 3] = 1; faceColors[i * 3 + 1] = 0; faceColors[i * 3 + 2] = 0;
+  }
+  for (let i = 2; i < 8; i++) {
+    faceColors[i * 3] = 0.8; faceColors[i * 3 + 1] = 0.8; faceColors[i * 3 + 2] = 0.8;
+  }
+  for (let i = 8; i < 16; i++) {
+    faceColors[i * 3] = 0; faceColors[i * 3 + 1] = 0; faceColors[i * 3 + 2] = 0;
+  }
+
+  // Scale
+  for (let i = 0; i < vertices.length; i++) {
+    vertices[i] = vertices[i] / 8 * scale;
+  }
+
+  // Rotate to match direction
+  const angle = Math.atan2(direction[0], direction[1]);
+  const cos = Math.cos(angle);
+  const sin = Math.sin(angle);
+
+  for (let i = 0; i < vertices.length / 3; i++) {
+    const x = vertices[i * 3];
+    const y = vertices[i * 3 + 1];
+    vertices[i * 3] = x * cos - y * sin;
+    vertices[i * 3 + 1] = x * sin + y * cos;
+  }
+
+  const textPosition: [number, number, number] = [0, 4 * scale / 8, 0];
+  const tx = textPosition[0];
+  const ty = textPosition[1];
+  textPosition[0] = tx * cos - ty * sin;
+  textPosition[1] = tx * sin + ty * cos;
+
+  return { vertices, faces, faceColors, textPosition };
+}
+
+/**
+ * Petrel-style north pointer.
+ */
+function petrelNorthPointer(
+  direction: [number, number],
+  scale: number
+): NorthPointerMesh {
+  // Arrow shape
+  const v1 = [
+    [0, 0, 0], [1, 0, 0], [0, 2, 0], [1, 2, 0],
+    [-0.5, 2, 0], [1.5, 2, 0], [0.5, 3, 0],
+  ];
+
+  const v2 = v1.map(([x, y, z]) => [x, y, z + 0.25]);
+  const v3 = v2.map(([x, y, z]) => [x, y, z + 0.25]);
+
+  const allVerts = [...v1, ...v2, ...v3];
+  const vertices = new Float32Array(allVerts.flat());
+
+  const faces = new Uint32Array([
+    0, 1, 2, 1, 3, 2, 4, 5, 6,
+    0, 7, 8, 8, 1, 0,
+    0, 7, 9, 9, 2, 0,
+    1, 8, 10, 10, 3, 1,
+    4, 11, 9, 9, 2, 4,
+    3, 10, 12, 12, 5, 3,
+    4, 11, 13, 13, 6, 4,
+    6, 13, 12, 12, 5, 6,
+    7, 14, 15, 15, 8, 7,
+    7, 14, 16, 16, 9, 7,
+    8, 15, 17, 17, 10, 8,
+    11, 18, 16, 16, 9, 11,
+    10, 17, 19, 19, 12, 10,
+    11, 18, 20, 20, 13, 11,
+    13, 20, 19, 19, 12, 13,
+    14, 15, 16, 15, 17, 16, 18, 19, 20,
+  ]);
+
+  // Face colors: green body, red arrow
+  const faceColors = new Float32Array(faces.length);
+  const c1: [number, number, number] = [0.361, 0.788, 0.231];
+  const c2: [number, number, number] = [0.733, 0.153, 0.102];
+
+  for (let i = 0; i < 17; i++) {
+    faceColors[i * 3] = c1[0];
+    faceColors[i * 3 + 1] = c1[1];
+    faceColors[i * 3 + 2] = c1[2];
+  }
+  for (let i = 17; i < 34; i++) {
+    faceColors[i * 3] = c2[0];
+    faceColors[i * 3 + 1] = c2[1];
+    faceColors[i * 3 + 2] = c2[2];
+  }
+
+  // Scale
+  for (let i = 0; i < vertices.length; i++) {
+    vertices[i] = vertices[i] / 8 * scale;
+  }
+
+  // Rotate to match direction
+  const angle = Math.atan2(direction[0], direction[1]);
+  const cos = Math.cos(angle);
+  const sin = Math.sin(angle);
+
+  for (let i = 0; i < vertices.length / 3; i++) {
+    const x = vertices[i * 3];
+    const y = vertices[i * 3 + 1];
+    vertices[i * 3] = x * cos - y * sin;
+    vertices[i * 3 + 1] = x * sin + y * cos;
+  }
+
+  const textPosition: [number, number, number] = [0.5 * scale / 8, 4 * scale / 8, 0.5 * scale / 8];
+  const tx = textPosition[0];
+  const ty = textPosition[1];
+  textPosition[0] = tx * cos - ty * sin;
+  textPosition[1] = tx * sin + ty * cos;
+
+  return { vertices, faces, faceColors, textPosition };
+}
+
+// ============================================================================
+// Curves mesh (well log curves)
+// ============================================================================
+
+/**
+ * Generate tube mesh for well log curves.
+ * Ported from cigvis Python: curves_mesh
+ *
+ * @param points - Curve points [N, 3]
+ * @param radius - Tube radius
+ * @param tubePoints - Points around tube circumference
+ * @returns Mesh
+ */
+export function curvesMesh(
+  points: Float32Array,
+  radius: number,
+  tubePoints: number = 8
+): Mesh {
+  // Reuse trajectory mesh implementation
+  return trajectoryMesh(points, radius, tubePoints);
+}
+
+// ============================================================================
 // Agent interface
 // ============================================================================
 
@@ -597,5 +814,7 @@ export function createMeshsAgent() {
     cubePoints,
     regularPolyPoints,
     trajectoryMesh,
+    northPointerMesh,
+    curvesMesh,
   };
 }
