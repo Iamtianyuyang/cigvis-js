@@ -75,6 +75,9 @@ export type { Plot3DOptions } from './plot3d';
 // IO utilities
 export * as io from './io';
 
+// Mesh generation
+export * as meshs from './meshs';
+
 // Math utilities
 export * as utils from './utils';
 
@@ -142,6 +145,7 @@ import * as _viser from './viser';
 import * as _sliceviewer from './sliceviewer';
 import * as _tools from './tools';
 import * as _gui from './gui';
+import * as _meshs from './meshs';
 
 export const cigvis = {
   // Configuration
@@ -187,6 +191,7 @@ export const cigvis = {
   sliceviewer: _sliceviewer,
   tools: _tools,
   gui: _gui,
+  meshs: _meshs,
 
   // Version
   VERSION,
