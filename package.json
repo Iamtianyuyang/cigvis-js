@@ -1,7 +1,7 @@
 {
-  "name": "cigvis",
+  "name": "cigvis-js",
   "version": "0.1.0",
-  "description": "CIGVis - A tool for visualizing multidimensional geophysical data in the browser",
+  "description": "CIGVis-js - A tool for visualizing multidimensional geophysical data in the browser",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
